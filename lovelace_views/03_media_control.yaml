@@ -1,0 +1,12 @@
+- title: Power
+  icon: 'mdi:power-plug'
+  cards:
+    - entity: media_player.firetvbox
+      type: media-control
+    - artwork: cover
+      entity: media_player.firetvbox
+      hide_power: true
+      tts:
+         entity_id: media_player.firetvbox
+         platform: alexa
+      type: 'custom:mini-media-player'

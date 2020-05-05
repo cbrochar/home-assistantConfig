@@ -1,0 +1,406 @@
+##############################################################################
+# Automations to configure button controls on page 6 (two wide, 4 tall)
+# Currently this page is not used in the demo automations
+
+##############################################################################
+# Automations to set colors on HASP Page 6
+
+automation:
+  - alias: hasp_master_p6_ColorConfig_selectedforegroundcolor
+    trigger:
+      - platform: state
+        entity_id: "binary_sensor.master_connected"
+        to: "on"
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id: input_number.hasp_master_selectedforegroundcolor
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "hasp/master/command/json"
+          payload_template: >-
+            [{%- for i in range(4,11) -%}"p[6].b[{{i}}].pco={{ states('input_number.hasp_master_selectedforegroundcolor')|int }}"{% if not loop.last %},{% endif %}{%- endfor -%}
+
+  - alias: hasp_master_p6_ColorConfig_selectedbackgroundcolor
+    trigger:
+      - platform: state
+        entity_id: "binary_sensor.master_connected"
+        to: "on"
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id: input_number.hasp_master_selectedbackgroundcolor
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "hasp/master/command/json"
+          payload_template: >-
+            [{%- for i in range(4,11) -%}"p[6].b[{{i}}].bco={{ states('input_number.hasp_master_selectedbackgroundcolor')|int }}"{% if not loop.last %},{% endif %}{%- endfor -%}]
+
+  - alias: hasp_master_p6_ColorConfig_unselectedforegroundcolor
+    trigger:
+      - platform: state
+        entity_id: "binary_sensor.master_connected"
+        to: "on"
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id: input_number.hasp_master_unselectedforegroundcolor
+      - platform: mqtt
+        topic: 'hasp/master/command/page'
+        payload: '6'
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "hasp/master/command/json"
+          payload_template: >-
+            [{%- for i in range(4,11) -%}"p[6].b[{{i}}].pco2={{ states('input_number.hasp_master_unselectedforegroundcolor')|int }}"{% if not loop.last %},{% endif %}{%- endfor -%}]
+
+  - alias: hasp_master_p6_ColorConfig_unselectedbackgroundcolor
+    trigger:
+      - platform: state
+        entity_id: "binary_sensor.master_connected"
+        to: "on"
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id: input_number.hasp_master_unselectedbackgroundcolor
+      - platform: mqtt
+        topic: 'hasp/master/command/page'
+        payload: '6'
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "hasp/master/command/json"
+          payload_template: >-
+            [{%- for i in range(4,11) -%}"p[6].b[{{i}}].bco2={{ states('input_number.hasp_master_unselectedbackgroundcolor')|int }}"{% if not loop.last %},{% endif %}{%- endfor -%}]
+
+  # Set font and text labels for menu buttons on device init
+  - alias: hasp_master_p6_MenuInit
+    trigger:
+    - platform: state
+      entity_id: 'binary_sensor.master_connected'
+      to: 'on'
+    - platform: homeassistant
+      event: start
+    - platform: mqtt
+      topic: 'hasp/master/command/page'
+      payload: '6'
+    action:
+    - service: mqtt.publish
+      data:
+        topic: "hasp/master/command/json"
+        payload_template: '["p[6].b[4].font=1","p[6].b[5].font=1","p[6].b[6].font=1","p[6].b[7].font=1","p[6].b[8].font=1","p[6].b[9].font=1","p[6].b[10].font=1","p[6].b[11].font=1"]'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[4].txt'
+        payload: '"Living Lights"'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[5].txt'
+        payload: '"Living Fan"'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[6].txt'
+        payload: '"Alexa"'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[7].txt'
+        payload: '"All    Lights"'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[8].txt'
+        payload: '"Up     Stairs"'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[9].txt'
+        payload: '"Down   Stairs"'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[10].txt'
+        payload: '"Party"'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[11].txt'
+        payload: '"Office"'
+
+
+  # Trigger action when p[6].b[4] pressed
+  - alias: hasp_master_p6_SceneButton4
+    trigger:
+    - platform: mqtt
+      topic: 'hasp/master/state/p[6].b[4]'
+      payload: 'ON'
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.hasp_master_activepage
+        value: 3
+      
+  # Trigger action when p[6].b[5] pressed
+  - alias: hasp_master_p6_SceneButton4
+    trigger:
+    - platform: mqtt
+      topic: 'hasp/master/state/p[6].b[5]'
+      payload: 'ON'
+    action:
+      service: input_number.set_value
+      data_template:
+        entity_id: input_number.hasp_master_activepage
+        value: 10
+
+  # Trigger action when p[6].b[6] pressed
+  - alias: hasp_master_p6_SceneButton6
+    trigger:
+    - platform: mqtt
+      topic: 'hasp/master/state/p[6].b[6]'
+      payload: 'ON'
+    action:
+    - service: input_number.set_value
+      data_template:
+        entity_id: 'input_number.hasp_master_activepage'
+        value: 1
+
+  # Trigger action when p[6].b[7] pressed  *****Check the All lights entity
+  - alias: hasp_master_p6_SceneButton7
+    trigger:
+    - platform: mqtt
+      topic: 'hasp/master/state/p[6].b[7]'
+      payload: 'ON'
+    action:
+    - service_template: >
+          {% if states.light.all_lights.state == "on" -%}
+            homeassistant.turn_off
+          {%- else -%}
+            homeassistant.turn_on
+          {%- endif %}
+      entity_id: light.all_lights
+
+  # Trigger action_on when p[6].b[8] pressed
+  - alias: hasp_master_p6_SceneButton8
+    trigger:
+    - platform: mqtt
+      topic: 'hasp/master/state/p[6].b[8]'
+      payload: 'ON'
+    action:
+    - service_template: >
+          {% if states.light.upstairs_lights.state == "on" -%}
+            homeassistant.turn_off
+          {%- else -%}
+            homeassistant.turn_on
+          {%- endif %}
+      entity_id: light.upstairs_lights
+      
+  # Trigger scene.daylight when p[6].b[9] pressed
+  - alias: hasp_master_p6_SceneButton9
+    trigger:
+    - platform: mqtt
+      topic: 'hasp/master/state/p[6].b[9]'
+      payload: 'ON'
+    action:
+    - service_template: >
+          {% if states.light.downstairs_lights.state == "on" -%}
+            homeassistant.turn_off
+          {%- else -%}
+            homeassistant.turn_on
+          {%- endif %}
+      entity_id: light.downstairs_lights
+
+  # Trigger scene.night when p[6].b[10] pressed
+  - alias: hasp_master_p6_SceneButton10
+    trigger:
+    - platform: mqtt
+      topic: 'hasp/master/state/p[6].b[10]'
+      payload: 'ON'
+    action:
+    - service: script.party
+
+  # Trigger lights_off.night when p[6].b[11] pressed
+  - alias: hasp_master_p6_SceneButton5
+    trigger:
+    - platform: mqtt
+      topic: 'hasp/master/state/p[6].b[11]'
+      payload: 'ON'
+    action:
+    - service: light.toggle
+      entity_id: light.dimmer
+
+  # Set button 7 to "All Off" if any lights are on, otherwise set to "All On"
+  - alias: hasp_master_p6_ToggleColor7
+    trigger:
+    - platform: state
+      entity_id: light.all_lights
+    - platform: state
+      entity_id: 'binary_sensor.master_connected'
+      to: 'on'
+    - platform: homeassistant
+      event: start
+    - platform: state
+      entity_id: input_number.hasp_master_selectedbackgroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_unselectedbackgroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_selectedforegroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_unselectedforegroundcolor
+    action:
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[7].bco'
+        payload_template: >-
+          {% if states.light.all_lights.state == "on" -%}
+            {{ states.input_number.hasp_master_unselectedbackgroundcolor.state | int }}
+          {%- else -%}
+            {{ states.input_number.hasp_master_selectedbackgroundcolor.state | int }}
+          {%- endif %}
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/master/command/p[6].b[7].pco'
+        payload_template: >-
+          {% if states.light.all_lights.state == "on" -%}
+            {{ states.input_number.hasp_master_unselectedforegroundcolor.state | int }}
+          {%- else -%}
+            {{ states.input_number.hasp_master_selectedforegroundcolor.state | int }}
+          {%- endif %}
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/master/command/p[6].b[7].txt'
+        payload_template: >-
+          {% if states.light.all_lights.state == "on" -%}
+           "All    Off"
+          {%- else -%}
+           "All    On"
+          {%- endif %}
+
+  # Set button 8 to "All Off" if any lights are on, otherwise set to "All On"
+  - alias: hasp_master_p6_ToggleColor8
+    trigger:
+    - platform: state
+      entity_id: light.upstairs_lights
+    - platform: state
+      entity_id: 'binary_sensor.master_connected'
+      to: 'on'
+    - platform: homeassistant
+      event: start
+    - platform: state
+      entity_id: input_number.hasp_master_selectedbackgroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_unselectedbackgroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_selectedforegroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_unselectedforegroundcolor
+    action:
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[8].bco'
+        payload_template: >-
+          {% if states.light.upstairs_lights.state == "on" -%}
+            {{ states.input_number.hasp_master_unselectedbackgroundcolor.state | int }}
+          {%- else -%}
+            {{ states.input_number.hasp_master_selectedbackgroundcolor.state | int }}
+          {%- endif %}
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/master/command/p[6].b[8].pco'
+        payload_template: >-
+          {% if states.light.upstairs_lights.state == "on" -%}
+            {{ states.input_number.hasp_master_unselectedforegroundcolor.state | int }}
+          {%- else -%}
+            {{ states.input_number.hasp_master_selectedforegroundcolor.state | int }}
+          {%- endif %}
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/master/command/p[6].b[8].txt'
+        payload_template: >-
+          {% if states.light.upstairs_lights.state == "on" -%}
+           "Upstair Off"
+          {%- else -%}
+           "Upstair On"
+          {%- endif %}
+
+  # Set button 9 to "All Off" if any lights are on, otherwise set to "All On"
+  - alias: hasp_master_p6_ToggleColor9
+    trigger:
+    - platform: state
+      entity_id: light.downstairs_lights
+    - platform: state
+      entity_id: 'binary_sensor.master_connected'
+      to: 'on'
+    - platform: homeassistant
+      event: start
+    - platform: state
+      entity_id: input_number.hasp_master_selectedbackgroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_unselectedbackgroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_selectedforegroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_unselectedforegroundcolor
+    action:
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[9].bco'
+        payload_template: >-
+          {% if states.light.downstairs_lights.state == "on" -%}
+            {{ states.input_number.hasp_master_unselectedbackgroundcolor.state | int }}
+          {%- else -%}
+            {{ states.input_number.hasp_master_selectedbackgroundcolor.state | int }}
+          {%- endif %}
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/master/command/p[6].b[9].pco'
+        payload_template: >-
+          {% if states.light.downstairs_lights.state == "on" -%}
+            {{ states.input_number.hasp_master_unselectedforegroundcolor.state | int }}
+          {%- else -%}
+            {{ states.input_number.hasp_master_selectedforegroundcolor.state | int }}
+          {%- endif %}
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/master/command/p[6].b[9].txt'
+        payload_template: >-
+          {% if states.light.downstairs_lights.state == "on" -%}
+           "DnstairOff"
+          {%- else -%}
+           "DnstairOn"
+          {%- endif %}
+
+   # Toggle colors on p[6].b[11] when light.ridge changes
+  - alias: hasp_master_p6_ToggleColor11
+    trigger:
+    - platform: state
+      entity_id: light.dimmer
+    - platform: state
+      entity_id: 'binary_sensor.master_connected'
+      to: 'on'
+    - platform: homeassistant
+      event: start
+    - platform: state
+      entity_id: input_number.hasp_master_selectedbackgroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_unselectedbackgroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_selectedforegroundcolor
+    - platform: state
+      entity_id: input_number.hasp_master_unselectedforegroundcolor
+    action:
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/master/command/p[6].b[11].bco'
+        payload_template: >-
+          {% if states.light.dimmer.state == "on" -%}
+            {{ states.input_number.hasp_master_selectedbackgroundcolor.state | int }}
+          {%- else -%}
+            {{ states.input_number.hasp_master_unselectedbackgroundcolor.state | int }}
+          {%- endif %}
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/master/command/p[6].b[11].pco'
+        payload_template: >-
+          {% if states.light.dimmer.state == "on" -%}
+            {{ states.input_number.hasp_master_selectedforegroundcolor.state | int }}
+          {%- else -%}
+            {{ states.input_number.hasp_master_unselectedforegroundcolor.state | int }}
+          {%- endif %}

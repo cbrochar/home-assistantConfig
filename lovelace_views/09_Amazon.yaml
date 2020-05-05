@@ -1,0 +1,136 @@
+  - title: Amazon
+    icon: 'mdi:message-bulleted'
+    badges: []
+    cards:
+      - entities:
+          - switch.logans_echo_show_do_not_disturb_switch
+          - sensor.logans_echo_show_next_alarm
+          - sensor.logans_echo_show_next_reminder
+          - sensor.logans_echo_show_next_timer
+          - switch.logans_echo_show_repeat_switch
+          - switch.logans_echo_show_shuffle_switch
+        type: entities
+      - entity: media_player.logans_echo_show
+        artwork: cover
+        hide_power: true
+        tts:
+          entity_id: media_player.logans_echo_show
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - entities:
+          - switch.chad_s_aio_do_not_disturb_switch
+          - sensor.chad_s_aio_next_alarm
+          - sensor.chad_s_aio_next_reminder
+          - sensor.chad_s_aio_next_timer
+          - switch.chad_s_aio_repeat_switch
+          - switch.chad_s_aio_shuffle_switch
+        type: entities
+      - entity: media_player.chad_s_aio
+        type: media-control
+      - entities:
+          - switch.girls_echo_do_not_disturb_switch
+          - sensor.girls_echo_next_alarm
+          - sensor.girls_echo_next_reminder
+          - sensor.girls_echo_next_timer
+          - switch.girls_echo_repeat_switch
+          - switch.girls_echo_shuffle_switch
+        type: entities
+      - entity: media_player.girls_echo
+        type: media-control
+      - entity: media_player.logan_s_fire
+        type: media-control
+      - entities:
+          - switch.extra_echo_do_not_disturb_switch
+          - sensor.extra_echo_next_alarm
+          - sensor.extra_echo_next_reminder
+          - sensor.extra_echo_next_timer
+          - switch.extra_echo_repeat_switch
+          - switch.extra_echo_shuffle_switch
+        type: entities
+      - entity: media_player.extra_echo
+        artwork: cover
+        hide_power: true
+        tts:
+          entity_id: media_player.extra_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - entity: media_player.extra_echo
+        type: media-control
+      - entities:
+          - switch.bedroom_echo_show_do_not_disturb_switch
+          - sensor.bedroom_echo_show_next_alarm
+          - sensor.bedroom_echo_show_next_reminder
+          - sensor.bedroom_echo_show_next_timer
+          - switch.bedroom_echo_show_repeat_switch
+          - switch.bedroom_echo_show_shuffle_switch
+        type: entities
+      - entity: media_player.bedroom_echo_show
+        type: media-control
+      - entity: media_player.frog_fire_tv
+        type: media-control
+      - entities:
+          - switch.adults_do_not_disturb_switch
+          - switch.adults_repeat_switch
+          - switch.adults_shuffle_switch
+        type: entities
+      - entity: media_player.adults
+        type: media-control
+      - entities:
+          - switch.kitchen_echo_do_not_disturb_switch
+          - sensor.kitchen_echo_next_alarm
+          - sensor.kitchen_echo_next_reminder
+          - sensor.kitchen_echo_next_timer
+          - switch.kitchen_echo_repeat_switch
+          - switch.kitchen_echo_shuffle_switch
+        type: entities
+      - entity: media_player.kitchen_echo
+        type: media-control
+      - entities:
+          - switch.everywhere_do_not_disturb_switch
+          - switch.everywhere_repeat_switch
+          - switch.everywhere_shuffle_switch
+        type: entities
+      - entity: media_player.everywhere
+        type: media-control
+      - entity: media_player.nathaly_s_alexa_apps
+        type: media-control
+      - entity: media_player.this_device
+        type: media-control
+      - entities:
+          - switch.davids_echo_do_not_disturb_switch
+          - sensor.davids_echo_next_alarm
+          - sensor.davids_echo_next_reminder
+          - sensor.davids_echo_next_timer
+          - switch.davids_echo_repeat_switch
+          - switch.davids_echo_shuffle_switch
+        type: entities
+      - entity: media_player.davids_echo
+        type: media-control
+      - entities:
+          - switch.whole_house_do_not_disturb_switch
+          - switch.whole_house_repeat_switch
+          - switch.whole_house_shuffle_switch
+        type: entities
+      - entity: media_player.whole_house
+        type: media-control
+      - entities:
+          - switch.living_echo_do_not_disturb_switch
+          - sensor.living_echo_next_alarm
+          - sensor.living_echo_next_reminder
+          - sensor.living_echo_next_timer
+          - switch.living_echo_repeat_switch
+          - switch.living_echo_shuffle_switch
+        type: entities
+      - entity: media_player.living_echo
+        type: media-control
+      - entities:
+          - switch.broken_echo_do_not_disturb_switch
+          - sensor.broken_echo_next_alarm
+          - sensor.broken_echo_next_reminder
+          - sensor.broken_echo_next_timer
+          - switch.broken_echo_repeat_switch
+          - switch.broken_echo_shuffle_switch
+        type: entities
+      - entity: media_player.broken_echo
+        type: media-control
+    path: amazon

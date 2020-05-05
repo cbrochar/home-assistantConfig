@@ -1,0 +1,30 @@
+  - title: BOH
+    icon: 'mdi:settings'
+    cards:
+      - entities:
+          - entity: automation.christmas_lights_off
+          - entity: automation.christmas_lights_on
+          - entity: automation.away_lights_on
+          - entity: automation.away_lights_off
+        title: Automations
+        type: entities
+      - entities:
+          - entity: sensor.arris_tg1682g_bytes_received
+          - entity: sensor.arris_tg1682g_bytes_sent
+          - entity: sensor.arris_tg1682g_packets_received
+          - entity: sensor.arris_tg1682g_packets_sec_received
+          - entity: sensor.arris_tg1682g_packets_sec_sent
+          - entity: sensor.arris_tg1682g_packets_sent
+        show_header_toggle: false
+        title: Router
+        type: entities
+      - card:
+          title: People at home
+          type: glance
+        entities:
+          - binary_sensor.chad_brochard_s_chads_iphone_xr_presence
+          - binary_sensor.nathaly_vasquez_s_nathaly_presence
+        state_filter:
+          - 'on'
+        type: entity-filter
+    path: BOH

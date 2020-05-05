@@ -1,0 +1,14 @@
+Alxea Devices:
+
+
+media_player.bedroom_echo_show
+media_player.broken_echo
+media_player.chad_s_aio
+media_player.davids_echo
+media_player.den_fire_tv
+media_player.extra_echo
+media_player.firetvbox
+media_player.girls_echo
+media_player.kitchen_echo
+media_player.living_echo
+media_player.logans_echo_show

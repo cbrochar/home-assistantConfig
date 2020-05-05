@@ -1,0 +1,50 @@
+##############################################################################
+# Automations and required components to display information messages on HASP
+
+input_text:
+  hasp_living_plate_messagetext:
+    name: living_plate Message Text
+    icon: mdi:playlist-edit
+    max: 126
+
+input_number:
+  hasp_living_plate_messagetime:
+    name: living_plate Message Time
+    icon: mdi:clock-end
+    mode: box
+    min: 1
+    max: 600
+    step: 1
+
+group:
+  living_plate_messagedisplay:
+    name: living_plate Message Display
+    entities:
+      - input_text.hasp_living_plate_messagetext
+      - input_number.hasp_living_plate_messagetime
+      - automation.hasp_living_plate_00_messagedisplaytext
+
+automation:
+##############################################################################
+# Display text message
+  - alias: hasp_living_plate_00_messagedisplaytext
+    trigger: []
+    action:
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/living_plate/command/p[0].b[1].txt'
+        payload: '"{{ states.input_text.hasp_living_plate_messagetext.state }}"'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/living_plate/command/page'
+        payload: '0'
+    - service: mqtt.publish
+      data:
+        topic: 'hasp/living_plate/command'
+        payload: 'vis 1,1'
+    - delay: '00:00:{{ states.input_number.hasp_living_plate_messagetime.state | int }}'
+    - service: mqtt.publish
+      data_template:
+        topic: 'hasp/living_plate/command/page'
+        payload: '{{ states.input_number.hasp_living_plate_activepage.state | int }}'
+  

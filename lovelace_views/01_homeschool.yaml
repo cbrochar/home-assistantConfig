@@ -1,0 +1,23 @@
+  - title: Homeschool
+    icon: 'mdi:video-input-svideo'
+    path: homeschool
+    cards:
+      - type: entities
+        title: master automations
+        show_header_toggle: false
+        entities:
+          - automation.homeschool_schedule_1
+          - automation.homeschool_schedule_2
+          - automation.homeschool_schedule_3
+          - automation.homeschool_schedule_4
+          - automation.homeschool_schedule_5
+          - automation.homeschool_schedule_6
+          - automation.homeschool_schedule_7
+          - automation.homeschool_schedule_8
+          - automation.homeschool_schedule_9
+          - automation.homeschool_schedule_10
+          - automation.homeschool_schedule_11
+          - automation.homeschool_schedule_12
+          - automation.homeschool_schedule_13
+          - automation.homeschool_schedule_14
+          - automation.homeschool_schedule_15

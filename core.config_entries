@@ -1,0 +1,47 @@
+{
+    "data": {
+        "entries": [
+            {
+                "connection_class": "unknown",
+                "data": {
+                    "secret": "624d44c593b4a6a671d00f2aaf981176",
+                    "webhook_id": "bb9aa8be054431c0251a9001f61e16a52dd6320bd75a5f72a3446fdee6723439"
+                },
+                "domain": "owntracks",
+                "entry_id": "93e47b7715434b028e1961162bbd2b6b",
+                "source": "user",
+                "title": "OwnTracks",
+                "version": 1
+            },
+            {
+                "connection_class": "cloud_push",
+                "data": {},
+                "domain": "ios",
+                "entry_id": "0ac10fda912048b7a087d610bcb9102b",
+                "source": "user",
+                "title": "Home Assistant iOS",
+                "version": 1
+            },
+            {
+                "connection_class": "local_poll",
+                "data": {},
+                "domain": "upnp",
+                "entry_id": "eec89af77a024e37a6551290b2da3dbf",
+                "source": "discovery",
+                "title": "UPnP/IGD",
+                "version": 1
+            },
+            {
+                "connection_class": "local_push",
+                "data": {},
+                "domain": "mqtt",
+                "entry_id": "5a3f5934b7814ade90095230c9e8cbd6",
+                "source": "import",
+                "title": "configuration.yaml",
+                "version": 1
+            }
+        ]
+    },
+    "key": "core.config_entries",
+    "version": 1
+}

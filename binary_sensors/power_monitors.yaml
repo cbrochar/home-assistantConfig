@@ -1,0 +1,18 @@
+- platform: template
+  sensors:
+    bedroom_tv_on:
+      friendly_name: "Bedroom TV On"
+      device_class: power
+      value_template: "{{ states('sensor.bedroomtvmonitor_energy_power')|float > 5.0 }}"
+- platform: template
+  sensors:
+    living_tv_on:
+      friendly_name: "Living TV On"
+      device_class: power
+      value_template: "{{ states('sensor.livingtvmonitor_energy_power')|float > 5.0 }}"
+- platform: template
+  sensors:
+    projector_on:
+      friendly_name: "Projector On"
+      device_class: power
+      value_template: "{{ states('sensor.projectormonitor_energy_power')|float > 5.0 }}"

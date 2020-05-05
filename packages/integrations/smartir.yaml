@@ -1,0 +1,23 @@
+smartir:
+
+media_player:
+  - platform: smartir
+    name: master_tv
+    unique_id: master_tv
+    device_code: 3003
+    controller_data: bedroomIR/cmnd/irSend
+    power_sensor: binary_sensor.bedroom_tv_on
+
+  - platform: smartir
+    name: living_tv
+    unique_id: living_tv
+    device_code: 3001
+    controller_data: cmnd/rm-mini/irSend
+    power_sensor: binary_sensor.living_tv_on
+
+  - platform: smartir
+    name: projector
+    unique_id: projector
+    device_code: 3004
+    controller_data: patioparty/cmnd/irSend
+    power_sensor: binary_sensor.projector_on

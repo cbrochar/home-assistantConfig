@@ -1,0 +1,19 @@
+zone:
+  - name: Work
+    latitude: !secret work_lat
+    longitude: !secret work_long
+    radius: 100
+    icon: mdi:worker
+
+  # This will override the default home zone
+  - name: Home
+    latitude: !secret lat
+    longitude: !secret long
+    radius: 100
+    icon: mdi:account-multiple
+    
+  - name: BigUgly
+    latitude: 36.695483
+    longitude: -76.232064
+    radius: 100
+    icon: mdi:beer

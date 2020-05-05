@@ -1,0 +1,86 @@
+- platform: group
+  name: "Upstairs Lights"
+  entities:
+   - light.bedroom_lights
+   - light.vs_lights
+   - light.logan_lights
+   - light.david_lamp
+   - light.gym_lights
+- platform: group
+  name: "Downstairs Lights"
+  entities:
+   - light.barn_lights
+   - light.kitchen_lights
+   - light.living_room_lights
+   - light.dimmer
+- platform: group
+  name: "All Lights"
+  entities:
+   - light.downstairs_lights
+   - light.upstairs_lights
+- platform: group
+  name: "Kitchen Lights"
+  entities:
+   - light.kitchen_overhead
+   - light.kitchen_table
+   - light.patio
+- platform: group
+  name: "Bedroom Lights"
+  entities:
+   - light.bedroom_fan_one
+   - light.bedroom_fan_two
+   - light.my_lamp
+- platform: group
+  name: "Living Room Lights"
+  entities:
+   - light.living_room_lamp1
+   - light.sonoff_100092e2b2
+   - light.living_room_lamp2
+- platform: group
+  name: "Vanessas Lights"
+  entities:
+   - light.vanessa3
+   - light.vanessa3
+   - light.girls_1
+   - light.girls_2
+- platform: group
+  name: "Barn Lights"
+  entities:
+   - light.barn1
+   - light.barn2
+   - light.barn3
+- platform: group
+  name: "Logan Lights"
+  entities:
+   - light.logan1
+   - light.logan2
+- platform: group
+  name: "Colored Lights"
+  entities:
+   - light.logan1
+   - light.logan2
+   - light.girls1
+   - light.girls2
+   - light.girls3
+   - light.girls4
+   - light.bedroom_fan_one
+   - light.bedroom_fan_two
+   - light.my_lamp
+   - light.david_lamp
+   - light.gym_overhead1
+   - light.gym_overhead2
+   - light.gym_overhead3
+- platform: group
+  name: "Gym Lights"
+  entities:
+   - light.gym_overhead1
+   - light.gym_overhead2
+   - light.gym_overhead3
+- platform: group
+  name: "Danielas Lights"
+  entities:
+   - light.daniela1
+   - light.daniela2
+   - light.daniela3
+   - light.daniela4
+   - light.daniela5

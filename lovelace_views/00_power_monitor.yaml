@@ -1,0 +1,49 @@
+- title: Power
+  icon: 'mdi:power-plug'
+  cards:
+    - type: entities
+      entities:
+        - binary_sensor.bedroom_tv_on
+        - switch.bedroomtvmonitor
+        - binary_sensor.bedroomtvmonitor_button1
+        - sensor.bedroomtvmonitor_energy_apparentpower
+        - sensor.bedroomtvmonitor_energy_current
+        - sensor.bedroomtvmonitor_energy_factor
+        - sensor.bedroomtvmonitor_energy_power
+        - sensor.bedroomtvmonitor_energy_reactivepower
+        - sensor.bedroomtvmonitor_energy_today
+        - sensor.bedroomtvmonitor_energy_total
+        - sensor.bedroomtvmonitor_energy_totalstarttime
+        - sensor.bedroomtvmonitor_energy_voltage
+        - sensor.bedroomtvmonitor_energy_yesterday
+        - sensor.bedroomtvmonitor_status
+    - type: entities
+      entities:
+        - switch.livingtvmonitor
+        - binary_sensor.livingtvmonitor_button1
+        - sensor.livingtvmonitor_energy_apparentpower
+        - sensor.livingtvmonitor_energy_current
+        - sensor.livingtvmonitor_energy_factor
+        - sensor.livingtvmonitor_energy_power
+        - sensor.livingtvmonitor_energy_reactivepower
+        - sensor.livingtvmonitor_energy_today
+        - sensor.livingtvmonitor_energy_total
+        - sensor.livingtvmonitor_energy_totalstarttime
+        - sensor.livingtvmonitor_energy_voltage
+        - sensor.livingtvmonitor_energy_yesterday
+        - sensor.livingtvmonitor_status
+    - type: entities
+      entities:
+        - switch.plug_monitor_3
+        - binary_sensor.plug_monitor_3_button1
+        - sensor.plug_monitor_3_energy_apparentpower
+        - sensor.plug_monitor_3_energy_current
+        - sensor.plug_monitor_3_energy_factor
+        - sensor.plug_monitor_3_energy_power
+        - sensor.plug_monitor_3_energy_reactivepower
+        - sensor.plug_monitor_3_energy_today
+        - sensor.plug_monitor_3_energy_total
+        - sensor.plug_monitor_3_energy_totalstarttime
+        - sensor.plug_monitor_3_energy_voltage
+        - sensor.plug_monitor_3_energy_yesterday
+        - sensor.plug_monitor_3_status

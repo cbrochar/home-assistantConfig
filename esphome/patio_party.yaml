@@ -1,0 +1,105 @@
+esphome:
+  name: patio_party
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: !secret ssid
+  password: !secret ssid_pass
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Patio Party Fallback Hotspot"
+    password: "fallback"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+  port: 80
+
+remote_receiver:
+  pin: 
+    number: D7
+    inverted: yes
+  dump: all
+
+remote_transmitter:
+  pin: D5
+  # Infrared remotes use a 50% carrier signal
+  carrier_duty_percent: 50%
+
+switch:
+  - platform: gpio
+    pin: 
+      number: D3
+      inverted: yes
+    name: "Patio Fan Switch"
+    id: patio_fan_switch
+  - platform: gpio
+    pin: 
+      number: D4
+      inverted: yes
+    name: "Patio Disco Switch"
+    id: pati_disco_switch
+  - platform: template
+    name: "Vizio TV Power"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0x20DF
+          command: 0x10EF
+  - platform: template
+    name: "Projector Power"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0xC1AA
+          command: 0x09F6
+  - platform: template
+    name: "Projector Enter"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0xC1AA
+          command: 0xA15E
+  - platform: template
+    name: "Projector Menu"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0xC1AA
+          command: 0x59A6
+  - platform: template
+    name: "Projector Up"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0xC1AA
+          command: 0x0DF2
+  - platform: template
+    name: "Projector Down"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0xC1AA
+          command: 0x4DB2
+  - platform: template
+    name: "Projector Left"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0xC1AA
+          command: 0xCD32
+  - platform: template
+    name: "Projector Right"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0xC1AA
+          command: 0x8D72
+  - platform: template
+    name: "Projector Input"
+    turn_on_action:
+      - remote_transmitter.transmit_nec:
+          address: 0xC1AA
+          command: 0x39C6

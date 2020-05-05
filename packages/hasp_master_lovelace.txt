@@ -1,0 +1,54 @@
+  - path: master
+    title: master
+    badges:
+      - entity: binary_sensor.master_connected
+      - entity: sensor.master_status
+    cards:
+      - type: entity-button
+        name: Click here for HASP master First-Time Setup
+        entity: automation.hasp_master_00_firsttimesetup
+        show_icon: false
+        show_name: true
+        hold_action:
+          action: more-info
+        tap_action:
+          action: call-service
+          service: automation.trigger
+          service_data:
+            entity_id: automation.hasp_master_00_firsttimesetup
+      - type: entities
+        title: master Colors
+        show_header_toggle: false
+        entities:
+          - entity: input_select.hasp_master_theme
+          - entity: light.hasp_master_selected_foreground_color
+            icon: 'mdi:palette'
+            name: master Selected Foreground Color
+          - entity: light.hasp_master_selected_background_color
+            icon: 'mdi:palette'
+            name: master Selected Background Color
+          - entity: light.hasp_master_unselected_foreground_color
+            icon: 'mdi:palette'
+            name: master Unselected Foreground Color
+          - entity: light.hasp_master_unselected_background_color
+            icon: 'mdi:palette'
+            name: master Unselected Background Color
+      - type: entities
+        title: master Page Selection
+        show_header_toggle: false
+        entities:
+          - entity: input_number.hasp_master_activepage
+          - entity: input_number.hasp_master_pagebutton1page
+          - entity: input_text.hasp_master_pagebutton1label
+          - entity: input_select.hasp_master_pagebutton1font
+          - entity: input_number.hasp_master_pagebutton2page
+          - entity: input_text.hasp_master_pagebutton2label
+          - entity: input_select.hasp_master_pagebutton2font
+          - entity: input_number.hasp_master_pagebutton3page
+          - entity: input_text.hasp_master_pagebutton3label
+          - entity: input_select.hasp_master_pagebutton3font
+      - type: entities
+        title: master Backlight
+        show_header_toggle: false
+        entities:
+          - light.master_backlight

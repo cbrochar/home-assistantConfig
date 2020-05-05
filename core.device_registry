@@ -1,0 +1,134 @@
+{
+    "data": {
+        "devices": [
+            {
+                "config_entries": [
+                    "0ac10fda912048b7a087d610bcb9102b"
+                ],
+                "connections": [],
+                "hub_device_id": null,
+                "id": "f5518b6676124124b1bddde6aab4abe0",
+                "identifiers": [
+                    [
+                        "ios",
+                        "5378E633-E7DC-4FD8-B532-ABD0AF4B22E8"
+                    ]
+                ],
+                "manufacturer": "Apple",
+                "model": "iPhone 8",
+                "name": "iPhone",
+                "sw_version": "12.2"
+            },
+            {
+                "config_entries": [
+                    "5a3f5934b7814ade90095230c9e8cbd6"
+                ],
+                "connections": [],
+                "hub_device_id": null,
+                "id": "4773bad1c6644385b40a31b20fb259af",
+                "identifiers": [
+                    [
+                        "mqtt",
+                        "0F6E54"
+                    ]
+                ],
+                "manufacturer": "Tasmota",
+                "model": "Sonoff Basic",
+                "name": "Desk Lamp",
+                "sw_version": "6.4.1(sonoff)"
+            },
+            {
+                "config_entries": [
+                    "5a3f5934b7814ade90095230c9e8cbd6"
+                ],
+                "connections": [],
+                "hub_device_id": null,
+                "id": "05597cd3c06e4c4c8c33a594830973f5",
+                "identifiers": [
+                    [
+                        "mqtt",
+                        "94D2F4"
+                    ]
+                ],
+                "manufacturer": "Tasmota",
+                "model": "Sonoff Basic",
+                "name": "LivingLight",
+                "sw_version": "6.4.1(sonoff)"
+            },
+            {
+                "config_entries": [
+                    "5a3f5934b7814ade90095230c9e8cbd6"
+                ],
+                "connections": [],
+                "hub_device_id": null,
+                "id": "e2fd75ca78ae4be88f206e4d2c189ac8",
+                "identifiers": [
+                    [
+                        "mqtt",
+                        "43AEE3"
+                    ]
+                ],
+                "manufacturer": "Tasmota",
+                "model": "Sonoff T1 2CH",
+                "name": "loganlight",
+                "sw_version": "6.4.1(sonoff)"
+            },
+            {
+                "config_entries": [
+                    "5a3f5934b7814ade90095230c9e8cbd6"
+                ],
+                "connections": [],
+                "hub_device_id": null,
+                "id": "f4543947845540bf9099d2c7dd09533e",
+                "identifiers": [
+                    [
+                        "mqtt",
+                        "DB6FDD"
+                    ]
+                ],
+                "manufacturer": "Tasmota",
+                "model": "Sonoff T1 3CH",
+                "name": "Kitchen Down",
+                "sw_version": "6.4.1(sonoff)"
+            },
+            {
+                "config_entries": [
+                    "5a3f5934b7814ade90095230c9e8cbd6"
+                ],
+                "connections": [],
+                "hub_device_id": null,
+                "id": "57caf09732cc43cda1256709b3f2c7a2",
+                "identifiers": [
+                    [
+                        "mqtt",
+                        "C94C74"
+                    ]
+                ],
+                "manufacturer": "Tasmota",
+                "model": "Sonoff Touch",
+                "name": "Bedroom Overhead",
+                "sw_version": "6.4.1(sonoff)"
+            },
+            {
+                "config_entries": [
+                    "5a3f5934b7814ade90095230c9e8cbd6"
+                ],
+                "connections": [],
+                "hub_device_id": null,
+                "id": "701311ba796e405cba6ce28e8bf8988a",
+                "identifiers": [
+                    [
+                        "mqtt",
+                        "D9E4CF"
+                    ]
+                ],
+                "manufacturer": "Tasmota",
+                "model": "Generic",
+                "name": "Ir",
+                "sw_version": "6.5.0(release-sonoff)"
+            }
+        ]
+    },
+    "key": "core.device_registry",
+    "version": 1
+}
