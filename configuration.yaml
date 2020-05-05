@@ -1,0 +1,140 @@
+homeassistant:
+  name: Mi Casa
+  latitude: !secret lat
+  longitude: !secret long
+  elevation: 0
+  unit_system: imperial
+  time_zone: America/New_York
+  # Customization file
+  customize: !include customize.yaml
+  packages: !include_dir_named packages
+
+default_config:
+
+logger:
+  default: warning
+  # logs:
+  # #log level for HA core
+  # homeassistant.core: fatal
+
+  # #log level for MQTT integration
+  # homeassistant.components.mqtt: warning
+
+  # #log level for all python scripts
+  # homeassistant.components.python_script: warning
+
+binary_sensor: !include binary_sensor.yaml
+
+recorder:
+ #  db_url: mysql://homeassistant:76Bronco@core-mariadb/homeassistant?charset=utf8
+   include:
+      domains:
+        - light
+        - binary_senor
+        - climate
+        - device_tracker
+        - fan
+        - media_player
+
+frontend:
+  extra_html_url:
+    - /local/custom_ui/state-card-floorplan.html
+  themes: !include_dir_merge_named themes
+      
+panel_iframe:
+  tasmoadmin:
+    title: TasmoAdmin
+    icon: mdi:lightbulb-on
+    url: http://192.168.0.100:9541
+
+
+websocket_api:
+
+lovelace:
+  mode: storage
+  # resources:
+    # - url: /community_plugin/light-entity-card/light-entity-card.js
+      # type: js
+    # - url: /local/floorplan/floorplan-card.js?v=1.1.14
+      # type: module
+    # - url: /community_plugin/unused-card/unused-card.js
+      # type: module
+    # - url: /community_plugin/custom-header/custom-header.js
+      # type: module
+    # - url: /community_plugin/fan-control-entity-row/fan-control-entity-row.js
+      # type: js
+  dashboards:
+    lovelace-yaml:
+      mode: yaml
+      title: YAML
+      icon: mdi:script
+      show_in_sidebar: true
+      filename: yaml_lovelace.yaml
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+# Discover some devices automatically
+discovery:
+
+alexa_media:
+  accounts:
+    - email: !secret amazon_user
+      password: !secret amazon_password
+      url: amazon.com
+
+ios:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+
+# # Enables a map showing the location of tracked devices
+# map:
+
+# # Track the sun
+# sun:
+
+sonoff:
+    username: !secret ewink_user
+    password: !secret ewink_pass
+
+# Example configuration.yaml entry configuring HomeKit
+
+# Home/Away Mode Switch
+input_boolean:
+  notify_home:
+    name: Notify when someone arrives home
+    initial: off
+    icon: mdi:car
+  # filter:
+    # include_domains:
+      # - alarm_control_panel
+      # - light
+      # - media_player
+    # include_entities:
+      # - binary_sensor.living_room_motion
+  # entity_config:
+    # alarm_control_panel.home:
+      # code: 1234
+    # binary_sensor.living_room_motion:
+      # linked_battery_sensor: sensor.living_room_motion_battery
+      # low_battery_threshold: 31
+    # light.kitchen_table:
+      # name: Kitchen Table Light
+    # lock.front_door:
+      # code: 1234
+    # media_player.living_room:
+      # feature_list:
+        # - feature: on_off
+        # - feature: play_pause
+        # - feature: play_stop
+        # - feature: toggle_mute
+    # switch.bedroom_outlet:
+      # type: outlet
+

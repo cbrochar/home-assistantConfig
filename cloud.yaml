@@ -1,0 +1,29 @@
+alexa:
+  # filter:
+    # exclude_entities:
+      # - light.bedroom_fan_one
+      # - light.bedroom_fan_two
+      # - light.david_lamp
+      # - light.david_light_1
+      # - light.david_light_2
+      # - light.david_light_3
+      # - light.david_light_4
+      # - light.girls_light
+      # - light.girls_light_2
+      # - light.girls_light_3
+      # - light.logan_1
+      # - light.logan_2
+      # - light.my_lamp
+    # exclude_domains:
+      # - automation
+      # - group
+  # entity_config:
+    # switch.media_room_light:
+      # name: Media Room Light
+      # description: The light in the media room
+      # display_categories: LIGHT
+    # script.send_tv_power:
+      # name: TV Power
+      # description: Tunr TV On/Off
+      # display_categories: SWITCH
+    

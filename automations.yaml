@@ -1,0 +1,158 @@
+- alias: Power state on HA start-up
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: sonoffs/cmnd/state
+      payload: ''
+  id: 3dc9e577c7314a949d5ab1f05d6e468d
+- alias: Enable MQTT discovery for all devices
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: sonoffs/cmnd/SetOption19
+      payload: '1'
+  id: b7567cf4e71b4a369c017f61d1456a7b
+- id: sonoff_firmware_installed
+  alias: Sonoff Firmware Installed
+  trigger:
+  - event: start
+    platform: homeassistant
+  action:
+  - data:
+      payload: '2'
+      topic: sonoffs/cmnd/status
+    service: mqtt.publish
+  initial_state: 'true'
+- id: '1580682186971'
+  alias: Away Lights On
+  description: Turn Light on while we are away
+  trigger:
+  - at: '18:00'
+    platform: time
+  condition:
+  - condition: state
+    entity_id: input_boolean.notify_home
+    state: 'on'
+  action:
+  - device_id: 2701b53765d847318e62d5c6b6fac982
+    domain: light
+    entity_id: light.logan1
+    type: turn_on
+  - device_id: 28dddfe9d56a40c1a0a11959fbc2eba4
+    domain: light
+    entity_id: light.logan2
+    type: turn_on
+  - device_id: 444e02ad82c342428911844b93c355cc
+    domain: light
+    entity_id: light.girls1
+    type: turn_on
+  - device_id: e3711b518f2c4744acac09e868de04f9
+    domain: light
+    entity_id: light.girls2
+    type: turn_on
+  - device_id: ac5d11bd5752462891ab0a5abf43b24b
+    domain: light
+    entity_id: light.girls3
+    type: turn_on
+  - device_id: dc724ac9050345a8a5006d02f55320a1
+    domain: light
+    entity_id: light.girls4
+    type: turn_on
+- id: '1580683457299'
+  alias: Away Lights Off
+  description: Turn Off Lights while we are Away
+  trigger:
+  - at: '22:00'
+    platform: time
+  condition:
+  - condition: state
+    entity_id: input_boolean.notify_home
+    state: 'on'
+  action:
+  - device_id: 2701b53765d847318e62d5c6b6fac982
+    domain: light
+    entity_id: light.logan1
+    type: turn_off
+  - device_id: 28dddfe9d56a40c1a0a11959fbc2eba4
+    domain: light
+    entity_id: light.logan2
+    type: turn_off
+  - device_id: 444e02ad82c342428911844b93c355cc
+    domain: light
+    entity_id: light.girls1
+    type: turn_off
+  - device_id: e3711b518f2c4744acac09e868de04f9
+    domain: light
+    entity_id: light.girls2
+    type: turn_off
+  - device_id: ac5d11bd5752462891ab0a5abf43b24b
+    domain: light
+    entity_id: light.girls3
+    type: turn_off
+  - device_id: dc724ac9050345a8a5006d02f55320a1
+    domain: light
+    entity_id: light.girls4
+    type: turn_off
+- alias: Turn on office light when there is movement
+  trigger:
+    platform: state
+    entity_id: binary_sensor.office_motion
+    to: 'on'
+  action:
+    service: light.turn_on
+    entity_id: light.dimmer
+  id: 10292c22d9ff498dbb7d28b7c927e713
+- alias: Turn off office light 10 minutes after last movement
+  trigger:
+    platform: state
+    entity_id: binary_sensor.office_motion
+    to: 'off'
+    for:
+      minutes: 10
+  action:
+    service: light.turn_off
+    entity_id: light.dimmer
+  id: ad0e688d7cbf4531a4a891d72a7448f8
+- id: '1584927945908'
+  alias: Pantry Door alarm
+  description: Set alarm off when the pantry door is opened
+  trigger:
+  - entity_id: binary_sensor.pantry_door
+    platform: state
+    to: 'on'
+  condition:
+  - after: 06:00:00
+    before: '20:00:00'
+    condition: time
+  action:
+  - data: {}
+    service: script.pantry_door_alarm
+- id: '1587781854716'
+  alias: Turtle Light
+  description: Turn Turtle Light on at sunrise
+  trigger:
+  - event: sunrise
+    platform: sun
+  condition: []
+  action:
+  - device_id: dbc134d777814ff5a9b5fe3d7ddc480b
+    domain: light
+    entity_id: light.turtle_light
+    type: turn_on
+- id: '1587782018424'
+  alias: Turtle Light Sunset
+  description: Turn Turtle light off at sunset
+  trigger:
+  - event: sunset
+    platform: sun
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.turtle_light
+    service: homeassistant.turn_off
