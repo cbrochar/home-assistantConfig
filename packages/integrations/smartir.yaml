@@ -1,4 +1,5 @@
 smartir:
+  check_updates: false
 
 media_player:
   - platform: smartir

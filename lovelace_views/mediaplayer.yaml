@@ -1,0 +1,34 @@
+########################################################################################################################
+# View - Mediaplayers
+########################################################################################################################
+title: Mediaplayers
+icon: mdi:music-box-outline
+cards:
+########################################################################################################################
+# Mediaplayers
+########################################################################################################################
+  - type: vertical-stack
+    cards:
+      - type: media-control
+        entity: media_player.tv_vardagsrum
+      - type: media-control
+        entity: media_player.tivo
+      - type: media-control
+        entity: media_player.sonos_living_room
+      - type: media-control
+        entity: media_player.shield
+########################################################################################################################
+# Switches
+########################################################################################################################
+  - type: entities
+    title: Test Scripts
+    show_header_toggle: false
+    entities:
+      - script.tv_living_room_on
+      - script.tv_living_room_off
+      - script.tv_living_room_input_tv
+      - script.tv_living_room_input_spel
+      - script.tv_living_room_input_dator
+      - script.remote_start_app_youtube
+      - sensor.tv_input
+      - sensor.tv_sound_output

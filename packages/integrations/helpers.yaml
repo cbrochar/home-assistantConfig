@@ -1,0 +1,28 @@
+---
+input_select:
+############################################################################################
+##                                  input_select.remote
+##
+##    An entity thats needed for the top navigations buttons to change color when active
+############################################################################################
+  remote:
+    name: Select Remote Controll
+    options:
+      - TIVO
+      - SHIELD
+      - CHANNELS
+      - RADIO
+    initial: SHIELD
+
+sensor:
+############################################################################################
+##                                sensor.shield_app
+##
+##          Sensor used to set active color on the current running app on the shield
+############################################################################################
+  - platform: template
+    sensors:
+      shield_app:
+        friendly_name: "Shield App"
+        value_template: "{{ state_attr('media_player.shield', 'app_name') }}"
+############################################################################################

@@ -1,0 +1,280 @@
+---
+###################################################################################################
+## TIVO, SONOS & LG REMOTE CONTROLLER
+###################################################################################################
+        type: custom:layout-card
+        layout: vertical
+        min_columns: 1
+        max_columns: 1
+        max_width: 99%
+        cards:
+          - type: horizontal-stack
+            cards:
+            - type: custom:decluttering-card
+              template: label_image
+              variables:
+                - image: tivo_tivobox.png
+                - height: 100
+                - border_on: rgb(0,153,204)                           # Tivo Border "on" color blue
+            - type: custom:decluttering-card
+              template: label_image
+              variables:
+                - image: tv_lg_logo.png
+                - height: 100
+                - border_on: rgb(204,0,102)                         # Border "on" color - redish
+
+###################################################################################################
+# 1. Button row (1 sonos + 3 tivo)
+###################################################################################################
+          - type: horizontal-stack
+            cards:
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'VOLYM'
+                - icon: volume-plus
+                - border_on: rgb(80,120,160) # Sonos Border "on" color
+                - tap_action:
+                    action: call-service
+                    service: media_player.volume_up
+                    service_data:
+                      entity_id: media_player.sonos_living_room
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'TV OFF'
+                - icon: power-standby
+                - border_on: rgb(204,0,102)                         # LG Border "on" color - redish
+                - tap_action:
+                    action: call-service
+                    service: media_player.turn_off
+                    service_data:
+                      entity_id: media_player.tv_vardagsrum
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'UP'
+                - icon: arrow-up-bold
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: UP
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'TV ON'
+                - icon: power-standby
+                - border_on: rgb(204,0,102)                         # LG Border "on" color - redish
+                - tap_action:
+                    action: call-service
+                    service: media_player.turn_on
+                    service_data:
+                      entity_id: media_player.tv_vardagsrum
+###################################################################################################
+# 2. Button row (1 sonos + 3 tivo)
+###################################################################################################
+          - type: horizontal-stack
+            cards:
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'VOLYM'
+                - icon: volume-minus
+                - border_on: rgb(80,120,160) # Sonos Border "on" color
+                - tap_action:
+                    action: call-service
+                    service: media_player.volume_down
+                    service_data:
+                      entity_id: media_player.sonos_living_room
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'LEFT'
+                - icon: arrow-left-bold
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: LEFT
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'ENTER'
+                - icon: camera-control
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: SELECT
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'RIGHT'
+                - icon: arrow-right-bold
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: RIGHT
+###################################################################################################
+# 3. Button row (1 sonos + 3 tivo)
+###################################################################################################
+          - type: horizontal-stack
+            cards:
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'MUTE'
+                - icon: volume-mute
+                - border_on: rgb(80,120,160) # Sonos Border "on" color
+                - tap_action:
+                    action: call-service
+                    service: media_player.volume_mute
+                    service_data:
+                      entity_id: media_player.sonos_living_room
+                      is_volume_muted: true
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'CHANNEL'
+                - icon: minus
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: CHANNELDOWN
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'DOWN'
+                - icon: arrow-down-bold
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: DOWN
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'CHANNEL'
+                - icon: plus
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: CHANNELUP
+###################################################################################################
+# 4. Button row (1 sonos + 3 tivo)
+###################################################################################################
+          - type: horizontal-stack
+            cards:
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'UNMUTE'
+                - entity: media_player.sonos_living_room
+                - icon: volume-high
+                - border_on: rgb(80,120,160) # Sonos Border "on" color
+                - tap_action:
+                    action: call-service
+                    service: media_player.volume_mute
+                    service_data:
+                      entity_id: media_player.sonos_living_room
+                      is_volume_muted: false
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'TIVO'
+                - icon: television
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: TIVO
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'EPG'
+                - icon: format-list-bulleted
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: GUIDE
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'LIVE TV'
+                - icon: television-classic
+                - border_on: rgb(0,153,204)                         # Tivo Border "on" color blue
+                - tap_action:
+                    action: call-service
+                    service: media_player.virgintivo_ircode
+                    service_data:
+                      entity_id: media_player.tivo
+                      command: LIVETV
+###################################################################################################
+# 5. Button row (4 LG)
+###################################################################################################
+          - type: horizontal-stack
+            cards:
+            - type: custom:decluttering-card
+              template: label_image
+              variables:
+                - image: tv_lg_logo.png
+                - border_on: rgb(204,0,102)                         # Border "on" color - redish
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'HDMI 2'
+                - icon: laptop-mac
+                - border_on: rgb(204,0,102)                         # Border "on" color - redish
+                - tap_action:
+                    action: call-service
+                    service: media_player.select_source
+                    service_data:
+                      entity_id: media_player.tv_vardagsrum
+                      source: Dator
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'HDMI 3'
+                - icon: gamepad-variant
+                - border_on: rgb(204,0,102)                         # Border "on" color - redish
+                - tap_action:
+                    action: call-service
+                    service: media_player.select_source
+                    service_data:
+                      entity_id: media_player.tv_vardagsrum
+                      source: Spel
+            - type: custom:decluttering-card
+              template: button_icon_and_text
+              variables:
+                - name: 'HDMI 4'
+                - icon: television-classic
+                - border_on: rgb(204,0,102)                         # Border "on" color - redish
+                - tap_action:
+                    action: call-service
+                    service: media_player.select_source
+                    service_data:
+                      entity_id: media_player.tv_vardagsrum
+                      source: Tivo TV
