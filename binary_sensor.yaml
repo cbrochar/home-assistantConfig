@@ -1,7 +1,4 @@
 - platform: mqtt
-  state_topic: dummy/floorplan/sensor
-  name: Floorplan
-- platform: mqtt
   state_topic: "string/tele/RESULT"
   name: "office_motion"
   value_template: >-

@@ -6,7 +6,7 @@ homeassistant:
   unit_system: imperial
   time_zone: America/New_York
   # Customization file
-  customize: !include customize.yaml
+  #customize: !include customize.yaml
   packages: !include_dir_named packages
 
 default_config:
@@ -27,18 +27,16 @@ binary_sensor: !include binary_sensor.yaml
 
 recorder:
  #  db_url: mysql://homeassistant:76Bronco@core-mariadb/homeassistant?charset=utf8
-   include:
-      domains:
-        - light
-        - binary_senor
-        - climate
-        - device_tracker
-        - fan
-        - media_player
+ #  include:
+ #     domains:
+ #       - light
+ #       - binary_senor
+ #       - climate
+ #       - device_tracker
+ #       - fan
+ #       - media_player
 
 frontend:
-  extra_html_url:
-    - /local/custom_ui/state-card-floorplan.html
   themes: !include_dir_merge_named themes
       
 panel_iframe:
@@ -46,8 +44,9 @@ panel_iframe:
     title: TasmoAdmin
     icon: mdi:lightbulb-on
     url: http://192.168.0.100:9541
+    
 
-
+    
 websocket_api:
 
 lovelace:
@@ -95,16 +94,26 @@ conversation:
 
 
 # # Enables a map showing the location of tracked devices
-# map:
+map:
 
 # # Track the sun
-# sun:
+sun:
 
 sonoff:
     username: !secret ewink_user
     password: !secret ewink_pass
 
-# Example configuration.yaml entry configuring HomeKit
+timer:
+  zigbee_permit_join:
+    name: Time remaining
+    duration: 600
+
+sensor:
+  - platform: mqtt
+    name: Bridge state
+    state_topic: "zigbee2mqtt/bridge/state"
+    icon: mdi:router-wireless
+    
 
 # Home/Away Mode Switch
 input_boolean:
@@ -137,4 +146,8 @@ input_boolean:
         # - feature: toggle_mute
     # switch.bedroom_outlet:
       # type: outlet
+  zigbee_permit_join:
+    name: Allow devices to join
+    initial: off
+    icon: mdi:cellphone-wireless
 

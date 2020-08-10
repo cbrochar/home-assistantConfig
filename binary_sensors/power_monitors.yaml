@@ -16,3 +16,9 @@
       friendly_name: "Projector On"
       device_class: power
       value_template: "{{ states('sensor.projectormonitor_energy_power')|float > 5.0 }}"
+- platform: template
+  sensors:
+    daneila_tv_on:
+      friendly_name: "Daneila TV On"
+      device_class: power
+      value_template: "{{ states('sensor.plug_monitor_3_energy_power')|float > 5.0 }}"

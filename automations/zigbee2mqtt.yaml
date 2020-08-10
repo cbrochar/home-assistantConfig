@@ -1,0 +1,48 @@
+- id: enable_zigbee_join
+  alias: Enable Zigbee joining
+  description: ''
+  trigger:
+  - entity_id: input_boolean.zigbee_permit_join
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      payload: 'true'
+      topic: zigbee2mqtt/bridge/config/permit_join
+    service: mqtt.publish
+  - data: {}
+    entity_id: timer.zigbee_permit_join
+    service: timer.start
+- id: disable_zigbee_join
+  alias: Disable Zigbee joining
+  description: ''
+  trigger:
+  - entity_id: input_boolean.zigbee_permit_join
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      payload: 'false'
+      topic: zigbee2mqtt/bridge/config/permit_join
+    service: mqtt.publish
+  - data: {}
+    service: timer.cancel
+- id: disable_zigbee_join_timer
+  alias: Disable Zigbee joining by timer
+  description: ''
+  trigger:
+  - event_data:
+      entity_id: timer.zigbee_permit_join
+    event_type: timer.finished
+    platform: event
+  condition: []
+  action:
+  - data:
+      payload: 'false'
+      topic: zigbee2mqtt/bridge/config/permit_join
+    service: mqtt.publish
+  - data: {}
+    entity_id: input_boolean.zigbee_permit_join
+    service: input_boolean.turn_off

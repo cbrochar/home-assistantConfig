@@ -134,7 +134,7 @@
   - data: {}
     service: script.pantry_door_alarm
 - id: '1587781854716'
-  alias: Turtle Light
+  alias: Turtle Light On
   description: Turn Turtle Light on at sunrise
   trigger:
   - event: sunrise
@@ -154,5 +154,5 @@
   condition: []
   action:
   - data: {}
-    entity_id: switch.turtle_light
+    entity_id: light.turtle_light
     service: homeassistant.turn_off

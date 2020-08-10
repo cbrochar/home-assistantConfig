@@ -22,7 +22,7 @@ pantry_door_alarm:
         - media_player.girls_echo
         - media_player.living_echo
         - media_player.logans_echo_show
-        - media_player.office_echo
+        - media_player.broken_echo
       message: 'Someone is in the Pantry'
 dinnertime:
   alias: Dinnertime
@@ -39,7 +39,7 @@ dinnertime:
         - media_player.girls_echo
         - media_player.living_echo
         - media_player.logans_echo_show
-        - media_player.office_echo
+        - media_player.broken_echo
       message: 'Dinner is Ready'
   - service: media_player.play_media
     data:
@@ -51,7 +51,7 @@ dinnertime:
         - media_player.girls_echo
         - media_player.living_echo
         - media_player.logans_echo_show
-        - media_player.office_echo
+        - media_player.broken_echo
       media_content_type: sound
       media_content_id: amzn_sfx_doorbell_chime_01
 food_ready:
@@ -69,7 +69,7 @@ food_ready:
         - media_player.girls_echo
         - media_player.living_echo
         - media_player.logans_echo_show
-        - media_player.office_echo
+        - media_player.broken_echo
       message: 'Food is Ready'
 bedtime:
   alias: bedtime
@@ -86,7 +86,7 @@ bedtime:
         - media_player.girls_echo
         - media_player.living_echo
         - media_player.logans_echo_show
-        - media_player.office_echo
+        - media_player.broken_echo
       message: 'Ve A Dormir'
 showers:
   alias: showers
@@ -103,7 +103,7 @@ showers:
         - media_player.girls_echo
         - media_player.living_echo
         - media_player.logans_echo_show
-        - media_player.office_echo
+        - media_player.broken_echo
       message: 'Everyone Take Showers'
 send_tv_power:
   sequence:

@@ -12,4 +12,4 @@
   entity_id: switch.sonoff
 - platform: switch
   name: living room lamp1
-  entity_id: switch.living_room_lamp1
+  entity_id: switch.living_room_lamp1_2
