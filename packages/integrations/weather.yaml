@@ -1,4 +1,1 @@
 weather:
-  - platform: nws
-    api_key: haspuser@haswitchplate.com
-    name: nws
