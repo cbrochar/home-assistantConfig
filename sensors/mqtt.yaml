@@ -1,0 +1,57 @@
+- platform: mqtt
+  name: Bridge state
+  state_topic: "zigbee2mqtt/bridge/state"
+  icon: mdi:router-wireless
+- platform: rest
+  resource: http://www.webcal.fi/cal.php?id=335&format=json&start_year=current_year&end_year=current_year&tz=America%2FLos_Angeles
+  name: Flag
+  scan_interval: 14400
+  value_template: >-
+    {%- set now_string = now().strftime('%Y-%m-%d') %}
+    {% for day_val in value_json if day_val.date == now_string  %}
+      True
+      {% else %}
+      False
+    {% endfor -%}
+- platform: mqtt
+  name: "KulpController Repeat Status"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/repeat/status"
+- platform: mqtt
+  name: "KulpController Status"
+  state_topic: "Kulp/falcon/player/KulpController/status"
+- platform: mqtt
+  name: "KulpController Version"
+  state_topic: "Kulp/falcon/player/KulpController/version"
+- platform: mqtt
+  name: "KulpController Branch"
+  state_topic: "Kulp/falcon/player/KulpController/branch"
+- platform: mqtt
+  name: "KulpController Position Status"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/position/status"
+- platform: mqtt
+  name: "KulpController Name Status"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/name/status"
+- platform: mqtt
+  name: "KulpController Repeat Status"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/repeat/status"
+- platform: mqtt
+  name: "KulpController Section Status"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/section/status"
+- platform: mqtt
+  name: "KulpController Section Position Status"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/sectionPosition/status"
+- platform: mqtt
+  name: "KulpController Sequence Status"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/sequence/status"
+- platform: mqtt
+  name: "KulpController Media Title"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/media/title"
+- platform: mqtt
+  name: "KulpController Media Status"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/media/status"
+- platform: mqtt
+  name: "KulpController Media Artist"
+  state_topic: "Kulp/falcon/player/KulpController/playlist/media/artist"
+- platform: mqtt
+  name: "KulpController Playlist Details"
+  state_topic: "Kulp/falcon/player/KulpController/playlist_details"

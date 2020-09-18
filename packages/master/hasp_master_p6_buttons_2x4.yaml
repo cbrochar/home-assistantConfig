@@ -123,7 +123,7 @@ automation:
     - service: mqtt.publish
       data:
         topic: 'hasp/master/command/p[6].b[11].txt'
-        payload: '"Office"'
+        payload: '"End Party"'
 
 
   # Trigger action when p[6].b[4] pressed
@@ -217,14 +217,13 @@ automation:
     - service: script.party
 
   # Trigger lights_off.night when p[6].b[11] pressed
-  - alias: hasp_master_p6_SceneButton5
+  - alias: hasp_master_p6_SceneButton11
     trigger:
     - platform: mqtt
       topic: 'hasp/master/state/p[6].b[11]'
       payload: 'ON'
     action:
-    - service: light.toggle
-      entity_id: light.dimmer
+    - service: script.end_party
 
   # Set button 7 to "All Off" if any lights are on, otherwise set to "All On"
   - alias: hasp_master_p6_ToggleColor7

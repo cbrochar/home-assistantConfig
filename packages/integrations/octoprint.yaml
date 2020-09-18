@@ -1,5 +1,5 @@
 octoprint:
-  host: 192.168.0.60
+  host: 192.168.0.61
   api_key: !secret octoprint_api_key
   name: AnyCubicI3
   bed: true
@@ -8,8 +8,8 @@ octoprint:
 camera:
   - platform: mjpeg
     name: AnycubicI3_camera
-    still_image_url: http://192.168.0.60/webcam/?action=snapshot
-    mjpeg_url: http://192.168.0.60/webcam/?action=stream
+    still_image_url: http://192.168.0.61/webcam/?action=snapshot
+    mjpeg_url: http://192.168.0.61/webcam/?action=stream
     
 binary_sensor:
   - id: b672dbec-358d-460f-b935-60c44fe1ec8f

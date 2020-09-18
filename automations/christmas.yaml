@@ -32,3 +32,29 @@
       entity_id:
       - switch.led_power
     service: switch.turn_off
+
+###################################################################
+######                                                      #######
+######                       FPP                            #######
+######                                                      #######
+###################################################################
+ #####  Exterior lights on at sunset  #####
+- alias: "Monthly Holiday Color Scene ON"
+  initial_state: True
+ # hide_entity: True
+  trigger:
+    - platform: sun
+      event: sunset
+  action:
+    - service: script.monthly_color_scene
+
+#####  Exterior lights OFF  #####
+- alias: "Monthly Holiday Color Scene OFF"
+  initial_state: True
+  # hide_entity: True
+  trigger:
+    - platform: sun
+      event: sunrise
+  action:
+    - service: script.monthly_color_off
+

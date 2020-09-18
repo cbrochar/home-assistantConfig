@@ -1,0 +1,112 @@
+- alias: 'Homeschool Daniela 1'
+  trigger:
+  - at: '8:10'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Daniela has Morning Meeting in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Daniela 2' 
+  trigger:
+  - at: '8:25'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Daniela has Scocial Studies ans Science in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Daniela 3' 
+  trigger:
+  - at: '9:10'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Daniela has Reading in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Daniela 4' 
+  trigger:
+  - at: '9:40'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Daniela has Small Groups in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Daniela 5' 
+  trigger:
+  - at: '11:55'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Daniela has Resource in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Test' 
+  trigger:
+  - at: '21:53'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+  action:
+  - data:
+      message: "chad 1s testing"
+    service: script.alexa_msg
+- alias: 'Homeschool Daniela 6' 
+  trigger:
+  - at: '12:40'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+  action:
+  - data:
+      message: "Daniela has Math in 5 minutes"
+    service: script.alexa_msg

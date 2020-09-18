@@ -1,0 +1,95 @@
+- alias: 'Homeschool Logan 1'
+  id: '1585166565709'
+  description: Alexa Rings a Bell for Each Subject Change
+  trigger:
+  - at: '8:50'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Logan has English in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Logan 2' 
+  trigger:
+  - at: '9:45'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Logan has Math in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Logan 3' 
+  trigger:
+  - at: '10:40'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Logan has Core Plus in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Logan 4' 
+  trigger:
+  - at: '12:20'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Logan has Science in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Logan 5' 
+  trigger:
+  - at: '13:05'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: "Logan has Civics in 5 minutes"
+    service: script.alexa_msg
+- alias: 'Homeschool Logan 7' 
+  trigger:
+  - at: '14:40'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - wed
+    - fri
+  action:
+  - data:
+      message: "Logan has PE in 5 minutes"
+    service: script.alexa_msg

@@ -1,0 +1,75 @@
+- panel: false
+  path: KulpController
+  title: KulpController
+  badges:
+    - entity: sensor.KulpController_branch
+    - entity: sensor.KulpController_version
+    - entity: sensor.KulpController_status
+    - entity: sensor.KulpController_position_status
+    - entity: sensor.KulpController_name_status
+    - entity: sensor.KulpController_repeat_status
+    - entity: sensor.KulpController_section_status
+    - entity: sensor.KulpController_section_position_status
+    - entity: sensor.KulpController_sequence_status
+    - entity: sensor.KulpController_media_title
+    - entity: sensor.KulpController_media_status
+    - entity: sensor.KulpController_media_artist
+    - entity: sensor.KulpController_playlist_details
+  cards:
+    - cards:
+        - entity: script.falconplayer_start_playlist
+          icon: 'mdi:play'
+          name: Play
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.falconplayer_start_playlist
+          type: entity-button
+        - entity: script.falconplayer_stop_now
+          icon: 'mdi:stop'
+          name: Stop
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.falconplayer_stop_now
+          type: entity-button
+        - entity: script.falconplayer_prev_seq
+          icon: 'mdi:skip-previous'
+          name: Previous
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.falconplayer_prev_seq
+          type: entity-button
+        - entity: script.falconplayer_next_seq
+          icon: 'mdi:skip-next'
+          name: Next
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.falconplayer_next_seq
+          type: entity-button
+        - entity: script.falconplayer_repeat
+          icon: 'mdi:repeat'
+          name: Repeat
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.falconplayer_repeat
+          type: entity-button
+        - entity: script.falconplayer_repeat_off
+          icon: 'mdi:repeat-off'
+          name: Repeat Off
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.falconplayer_repeat_off
+          type: entity-button
+      title: Falcon Player Control
+      type: horizontal-stack

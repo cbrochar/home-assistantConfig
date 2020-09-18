@@ -2,7 +2,7 @@
   name: "Upstairs Lights"
   entities:
    - light.bedroom_lights
-   - light.vs_lights
+   - light.vanessas_lights
    - light.logan_lights
    - light.david_lamp
    - light.gym_lights
@@ -39,10 +39,10 @@
 - platform: group
   name: "Vanessas Lights"
   entities:
-   - light.vanessa1
-   - light.vanessa2
    - light.vanessa3
-   - light.vanessa4
+   - light.vanessa3
+   - light.girls_1
+   - light.girls_2
 - platform: group
   name: "Barn Lights"
   entities:
@@ -59,6 +59,10 @@
   entities:
    - light.logan1
    - light.logan2
+   - light.girls1
+   - light.girls2
+   - light.girls3
+   - light.girls4
    - light.bedroom_fan_one
    - light.bedroom_fan_two
    - light.my_lamp

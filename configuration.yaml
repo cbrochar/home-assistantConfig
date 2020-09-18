@@ -23,9 +23,8 @@ logger:
   # #log level for all python scripts
   # homeassistant.components.python_script: warning
 
-binary_sensor: !include binary_sensor.yaml
 
-recorder:
+#recorder:
  #  db_url: mysql://homeassistant:76Bronco@core-mariadb/homeassistant?charset=utf8
  #  include:
  #     domains:
@@ -108,13 +107,6 @@ timer:
     name: Time remaining
     duration: 600
 
-sensor:
-  - platform: mqtt
-    name: Bridge state
-    state_topic: "zigbee2mqtt/bridge/state"
-    icon: mdi:router-wireless
-    
-
 # Home/Away Mode Switch
 input_boolean:
   notify_home:
@@ -150,4 +142,3 @@ input_boolean:
     name: Allow devices to join
     initial: off
     icon: mdi:cellphone-wireless
-

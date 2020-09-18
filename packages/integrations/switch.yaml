@@ -1,2 +1,1 @@
-switch: !include ../../switch.yaml
-switch manual: !include_dir_merge_list ../../switches
+switch: !include_dir_merge_list ../../switches 
