@@ -19,7 +19,7 @@
   alias: Christmas Lights Off
   description: ''
   trigger:
-  - at: '23:00'
+  - at: '23:00:00'
     platform: time
   condition: []
   action:

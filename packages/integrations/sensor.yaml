@@ -1,1 +1,1 @@
-sensor manual: !include_dir_merge_list ../../sensors
+sensor manual: !include_dir_merge_list ../../config_folder/sensors

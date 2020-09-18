@@ -1,0 +1,15 @@
+- platform: mqtt
+  name: "String Lights"
+  command_topic: "string/cmnd/rfcode"
+  availability_topic: "string/tele/LWT"
+  payload_available: "Online"
+  payload_not_available: "Offline"
+  payload_on: "#FFFF01"
+  payload_off: "#FFFF03"
+  optimistic: true
+- platform: switch
+  name: living room lamp2
+  entity_id: switch.sonoff
+- platform: switch
+  name: living room lamp1
+  entity_id: switch.living_room_lamp1_2
