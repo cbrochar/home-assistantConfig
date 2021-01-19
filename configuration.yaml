@@ -7,12 +7,15 @@ homeassistant:
   time_zone: America/New_York
   # Customization file
   #customize: !include customize.yaml
-  packages: !include_dir_named packages
+  packages: !include_dir_named 00_packages
 
 default_config:
 
+system_log:
+  max_entries: 50
+
 logger:
-  default: warning
+  default: error
   # logs:
   # #log level for HA core
   # homeassistant.core: fatal
@@ -42,7 +45,7 @@ panel_iframe:
   tasmoadmin:
     title: TasmoAdmin
     icon: mdi:lightbulb-on
-    url: http://192.168.0.100:9541
+    url: http://192.168.1.100:9541
     
 
     
@@ -86,7 +89,21 @@ alexa_media:
       password: !secret amazon_password
       url: amazon.com
 
+
+
+media_player:
+  - platform: samsungtv_tizen
+    host: 192.168.1.67
+    mac: 98:06:3c:42:76:8c
+    name: main_tv
+    app_list: '{"Netflix":"11101200001","Prime Video":"3201512006785"}'
+    api_key: "44dea11a-3b2a-4550-ae46-97f07c56382c"
+    device_id: "5fe107e9-eccf-93b6-885e-650021fda6d3"
+
+
+
 ios:
+
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:

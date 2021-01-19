@@ -79,8 +79,8 @@
 - platform: group
   name: "Danielas Lights"
   entities:
-   - light.daniela1
-   - light.daniela2
-   - light.daniela3
-   - light.daniela4
-   - light.daniela5
+   - light.daniela1_2
+   - light.daniela2_2
+   - light.daniela3_2
+   - light.daniela4_2
+   - light.daniela5_2

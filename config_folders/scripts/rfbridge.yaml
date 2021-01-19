@@ -1,12 +1,12 @@
-send_rfcode:
-  description: "Send a Command to the String RF device"
-  codes:
-    - String:
-        on: #FFFF01
-        off: #FFFF03
-        red: #FFFF04
-  sequence:
-  - service: mqtt.publish
-    data_template:
-      topic: string/cmnd/rfcode
+#send_rfcode:
+#  description: "Send a Command to the String RF device"
+#  codes:
+#    - String:
+#        on: #FFFF01
+#        off: #FFFF03
+#        red: #FFFF04
+#  sequence:
+#  - service: mqtt.publish
+#    data_template:
+#      topic: string/cmnd/rfcode
 #      payload: {{String.command}}

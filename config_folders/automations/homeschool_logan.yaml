@@ -34,7 +34,7 @@
     service: script.alexa_msg
 - alias: 'Homeschool Logan 3' 
   trigger:
-  - at: '10:40'
+  - at: '10:35'
     platform: time
   condition:
   - condition: time
@@ -50,7 +50,7 @@
     service: script.alexa_msg
 - alias: 'Homeschool Logan 4' 
   trigger:
-  - at: '12:20'
+  - at: '12:10'
     platform: time
   condition:
   - condition: time
@@ -66,7 +66,7 @@
     service: script.alexa_msg
 - alias: 'Homeschool Logan 5' 
   trigger:
-  - at: '13:05'
+  - at: '13:00'
     platform: time
   condition:
   - condition: time
@@ -82,7 +82,7 @@
     service: script.alexa_msg
 - alias: 'Homeschool Logan 7' 
   trigger:
-  - at: '14:40'
+  - at: '14:50'
     platform: time
   condition:
   - condition: time

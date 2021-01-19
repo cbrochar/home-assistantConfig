@@ -1,0 +1,51 @@
+- id: '1607972210708'
+  name: a_motion_automation
+  alias: motionactivatedlight
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      no_motion_wait: '120'
+      motion_entity: binary_sensor.office_motion
+      light_target:
+        entity_id: light.dimmer
+- id: '1609733373052'
+  alias: 'Alexa Message #1'
+  description: Test Message
+  use_blueprint:
+    path: chadsblueprints/alexamessage.yaml
+    input:
+      timeofday: '23:12:00'
+      target_media_player:
+        device_id:
+        - dbf63c80d96ea9e683dbbf86630e8b87
+        - 8e03d2fbbc55350ac1a1ec8c20ecc6a4
+      message: Blueprint Test Message
+- id: '1609733805618'
+  alias: 1 Alexa Message
+  description: Test2
+  use_blueprint:
+    path: chadsblueprints/alexamessage.yaml
+    input:
+      timeofday: '23:20:00'
+      target_media_player:
+        device_id: dbf63c80d96ea9e683dbbf86630e8b87
+      message: Testing again
+- id: '1609767749736'
+  alias: Alexa Media Player TTS/Announce from Lovelace UI
+  description: ''
+  use_blueprint:
+    path: NachtaktiverHalbaffe/alexa-tts-announcement-from-lovelace-ui-and-without-nabu-casa-alexa-media-player.yaml
+    input:
+      message: input_text.alexatesttextinput
+      target: input_select.alexatestinputselect
+      announce: false
+- id: '1609768294060'
+  alias: Alexa Media Player TTS/Announce from Lovelace UI
+  description: ''
+  use_blueprint:
+    path: NachtaktiverHalbaffe/alexa-tts-announcement-from-lovelace-ui-and-without-nabu-casa-alexa-media-player.yaml
+    input:
+      message: input_text.alexatesttextinput
+      target: input_select.alexatestinputselect
+      announce: true

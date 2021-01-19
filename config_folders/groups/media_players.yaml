@@ -1,0 +1,11 @@
+house_alexa:
+  name: house_alexa
+  entities:
+    - media_player.chad_s_aio
+    - media_player.daniela_s_echo
+    - media_player.davids_echo
+    - media_player.kitchen_echo
+    - media_player.living_echo
+    - media_player.logans_echo
+    - media_player.office_echo
+    - media_player.vanessa_echo

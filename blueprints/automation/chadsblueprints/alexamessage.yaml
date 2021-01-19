@@ -1,0 +1,44 @@
+blueprint:
+  name: Alexa Message
+  description: Play a message over Alexa Media Player at a specifiedtime each weekday
+  domain: automation
+  input:
+    target_media_player:
+      name: Alexa Device
+      description: This is the device or devices which the message will be played on
+      selector:
+        target:
+          entity:
+            integration: alexa_media_player
+            domain: media_player
+    timeofday:
+      name: Time of Day
+      description: This is the time that the message will play
+      selector:
+        time:
+    message:
+      name: Message
+      description: This is the message to play      
+trigger:
+- at: !input timeofday
+  platform: time
+condition:
+- condition: time
+  weekday:
+  - mon
+  - tue
+  - wed
+  - thu
+  - fri
+action:
+  sequence:
+    - data:
+        entity_id: !input target_media_player
+        media_content_id: amzn_sfx_doorbell_chime_01
+        media_content_type: sound
+      service: media_player.play_media
+    - data_template:
+        data:
+          type: tts
+        message: !input message
+        target: !input target_media_player

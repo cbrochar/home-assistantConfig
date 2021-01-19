@@ -1,0 +1,170 @@
+alexa_msg:
+  description: "Send a message to all Alexas"
+  sequence:
+    - data:
+        entity_id:
+        - media_player.extra_echo
+        - media_player.kitchen_echo
+        - media_player.bedroom_echo_show
+        - media_player.chad_s_aio
+        - media_player.davids_echo
+        - media_player.girls_echo
+        - media_player.living_echo
+        - media_player.logans_echo_show
+        - media_player.broken_echo
+        media_content_id: amzn_sfx_doorbell_chime_01
+        media_content_type: sound
+      service: media_player.play_media
+    - data_template:
+        data:
+          type: tts
+        message: "{{ message }}"
+        target:
+        - media_player.extra_echo
+        - media_player.kitchen_echo
+        - media_player.bedroom_echo_show
+        - media_player.chad_s_aio
+        - media_player.davids_echo
+        - media_player.girls_echo
+        - media_player.living_echo
+        - media_player.logans_echo_show
+        - media_player.broken_echo
+      service: notify.alexa_media
+party:
+  alias: party
+  sequence:
+  - service: switch.turn_on
+    data:
+      entity_id: switch.patiodisco
+  - service: switch.turn_on
+    data:
+      entity_id: switch.patiofan
+  - service: media_player.play_media
+    data:  
+      entity_id: media_player.adults
+      media_content_id: party playlist in adults group,
+      media_content_type: AMAZON_MUSIC
+end_party:
+  alias: party
+  sequence:
+  - service: switch.turn_off
+    data:
+      entity_id: switch.patiodisco
+  - service: switch.turn_off
+    data:
+      entity_id: switch.patiofan
+  - service: media_player.media_stop
+    data:  
+      entity_id: media_player.adults
+pantry_door_alarm:
+  alias: pantry door alarm
+  sequence:
+  - service: notify.alexa_media
+    data:
+      data:
+        type: tts
+      target: 
+        - media_player.kitchen_echo
+        - media_player.bedroom_echo_show
+        - media_player.chad_s_aio
+        - media_player.davids_echo
+        - media_player.girls_echo
+        - media_player.living_echo
+        - media_player.logans_echo_show
+        - media_player.broken_echo
+      message: 'Someone is in the Pantry'
+send_tv_power:
+  sequence:
+  - data_template:
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD48B7"}'
+      topic: bedroomIR/cmnd/irSend
+    service: mqtt.publish
+  alias: TV Power
+send_tv_volup:
+  sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: bedroomIR/cmnd/irSend
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD58A7"}'
+send_tv_voldn:
+  sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: bedroomIR/cmnd/irSend
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD7887"}'
+send_tv_input:
+  sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: bedroomIR/cmnd/irSend
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FDF00F"}'
+goodnight_bedroom:
+  sequence:
+  - data_template:
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD48B7"}'
+      topic: bedroomIR/cmnd/irSend
+    service: mqtt.publish
+  - data:
+      entity_id: light.bedroom_lights
+    service: light.turn_off
+  - data:
+      entity_id: light.barn_lights
+    service: light.turn_off
+  - data:
+      entity_id: light.downstairs_lights
+    service: light.turn_off
+  - data:
+      entity_id: light.ridge
+    service: light.turn_off
+  alias: Good Night Bedroom
+send_string_rfcode:
+  description: "Send a Command to the String RF device"
+  sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: string/cmnd/rfcode
+      payload: >
+       {% if command == "off" %}
+         #FFFF03
+       {% elif command == "on" %}
+         #FFFF01
+       {% elif command == "red" %}
+         #FFFF04
+       {% elif command == "green" %}
+         #FFFF05
+       {% elif command == "blue" %}
+         #FFFF06
+       {% elif command == "white" %}
+         #FFFF07
+       {% elif command == "lime" %}
+         #FFFF08
+       {% elif command == "cyan" %}
+         #FFFF09
+       {% elif command == "purple" %}
+         #FFFF0A
+       {% elif command == "orange" %}
+         #FFFF0B
+       {% elif command == "dim_up" %}
+         #FFFF0C
+       {% elif command == "dim_dn" %}
+         #FFFF0F
+       {% elif command == "fade3" %}
+         #FFFF0D
+       {% elif command == "jump3" %}
+         #FFFF0E
+       {% elif command == "fade7" %}
+         #FFFF10
+       {% elif command == "jump7" %}
+         #FFFF11
+       {% elif command == "auto" %}
+         #FFFF13
+       {% elif command == "flash" %}
+         #FFFF14
+       {% elif command == "speed_up" %}
+         #FFFF12
+       {% elif command == "speed_dn" %}
+         #FFFF15
+       {% else %}
+         eRRoR
+       {% endif %}
+

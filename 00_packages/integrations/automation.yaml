@@ -1,0 +1,5 @@
+# My own handmade automations
+automation manual: !include_dir_merge_list ../../config_folders/automations
+
+# Automations I create in the UI
+automation ui: !include ../../automations.yaml

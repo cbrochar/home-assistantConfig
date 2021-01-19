@@ -1,0 +1,48 @@
+blueprint:
+  name: Alexa Media Player TTS/Announce from Lovelace UI
+  description: Send a notification (TTS/Announcment) via the Lovelace-Ui with the
+    help of a input select and input text. Uses the TTS component from Alexa Media
+    Player which can be installed from the Home Assistant Community Store (HACS).
+  domain: automation
+  input:
+    message:
+      name: Message of the notification (Input Text)
+      description: Input text where the message comes from
+      selector:
+        entity:
+          domain: input_text
+    target:
+      name: Target of the notification (Input Select)
+      description: The alexa device where the notification should be played. Must
+        be in a input select. Options can be the Friendly Name, Serial Number, entity_id,
+        or Home Assistant Group.
+      selector:
+        entity:
+          domain: input_select
+    announce:
+      name: Is announcment
+      description: Specify if announce-feature should be used. If not, the notification
+        will be a standart text-to-speech.
+      selector:
+        boolean: {}
+  source_url: https://community.home-assistant.io/t/alexa-tts-announcement-from-lovelace-ui-and-without-nabu-casa-alexa-media-player/259980
+mode: queued
+max_exceeded: silent
+variables:
+  message_to_say: !input 'message'
+  target_for_message: !input 'target'
+  is_announce: !input 'announce'
+trigger:
+- platform: event
+  event_type: state_changed
+  event_data:
+    entity_id: !input 'message'
+condition: []
+action:
+- service: notify.alexa_media
+  data:
+    message: '{{ states(message_to_say) }}'
+    data:
+      type: "{% if is_announce %}\n  announce\n{% else %}\n  tts\n{% endif %}\n"
+    target:
+    - '{{ states(target_for_message) }}'

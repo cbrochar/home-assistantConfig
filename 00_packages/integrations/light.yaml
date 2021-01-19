@@ -1,0 +1,1 @@
+light manual: !include_dir_merge_list ../../config_folders/lights
