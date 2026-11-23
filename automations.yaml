@@ -1452,3 +1452,65 @@
     target:
       entity_id: input_text.openhasp2_energy_days
   mode: single
+- id: '1795400486387'
+  alias: openhasp1 relay availability recovery
+  description: Keeps the Piano Room relay on plate 1 (light.piano_room_lights) usable.
+    The openHASP integration only marks the relay available once the plate answers
+    an output12 query; that reply is often lost while HA pushes the page layout after
+    a reconnect or restart, leaving the relay stuck 'unavailable' (and the plate 2
+    power button dead) for days. This re-sends the query until the relay reports back.
+    It only asks for the state; it never switches the relay.
+  triggers:
+  - trigger: state
+    entity_id: light.piano_room_lights
+    to: unavailable
+    for:
+      minutes: 1
+    note: Stuck unavailable (not just a brief blip during reconnect).
+  - trigger: homeassistant
+    event: start
+    note: The startup query can be lost too.
+  - trigger: time_pattern
+    minutes: /15
+    note: Safety net in case both of the above were missed.
+  conditions:
+  - condition: state
+    entity_id: light.piano_room_lights
+    state:
+    - unavailable
+    - unknown
+    note: Nothing to do if the relay is already reporting.
+  actions:
+  - repeat:
+      count: 10
+      sequence:
+      - if:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: light.piano_room_lights
+            state:
+            - unavailable
+            - unknown
+        then:
+        - stop: Relay is reporting again
+        note: Done once the relay reports back.
+      - delay:
+          seconds: 30
+        note: Let the plate finish loading pages before asking.
+      - if:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: openhasp.openhasp1
+            state: unavailable
+        then:
+        - action: mqtt.publish
+          data:
+            topic: hasp/openhasp1/command/output12
+            payload: ''
+          note: Empty payload = 'report your state'. The reply makes the relay entity
+            available again.
+        note: Only ask while plate 1 itself is online.
+    note: Retry every 30 s, up to 10 times (5 minutes).
+  mode: single
