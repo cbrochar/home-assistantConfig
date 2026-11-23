@@ -1,26 +1,74 @@
+# =============================================================================
+#  openHASP PLATE 2  (openhasp.openhasp2, Living Room, 800x480)
+# =============================================================================
+#
+#  What this file does:
+#    Links objects on the plate's screen to Home Assistant. Each entry is one
+#    on-screen object, named  p<page>b<id>  (p4b16 = page 4, object 16).
+#      properties:  values HA pushes TO the plate whenever an entity changes
+#      event:       what HA does when you touch the object ("down" = press,
+#                   "up" = release, "changed" = value changed, "long" = hold)
+#
+#  Where the screen layout lives:
+#    openhasp2pages.jsonl (positions, sizes, fonts, colors, nav buttons). It is
+#    uploaded to the plate itself; object ids here must match it.
+#
+#  Pages:
+#    0  Banner     on every page: page title, clock, date, Wi-Fi, temperature
+#    1  Weather    now + hourly (every 4 h) + 4-day forecast
+#    2  Energy     live solar/grid/home flow + 30-day usage bars
+#    3  Alarm      status + keypad
+#    4  Lights     tiles for 9 lights (tap = on/off, slider = brightness)
+#    5  RGB        Piano Room bulbs + all RGB lights (color wheel, brightness)
+#    6  Media      Music Assistant player for the speaker picked on screen
+#
+#  Helpers and automations this plate relies on:
+#    input_select.openhasp2_speaker   which speaker page 6 controls
+#    input_boolean.openhasp2_browse   shows/hides the Playlists & Mixes panel
+#    input_text.openhasp2_energy_days 30 days of usage for the page 2 bars
+#    automation "openhasp2 Energy Days"   fills input_text above every hour
+#    automation "openhasp2 media lists"   fills the Playlists/Mixes dropdowns
+#    automation "openhasp2-detect-mediaplayer-coverart"  cover art on page 6
+#    script.openhasp2_play_from_library   plays a picked playlist
+#    script.code_button                   alarm keypad logic
+#
+#  Icons: text like "" is a Material Design Icons glyph in the plate's
+#  icon font.
+#
+#  After editing: reload the openHASP integration
+#  (Settings -> Devices & Services -> openHASP -> ... -> Reload).
+# =============================================================================
+
 objects:
-  # All Pages: Datetime
-  - obj: "p0b4"
+
+  # ===========================================================================
+  #  PAGE 0 - Top banner (visible on every page)
+  # ===========================================================================
+  - obj: "p0b4" # page title roller: spins to the current page's name
     properties:
       "val": "{{states('openhasp.openhasp2') | int(0) -1}}"
-  # p0b10 (banner date) is driven by the plate's own clock ("template" in the pages file), time zone set to Eastern on the plate
+
+  # p0b10 (banner date) is driven by the plate's own clock ("template" in the
+  # pages file); time zone is set to Eastern on the plate. Only its position is set here.
   - obj: "p0b10"
     properties:
       "x": "190"
 
-  - obj: "p0b5" # temperature label on all pages
+  - obj: "p0b5" # outdoor temperature (top right)
     properties:
       "text": "{{ state_attr('weather.ecobee','temperature') |string + '°F'}}"
 
-  - obj: "p0b6" #time
+  - obj: "p0b6" # clock (top left)
     properties:
       "text": "{{ now().strftime('%-I:%M %p') }}"
 
-  - obj: "p0b7"
+  - obj: "p0b7" # Wi-Fi icon, colored by signal strength:
+                #   green > -50 dBm, olive, orange, maroon, red = weakest
     properties:
       "text_color": "{% if -50 <= state_attr('openhasp.openhasp2','rssi') | int(0) %}green{% elif -51 > state_attr('openhasp.openhasp2','rssi') | int(0) >= -60 %}olive{% elif -61 > state_attr('openhasp.openhasp2','rssi') | int(0) >= -70 %}orange{% elif -71 > state_attr('openhasp.openhasp2','rssi') |int (0) >= -80 %}maroon{% else %}red{% endif %}"
 
-  - obj: "p0b9" # temp Thermometer display
+  - obj: "p0b9" # thermometer icon, colored by outdoor temp:
+                #   yellow <= 30°F, blue 31-40, green 41-90, red above 90
     properties:
       "text_color":
         "{% if state_attr('weather.ecobee','temperature') |int(0) <= 30  %}yellow
@@ -28,16 +76,22 @@ objects:
         {% elif 40 < state_attr('weather.ecobee','temperature') |int(0) <= 90 %}green
         {% else %}red{% endif %}"
 
-  #page 1 - Weather
-  # Conditions/icon come from sensor.weather_hourly (the Ecobee reports "sunny" at night).
-  # Temperature still comes from the Ecobee.
-  - obj: "p1b15" # Today's date
+  # ===========================================================================
+  #  PAGE 1 - Weather
+  #  Condition text/icon come from sensor.weather_hourly (the Ecobee reports
+  #  "sunny" at night). Temperature still comes from the Ecobee.
+  #  Forecast slots show "-" until the forecast list is long enough.
+  #  Icons are image files on the plate: z-128-<condition>.png
+  # ===========================================================================
+
+  # --- Current conditions ----------------------------------------------------
+  - obj: "p1b15" # today's date, e.g. "Saturday 11/22"
     properties:
       "text": "{{ now().strftime('%A %m/%d') }}"
 
-  - obj: "p1b16" # Current temp (you can use your own outdoor temp sensor if you have one)
+  - obj: "p1b16" # current temperature (°F)
     properties:
-      "text": "{{ state_attr('weather.ecobee','temperature') |string + '°F' if not is_state('weather.ecobee','unavailable') }}" # or "{{ states('sensor.your_own_temp_sensor') if not is_state('sensor.your_own_temp_sensor','unavailable') else '--' }}°C"
+      "text": "{{ state_attr('weather.ecobee','temperature') |string + '°F' if not is_state('weather.ecobee','unavailable') }}"
 
   - obj: "p1b17" # Current weather condition
     properties:
@@ -49,6 +103,10 @@ objects:
   - obj: "p1b18" # Current condition image
     properties:
       "src": "{{ 'L:/z-128-' ~ states('sensor.weather_hourly') ~ '.png' if has_value('sensor.weather_hourly') else 'L:/openhasp_dummy_img.png' }}"
+
+  # --- Hourly forecast (+4h ... +24h) ---------------------------------------
+  # Three objects per slot: time label, temperature, condition icon.
+  # The number in [ ] is the hour offset into the forecast list.
 
   - obj: "p1b21" # Forecast time +4h
     properties:
@@ -212,6 +270,8 @@ objects:
         L:/z-128-{{ state_attr('sensor.weather_hourly','forecast')[23]['condition'] }}.png
         {%- endif %}
 
+  # --- Daily forecast (+1 to +4 days) ---------------------------------------
+  # Four objects per day: day name, low, high, condition icon.
   - obj: "p1b65" # Forecast date +1
     properties:
       "text": >
@@ -312,8 +372,15 @@ objects:
         L:/z-128-{{ state_attr('sensor.weather_daily','forecast')[4]['condition'] }}.png
         {%- endif %}
 
-  #Page 2 - Energy (energymonitor sensors)
-  # total_solar_watts = solar; total_house_watts = grid (+ import, - export); home = solar + grid
+  # ===========================================================================
+  #  PAGE 2 - Energy (ESPHome energymonitor)
+  #  sensor.energymonitor_total_solar_watts = solar production
+  #  sensor.energymonitor_total_house_watts = grid (+ buying, - selling back)
+  #  home use = solar + grid
+  #  Values under 1000 W show as "W", above as "kW".
+  # ===========================================================================
+
+  # --- Live readings ---------------------------------------------------------
   - obj: "p2b12" # solar
     properties:
       "text": >-
@@ -325,7 +392,7 @@ objects:
       "text": >-
         {%- set v = states('sensor.energymonitor_total_house_watts')|float(0)|abs -%}
         {{ (v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W' }}
-      "text_color": "{{ '#1E88E5' if states('sensor.energymonitor_total_house_watts')|float(0) >= 0 else '#8E5CD9' }}"
+      "text_color": "{{ '#1E88E5' if states('sensor.energymonitor_total_house_watts')|float(0) >= 0 else '#8E5CD9' }}"  # blue = buying, purple = selling
   - obj: "p2b23" # grid caption
     properties:
       "text": "{{ 'Grid in' if states('sensor.energymonitor_total_house_watts')|float(0) >= 0 else 'Grid out' }}"
@@ -337,13 +404,16 @@ objects:
         {%- set v = [s + states('sensor.energymonitor_total_house_watts')|float(0), 0]|max -%}
         {{ (v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W' }}
 
+  # --- Flow arrows -----------------------------------------------------------
+  # Each flow has a label (blank under 10 W) and a line (p2b40-42) that is
+  # bright when power flows that way and faded when it doesn't.
   - obj: "p2b45" # solar -> grid flow
     properties:
       "text": >-
         {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
         {%- set v = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
         {{ '' if v < 10 else ((v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W') }}
-  - obj: "p2b40"
+  - obj: "p2b40" # solar -> grid line
     properties:
       "line_opa": "{{ 255 if 0 - states('sensor.energymonitor_total_house_watts')|float(0) >= 10 else 50 }}"
 
@@ -354,7 +424,7 @@ objects:
         {%- set e = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
         {%- set v = s - e -%}
         {{ '' if v < 10 else ((v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W') }}
-  - obj: "p2b41"
+  - obj: "p2b41" # solar -> home line
     properties:
       "line_opa": >-
         {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
@@ -366,35 +436,38 @@ objects:
       "text": >-
         {%- set v = [states('sensor.energymonitor_total_house_watts')|float(0), 0]|max -%}
         {{ '' if v < 10 else ((v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W') }}
-  - obj: "p2b42"
+  - obj: "p2b42" # grid -> home line
     properties:
       "line_opa": "{{ 255 if states('sensor.energymonitor_total_house_watts')|float(0) >= 10 else 50 }}"
 
+  # --- Gauges ----------------------------------------------------------------
   - obj: "p2b51" # returned to grid gauge (0-8 kW)
     properties:
       "val": "{{ [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, 8000]|min|int }}"
-  - obj: "p2b52"
+  - obj: "p2b52" # returned to grid label
     properties:
       "text": >-
         {%- set v = [0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max -%}
         {{ (v/1000)|round(2) ~ ' kW' if v >= 1000 else (v|int) ~ ' W' }}
 
-  - obj: "p2b61" # self-consumed solar gauge
+  - obj: "p2b61" # self-consumed solar gauge: % of solar used in the house
     properties:
       "val": >-
         {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
         {%- set e = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
         {{ ((s - e) / s * 100)|int if s >= 10 else 0 }}
-  - obj: "p2b62"
+  - obj: "p2b62" # self-consumed solar label
     properties:
       "text": >-
         {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
         {%- set e = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
         {{ (((s - e) / s * 100)|round(1) ~ ' %') if s >= 10 else 'No solar' }}
 
-  # 30-day home use bars (p2b100 oldest ... p2b129 today). Data: input_text.openhasp2_energy_days,
-  # filled hourly by automation "openhasp2 Energy Days". Macros in custom_templates/openhasp2_energy.jinja
-  - obj: "p2b67"
+  # --- 30-day home use bar chart ---------------------------------------------
+  # p2b100 = oldest day ... p2b129 = today. Data: input_text.openhasp2_energy_days,
+  # filled hourly by automation "openhasp2 Energy Days".
+  # bar_h / bar_y / summary macros live in custom_templates/openhasp2_energy.jinja
+  - obj: "p2b67" # summary text above the chart
     properties:
       "text": "{% from 'openhasp2_energy.jinja' import summary %}{{ summary() }}"
   - obj: "p2b100"
@@ -518,9 +591,10 @@ objects:
       "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(29) }}"
       "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(29) }}"
 
-  #Page 3 - Alarm Panel
-
-  - obj: "p3b14" # Alarm Status
+  # ===========================================================================
+  #  PAGE 3 - Alarm panel (alarm_control_panel.alarm)
+  # ===========================================================================
+  - obj: "p3b14" # status text: Armed Home / Away / Vacation / Night / Disarmed
     properties:
       "text": >
         {% if states("alarm_control_panel.alarm") == "armed_home" %}
@@ -534,11 +608,12 @@ objects:
         {% else %}
         Disarmed
         {% endif %}
-  - obj: "p3b13" #alarm icon
+  - obj: "p3b13" # shield icon: green when disarmed, red when armed
     properties:
       "text": '{{"\uE68A" if is_state("alarm_control_panel.alarm", "disarmed") else "\uE565" | e }}'
       "text_color": '{{"#00ff7b " if is_state("alarm_control_panel.alarm", "disarmed") else "#FF0000" | e }}'
-  - obj: "p3b1" #keypad
+  - obj: "p3b1" # keypad: every key press goes to script.code_button,
+                #   which collects the digits and arms/disarms (see scripts.yaml)
     event:
       "down":
         sequence:
@@ -552,9 +627,17 @@ objects:
               haspname: "{{state_attr('openhasp.openhasp2','friendly_name')}}"
               haspMAC: "{{state_attr('openhasp.openhasp2','mac')}}"
 
-  #Page 4 - Light Switches
-  # TV Downlights (was My Lamp)
-  - obj: "p4b14" # name label
+  # ===========================================================================
+  #  PAGE 4 - Light tiles
+  #  Every tile uses the same numbering, where N is the tile number (1-9):
+  #    p4bN1 tile button   p4bN2 icon background   p4bN3 icon
+  #    p4bN4 name label    p4bN5 On/Off label      p4bN6 brightness slider (0-100 %)
+  #  Tapping the tile or the icon toggles the light. On/off-only lights hide
+  #  their slider.
+  # ===========================================================================
+
+  # --- Tile 1: TV Downlights -------------------------------------------------
+  - obj: "p4b14" # name label (layout file still says "My Lamp")
     properties:
       "text": "TV Downlights"
   - obj: "p4b11" # button
@@ -587,7 +670,8 @@ objects:
             entity_id: light.tvdownlights
           data:
             brightness_pct: "{{ val | int }}"
-    # Dining Table
+
+  # --- Tile 2: Dining Table --------------------------------------------------
   - obj: "p4b21" # button
     event:
       "down":
@@ -618,7 +702,8 @@ objects:
             entity_id: light.dining_table
           data:
             brightness_pct: "{{ val | int }}"
-    # foyer_recessed
+
+  # --- Tile 3: Foyer Recessed (on/off only) ----------------------------------
   - obj: "p4b31" # button
     event:
       "down":
@@ -641,7 +726,7 @@ objects:
     properties:
       "hidden": "1"
 
-    # Kitchen Recessed
+  # --- Tile 4: Kitchen Recessed ----------------------------------------------
   - obj: "p4b41" # button
     event:
       "down":
@@ -670,7 +755,8 @@ objects:
             entity_id: light.kitchen_recessed
           data:
             brightness_pct: "{{ val | int }}"
-    # Foyer Overhead
+
+  # --- Tile 5: Foyer Overhead ------------------------------------------------
   - obj: "p4b51" # button
     event:
       "down":
@@ -702,7 +788,8 @@ objects:
             entity_id: light.foyer_overhead
           data:
             brightness_pct: "{{ val | int }}"
-    # Kitchen Pendant
+
+  # --- Tile 6: Kitchen Pendant -----------------------------------------------
   - obj: "p4b61" # button
     event:
       "down":
@@ -731,7 +818,8 @@ objects:
             entity_id: light.kitchen_pendant
           data:
             brightness_pct: "{{ val | int }}"
-    # Stairs (Shelly 1 Mini, light.stair_light)
+
+  # --- Tile 7: Stairs (Shelly 1 Mini, light.stair_light, on/off only) --------
   - obj: "p4b71" # button
     event:
       "down":
@@ -755,14 +843,18 @@ objects:
   - obj: "p4b76" # slider - Shelly is on/off only, so hide it
     properties:
       "hidden": "1"
-    # Piano Room: tile/icon/slider = Zigbee bulbs (light.piano_room); power button p4b87 = openhasp1 relay (light.piano_room_lights) that feeds the bulbs
+
+  # --- Tile 8: Piano Room ----------------------------------------------------
+  # Tile, icon and slider control the Zigbee bulbs (light.piano_room).
+  # Extra power button p4b87 controls the relay on plate 1
+  # (light.piano_room_lights) that feeds power to those bulbs.
   - obj: "p4b81" # tile = bulbs
     event:
       "down":
         - action: light.toggle
           target:
             entity_id: light.piano_room
-  - obj: "p4b85" # status label
+  - obj: "p4b85" # status label: "Relay off" / "Relay offline" / On / Off
     properties:
       "text": >-
         {%- if is_state("light.piano_room_lights", "off") -%}Relay off
@@ -798,7 +890,8 @@ objects:
             entity_id: light.piano_room
           data:
             brightness_pct: "{{ val | int }}"
-    # Living Room Overhead
+
+  # --- Tile 9: Living Room Overhead ------------------------------------------
   - obj: "p4b91" # button
     event:
       "down":
@@ -828,8 +921,14 @@ objects:
           data:
             brightness_pct: "{{ val | int }}"
 
-  #Page 5 - RGB Lights
-  # Left = Piano Room bulbs (light.piano_room). Right = all RGB lights (light.colored_lights group).
+  # ===========================================================================
+  #  PAGE 5 - RGB lights
+  #  Left panel  = Piano Room bulbs (light.piano_room)
+  #  Right panel = all RGB lights together (light.colored_lights group)
+  #  Each panel: on/off button, color wheel, brightness slider (1-255).
+  # ===========================================================================
+
+  # --- Left: Piano Room ------------------------------------------------------
   - obj: "p5b4" # Piano Room on/off
     properties:
       "text": '{{ "On" if is_state("light.piano_room", "on") else "Off" }}'
@@ -862,7 +961,8 @@ objects:
           data:
             brightness: "{{ val | int }}"
 
-  - obj: "p5b10" # right panel title (was Living Room Light)
+  # --- Right: All RGB lights -------------------------------------------------
+  - obj: "p5b10" # right panel title (layout file still says "Living Room Light")
     properties:
       "text": "All RGB Lights"
   - obj: "p5b14" # all RGB on/off
@@ -897,9 +997,17 @@ objects:
           data:
             brightness: "{{ val | int }}"
 
-  #Page 6 - Media (Music Assistant)
-  # Controls whichever speaker input_select.openhasp2_speaker holds.
-  # Speaker grid order = that helper's option order.
+  # ===========================================================================
+  #  PAGE 6 - Media (Music Assistant)
+  #  Every control acts on whichever speaker input_select.openhasp2_speaker
+  #  holds. The speaker grid shows that helper's options in the same order.
+  #  Buttons dim when the selected speaker is unavailable.
+  #
+  #  To add a speaker: add it to input_select.openhasp2_speaker, and add its
+  #  short name to the two name maps below (p6b89 and p6b93).
+  # ===========================================================================
+
+  # --- Now playing -----------------------------------------------------------
   - obj: "p6b14" # title label
     properties:
       "text": "{% set p = states('input_select.openhasp2_speaker') %}{{ state_attr(p,'media_title') or '-' }}"
@@ -908,10 +1016,12 @@ objects:
     properties:
       "text": "{% set p = states('input_select.openhasp2_speaker') %}{{ state_attr(p,'media_artist') or '' }}"
 
-  - obj: "p6b39" # cover art frame (also holds the browse tabs)
+  - obj: "p6b39" # cover art frame (also holds the browse tabs); hidden when
+                 #   there's no art and the browse panel is closed
     properties:
       "hidden": "{% set p = states('input_select.openhasp2_speaker') %}{{ 0 if is_state('input_boolean.openhasp2_browse','on') or state_attr(p,'entity_picture') else 1 }}"
 
+  # --- Speaker picker --------------------------------------------------------
   - obj: "p6b89" # speaker name button - tap to open/close Playlists & Mixes
     properties:
       "text": "{{ {'media_player.denon_avr_x1700h_4':'Living Room','media_player.living_room_sound_bar_2':'Sound Bar','media_player.bedroom_tv_2':'Bedroom TV','media_player.master_bedroom_tv':'Master TV'}.get(states('input_select.openhasp2_speaker'), 'Speaker') }}"
@@ -922,7 +1032,7 @@ objects:
           target:
             entity_id: input_boolean.openhasp2_browse
 
-  - obj: "p6b93" # speaker picker grid, selected speaker in orange
+  - obj: "p6b93" # speaker picker grid (2 per row), selected speaker in orange
     properties:
       "text_font": "24"
       "options": >-
@@ -944,17 +1054,22 @@ objects:
           data:
             option: "{{ state_attr('input_select.openhasp2_speaker','options')[val | int(0)] }}"
 
-  - obj: "p6b95" # browse tabs
+  # --- Browse panel (Playlists & Mixes) --------------------------------------
+  # Shown while input_boolean.openhasp2_browse is on. Picking an item runs
+  # script.openhasp2_play_from_library, which plays it and closes the panel.
+  # Dropdown options are filled by automation "openhasp2 media lists".
+  # Item 0 in each dropdown is a header, so it is ignored.
+  - obj: "p6b95" # browse tabs container
     properties:
       "hidden": "{{ 0 if is_state('input_boolean.openhasp2_browse','on') else 1 }}"
-  - obj: "p6b96"
+  - obj: "p6b96" # tab 1 title
     properties:
       "text": "Playlists"
-  - obj: "p6b97"
+  - obj: "p6b97" # tab 2 title
     properties:
       "text": "Mixes"
 
-  - obj: "p6b99" # Playlists dropdown (options filled by automation openhasp2 media lists)
+  - obj: "p6b99" # Playlists dropdown
     event:
       "changed":
         - condition: template
@@ -980,7 +1095,8 @@ objects:
               name: "{{ text }}"
               media_type: playlist
 
-  - obj: "p6b17" # play/pause/stop
+  # --- Transport controls ----------------------------------------------------
+  - obj: "p6b17" # play/pause (tap) and stop (hold)
     properties:
       "text": >
         {% if is_state(states('input_select.openhasp2_speaker'), 'playing') %}
@@ -1028,7 +1144,7 @@ objects:
           data:
             volume_level: "{{ val | int / 100 }}"
 
-  - obj: "p6b27" # repeat
+  - obj: "p6b27" # repeat: each tap cycles off -> all -> one -> off
     properties:
       "text": >
         {% if is_state_attr(states('input_select.openhasp2_speaker'), 'repeat', 'one') %}

@@ -1,14 +1,54 @@
+# =============================================================================
+#  openHASP PLATE 1  (openhasp.openhasp1, small 240 px plate with the
+#                     Piano Room relay built in)
+# =============================================================================
+#
+#  What this file does:
+#    Links objects on the plate's screen to Home Assistant. Each entry is one
+#    on-screen object, named  p<page>b<id>  (p2b105 = page 2, object 105).
+#      properties:  values HA pushes TO the plate whenever an entity changes
+#      event:       what HA does when you touch the object ("down" = press,
+#                   "up" = release, "changed" = value changed, "long" = hold)
+#
+#  Where the screen layout lives:
+#    openhasp1pages.jsonl (positions, sizes, fonts, colors). It is uploaded to
+#    the plate itself; edit it there and the object ids here must still match.
+#
+#  Pages:
+#    1  Relay buttons    built-in relay (light.piano_room_lights), no HA bindings here
+#    2  Kitchen/Dining   on/off + brightness for three lights
+#    3  Piano Room       on/off, brightness, color wheel
+#    4  Foyer Overhead   on/off, brightness, color wheel
+#    5  Backlight        handled by the plate, nothing here
+#    6  Moodlight        handled by the plate, nothing here
+#    7  Weather          now + hourly + 4-day forecast
+#    8  Alarm            status + keypad
+#    0  Navigation       shown on every page, handled by the plate
+#
+#  Icons: text like "\uE6E8" is a Material Design Icons glyph in the plate's
+#  icon font (\uE6E8 = lightbulb on, \uE335 = lightbulb off).
+#
+#  After editing: reload the openHASP integration
+#  (Settings -> Devices & Services -> openHASP -> ... -> Reload).
+# =============================================================================
+
 objects:
-#Page 2
-  - obj: "p2b103" # switch reverse, checkbox or btn with toggle true
+
+  # ===========================================================================
+  #  PAGE 2 - Kitchen & Dining lights
+  #  Each light has an on/off switch and a brightness slider (0-255).
+  # ===========================================================================
+
+  # --- Kitchen Pendant -------------------------------------------------------
+  - obj: "p2b103" # on/off switch (also swaps the bulb icon)
     properties:
-      "val": '{{ 1 if is_state("light.kitchen_pendant", "on") else 0 }}' 
+      "val": '{{ 1 if is_state("light.kitchen_pendant", "on") else 0 }}'
       "text": '{{ "\uE6E8" if is_state("light.kitchen_pendant", "on") else "\uE335" | e }}'
     event:
       "down":
         - service: homeassistant.toggle
           entity_id: "light.kitchen_pendant"
-  - obj: "p2b105" # Light brightness
+  - obj: "p2b105" # brightness slider: updates while dragging and on release
     properties:
       "val": "{{ state_attr('light.kitchen_pendant', 'brightness') if state_attr('light.kitchen_pendant', 'brightness') != None else 0 }}"
     event:
@@ -21,16 +61,18 @@ objects:
         - service: light.turn_on
           data:
             entity_id: light.kitchen_pendant
-            brightness: "{{ val }}"  
-  - obj: "p2b106" # switch reverse, checkbox or btn with toggle true
+            brightness: "{{ val }}"
+
+  # --- Kitchen Recessed ------------------------------------------------------
+  - obj: "p2b106" # on/off switch
     properties:
-      "val": '{{ 1 if is_state("light.kitchen_recessed", "on") else 0 }}' 
+      "val": '{{ 1 if is_state("light.kitchen_recessed", "on") else 0 }}'
       "text": '{{ "\uE6E8" if is_state("light.kitchen_recessed", "on") else "\uE335" | e }}'
     event:
       "down":
         - service: homeassistant.toggle
           entity_id: "light.kitchen_recessed"
-  - obj: "p2b108" # Light brightness
+  - obj: "p2b108" # brightness slider
     properties:
       "val": "{{ state_attr('light.kitchen_recessed', 'brightness') if state_attr('light.kitchen_recessed', 'brightness') != None else 0 }}"
     event:
@@ -43,16 +85,18 @@ objects:
         - service: light.turn_on
           data:
             entity_id: light.kitchen_recessed
-            brightness: "{{ val }}"  
-  - obj: "p2b109" # switch reverse, checkbox or btn with toggle true
+            brightness: "{{ val }}"
+
+  # --- Dining Table ----------------------------------------------------------
+  - obj: "p2b109" # on/off switch
     properties:
-      "val": '{{ 1 if is_state("light.dining_table", "on") else 0 }}' 
+      "val": '{{ 1 if is_state("light.dining_table", "on") else 0 }}'
       "text": '{{ "\uE6E8" if is_state("light.dining_table", "on") else "\uE335" | e }}'
     event:
       "down":
         - service: homeassistant.toggle
           entity_id: "light.dining_table"
-  - obj: "p2b111" # Light brightness
+  - obj: "p2b111" # brightness slider
     properties:
       "val": "{{ state_attr('light.dining_table', 'brightness') if state_attr('light.dining_table', 'brightness') != None else 0 }}"
     event:
@@ -65,18 +109,23 @@ objects:
         - service: light.turn_on
           data:
             entity_id: light.dining_table
-            brightness: "{{ val }}"  
-#Page 3 - Piano Room: toggle, slider and color all control the Zigbee bulbs (light.piano_room)
-  - obj: "p3b103" # switch reverse, checkbox or btn with toggle true
+            brightness: "{{ val }}"
+
+  # ===========================================================================
+  #  PAGE 3 - Piano Room
+  #  Switch, slider and color wheel all control the Zigbee bulbs
+  #  (light.piano_room). The relay feeding them is on page 1.
+  # ===========================================================================
+  - obj: "p3b103" # on/off switch: sets the bulbs to match the switch position
     properties:
-      "val": '{{ 1 if is_state("light.piano_room", "on") else 0 }}' 
+      "val": '{{ 1 if is_state("light.piano_room", "on") else 0 }}'
       "text": '{{ "\uE6E8" if is_state("light.piano_room", "on") else "\uE335" | e }}'
     event:
       "up":
         - service: "light.turn_{{ 'on' if val | int(0) == 1 else 'off' }}"
           target:
             entity_id: "light.piano_room"
-  - obj: "p3b106" # Light brightness
+  - obj: "p3b106" # brightness slider
     properties:
       "val": "{{ state_attr('light.piano_room', 'brightness') if state_attr('light.piano_room', 'brightness') != None else 0 }}"
     event:
@@ -90,7 +139,7 @@ objects:
           data:
             entity_id: light.piano_room
             brightness: "{{ val }}"
-  - obj: "p3b107" # ColorPicker
+  - obj: "p3b107" # color wheel: shows the current color, sets a new one on release
     properties:
       "color": >
         {% if is_state('light.piano_room','on') %}
@@ -103,16 +152,19 @@ objects:
           data:
             entity_id: light.piano_room
             rgb_color: "[{{ r }},{{ g }},{{ b }}]"
-#Page 4
-  - obj: "p4b103" # switch reverse, checkbox or btn with toggle true
+
+  # ===========================================================================
+  #  PAGE 4 - Foyer Overhead (same layout as page 3)
+  # ===========================================================================
+  - obj: "p4b103" # on/off switch
     properties:
-      "val": '{{ 1 if is_state("light.foyer_overhead", "on") else 0 }}' 
+      "val": '{{ 1 if is_state("light.foyer_overhead", "on") else 0 }}'
       "text": '{{ "\uE6E8" if is_state("light.foyer_overhead", "on") else "\uE335" | e }}'
     event:
       "down":
         - service: homeassistant.toggle
           entity_id: "light.foyer_overhead"
-  - obj: "p4b106" # Light brightness
+  - obj: "p4b106" # brightness slider
     properties:
       "val": "{{ state_attr('light.foyer_overhead', 'brightness') if state_attr('light.foyer_overhead', 'brightness') != None else 0 }}"
     event:
@@ -126,7 +178,7 @@ objects:
           data:
             entity_id: light.foyer_overhead
             brightness: "{{ val }}"
-  - obj: "p4b107" # ColorPicker
+  - obj: "p4b107" # color wheel
     properties:
       "color": >
         {% if is_state('light.foyer_overhead','on') %}
@@ -139,25 +191,29 @@ objects:
           data:
             entity_id: light.foyer_overhead
             rgb_color: "[{{ r }},{{ g }},{{ b }}]"
-#page 7
-  - obj: "p7b14" # Icon  
+
+  # ===========================================================================
+  #  PAGE 7 - Weather
+  #  Current conditions come from the Ecobee (weather.ecobee).
+  #  Forecasts come from sensor.weather_hourly / sensor.weather_daily, which
+  #  hold a "forecast" list attribute. Each forecast slot shows "-" until the
+  #  list has enough entries.
+  # ===========================================================================
+
+  # --- Current conditions ----------------------------------------------------
+  - obj: "p7b14" # weather icon (image file on the plate: w-32-<condition>.png)
     properties:
       "src": "{{ 'L:/w-32-' + states('weather.ecobee') + '.png' if not is_state('weather.ecobee','unavailable') }}"
 
-  - obj: "p7b15" # Current date (adjust format to your needs)
+  - obj: "p7b15" # today's date, e.g. "Monday 11/24"
     properties:
-      "text": >
-        {%- if states.weather.ecobee is not none and not is_state('weather.ecobee','unavailable') %}
-        {%- set day = (states.weather.ecobee.last_changed).strftime('%w') %}
-        {%- set days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
-        {{- days[ day | int -1 ] }} {{ (states.weather.ecobee.last_changed).strftime('%m/%d') }}
-        {% endif -%}
+      "text": "{{ now().strftime('%A %m/%d') }}"
 
-  - obj: "p7b16" # Current temp (you can use your own outdoor temp sensor if you have one)
+  - obj: "p7b16" # current temperature (°F)
     properties:
-      "text": "{{ state_attr('weather.ecobee','temperature') |string + '°F' if not is_state('weather.ecobee','unavailable') }}"  # or "{{ states('sensor.your_own_temp_sensor') if not is_state('sensor.your_own_temp_sensor','unavailable') else '--' }}°C"
+      "text": "{{ state_attr('weather.ecobee','temperature') |string + '°F' if not is_state('weather.ecobee','unavailable') }}"
 
-  - obj: "p7b17" # Current weather condition
+  - obj: "p7b17" # current condition in words ("Partly cloudy", ...)
     properties:
       "text": >
           {% if is_state('weather.ecobee','clear-night') -%}
@@ -196,7 +252,11 @@ objects:
           {{ states('weather.ecobee') }}
           {% endif -%}
 
-  - obj: "p7b10"  # tab dots - MAKE SURE YOU UPDATE THIS ONE!!
+  # --- Tab dots --------------------------------------------------------------
+  # p7b10 is the swipeable tab view (hourly / daily). When you swipe, this
+  # redraws the two dots in p7b19 so the dark dot marks the current tab.
+  # If you add a tab in the pages file, add a matching branch here.
+  - obj: "p7b10"
     event:
       "changed":
         - service: openhasp.command
@@ -211,7 +271,10 @@ objects:
               {{ "#909090 \u2022# #000000 \u2022#" | e }}
               {% endif %}
 
-  - obj: "p7b21" # Forecast time +2h
+  # --- Hourly forecast (+2h, +4h, +6h, +8h) ---------------------------------
+  # Three objects per slot: time label, temperature, condition icon.
+  # The number in [ ] is the hour offset into the forecast list.
+  - obj: "p7b21" # +2h time, e.g. "Today 3 PM"
     properties:
       "text": >
         {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 %}
@@ -220,25 +283,25 @@ objects:
         {%- set event = as_timestamp(strptime(state_attr('sensor.weather_hourly','forecast')[2]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-00T00:00:00+00:00')) %}
         {%- set delta = ((event - midnight) // 86400) | int %}
         {%- if delta == 0 %}
-        Todays
+        Today
         {%- elif delta == 1 %}
         Tomorrow
         {%- endif %}
         {{- event | timestamp_custom(" %-I %p") }}
         {%- endif %}
 
-  - obj: "p7b22" # Forecast temp +2h
+  - obj: "p7b22" # +2h temperature
     properties:
       "text": "{{ state_attr('sensor.weather_hourly','forecast')[2]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 else '-' }}"
 
-  - obj: "p7b23" # Forecast condition +2h
+  - obj: "p7b23" # +2h condition icon
     properties:
       "src": >
         {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 %}
         L:/w-32-{{ state_attr('sensor.weather_hourly','forecast')[2]['condition'] }}.png
         {%- endif %}
 
-  - obj: "p7b31" # Forecast time +4h
+  - obj: "p7b31" # +4h time
     properties:
       "text": >
         {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 %}
@@ -247,25 +310,25 @@ objects:
         {%- set event = as_timestamp(strptime(state_attr('sensor.weather_hourly','forecast')[4]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-00T00:00:00+00:00')) %}
         {%- set delta = ((event - midnight) // 86400) | int %}
         {%- if delta == 0 %}
-        Todays
+        Today
         {%- elif delta == 1 %}
         Tomorrow
         {%- endif %}
         {{- event | timestamp_custom(" %-I %p") }}
         {%- endif %}
 
-  - obj: "p7b32" # Forecast temp +4h
+  - obj: "p7b32" # +4h temperature
     properties:
       "text": "{{ state_attr('sensor.weather_hourly','forecast')[4]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 else '-' }}"
 
-  - obj: "p7b33" # Forecast condition +4h
+  - obj: "p7b33" # +4h condition icon
     properties:
       "src": >
         {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 %}
         L:/w-32-{{ state_attr('sensor.weather_hourly','forecast')[4]['condition'] }}.png
         {%- endif %}
 
-  - obj: "p7b41" # Forecast time +6h
+  - obj: "p7b41" # +6h time
     properties:
       "text": >
         {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 %}
@@ -281,18 +344,18 @@ objects:
         {{- event | timestamp_custom(" %-I %p") }}
         {%- endif %}
 
-  - obj: "p7b42" # Forecast temp +6h
+  - obj: "p7b42" # +6h temperature
     properties:
       "text": "{{ state_attr('sensor.weather_hourly','forecast')[6]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 else '-' }}"
 
-  - obj: "p7b43" # Forecast condition +6h
+  - obj: "p7b43" # +6h condition icon
     properties:
       "src": >
         {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 %}
         L:/w-32-{{ state_attr('sensor.weather_hourly','forecast')[6]['condition'] }}.png
         {%- endif %}
 
-  - obj: "p7b51" # Forecast time +8h
+  - obj: "p7b51" # +8h time
     properties:
       "text": >
         {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 %}
@@ -308,18 +371,20 @@ objects:
         {{- event | timestamp_custom(" %-I %p") }}
         {%- endif %}
 
-  - obj: "p7b52" # Forecast temp +8h
+  - obj: "p7b52" # +8h temperature
     properties:
       "text": "{{ state_attr('sensor.weather_hourly','forecast')[8]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 else '-' }}"
 
-  - obj: "p7b53" # Forecast condition +8h
+  - obj: "p7b53" # +8h condition icon
     properties:
       "src": >
         {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 8 %}
         L:/w-32-{{ state_attr('sensor.weather_hourly','forecast')[8]['condition'] }}.png
         {%- endif %}
 
-  - obj: "p7b61" # Forecast date +1
+  # --- Daily forecast (+1 to +4 days) ---------------------------------------
+  # Four objects per day: day name, low, high, condition icon.
+  - obj: "p7b61" # +1d day name, e.g. "Tuesday 25"
     properties:
       "text": >
         {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
@@ -329,22 +394,22 @@ objects:
         {{ days[ day | int -1 ] }}{{ now1 | timestamp_custom(" %d") }}
         {%- endif %}
 
-  - obj: "p7b62" # Forecast temp min +1d
+  - obj: "p7b62" # +1d low
     properties:
       "text": "{{ state_attr('sensor.weather_daily','forecast')[1]['templow'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
 
-  - obj: "p7b63" # Forecast temp max +1d
+  - obj: "p7b63" # +1d high
     properties:
       "text": "{{ state_attr('sensor.weather_daily','forecast')[1]['temperature'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
 
-  - obj: "p7b64" # Forecast condition +1d
+  - obj: "p7b64" # +1d condition icon
     properties:
       "src": >
         {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
         L:/w-32-{{ state_attr('sensor.weather_daily','forecast')[1]['condition'] }}.png
         {%- endif %}
 
-  - obj: "p7b71" # Forecast date +2d
+  - obj: "p7b71" # +2d day name
     properties:
       "text": >
         {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
@@ -354,22 +419,22 @@ objects:
         {{ days[ day | int -1 ] }}{{ now1 | timestamp_custom(" %d") }}
         {%- endif %}
 
-  - obj: "p7b72" # Forecast temp min +2d
+  - obj: "p7b72" # +2d low
     properties:
       "text": "{{ state_attr('sensor.weather_daily','forecast')[2]['templow'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
 
-  - obj: "p7b73" # Forecast temp max +2d
+  - obj: "p7b73" # +2d high
     properties:
       "text": "{{ state_attr('sensor.weather_daily','forecast')[2]['temperature'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
 
-  - obj: "p7b74" # Forecast condition +2d
+  - obj: "p7b74" # +2d condition icon
     properties:
       "src": >
         {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
         L:/w-32-{{ state_attr('sensor.weather_daily','forecast')[2]['condition'] }}.png
         {%- endif %}
 
-  - obj: "p7b81" # Forecast date +3d
+  - obj: "p7b81" # +3d day name
     properties:
       "text": >
         {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
@@ -379,22 +444,22 @@ objects:
         {{ days[ day | int -1 ] }}{{ now1 | timestamp_custom(" %d") }}
         {%- endif %}
 
-  - obj: "p7b82" # Forecast temp min +3d
+  - obj: "p7b82" # +3d low
     properties:
       "text": "{{ state_attr('sensor.weather_daily','forecast')[3]['templow'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
 
-  - obj: "p7b83" # Forecast temp max +3d
+  - obj: "p7b83" # +3d high
     properties:
       "text": "{{ state_attr('sensor.weather_daily','forecast')[3]['temperature'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
 
-  - obj: "p7b84" # Forecast condition +3d
+  - obj: "p7b84" # +3d condition icon
     properties:
       "src": >
         {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
         L:/w-32-{{ state_attr('sensor.weather_daily','forecast')[3]['condition'] }}.png
         {%- endif %}
 
-  - obj: "p7b91" # Forecast date +4d
+  - obj: "p7b91" # +4d day name
     properties:
       "text": >
         {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
@@ -404,24 +469,25 @@ objects:
         {{ days[ day | int -1 ] }}{{ now1 | timestamp_custom(" %d") }}
         {%- endif %}
 
-  - obj: "p7b92" # Forecast temp min +4d
+  - obj: "p7b92" # +4d low
     properties:
       "text": "{{ state_attr('sensor.weather_daily','forecast')[4]['templow'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
 
-  - obj: "p7b93" # Forecast temp max +4d
+  - obj: "p7b93" # +4d high
     properties:
       "text": "{{ state_attr('sensor.weather_daily','forecast')[4]['temperature'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
 
-  - obj: "p7b94" # Forecast condition +4d
+  - obj: "p7b94" # +4d condition icon
     properties:
       "src": >
         {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
         L:/w-32-{{ state_attr('sensor.weather_daily','forecast')[4]['condition'] }}.png
         {%- endif %}
 
-#Page 8 - Alarm Panel
-
-  - obj: "p8b14" # Alarm Status
+  # ===========================================================================
+  #  PAGE 8 - Alarm panel (alarm_control_panel.alarm)
+  # ===========================================================================
+  - obj: "p8b14" # status text: Armed Home / Away / Vacation / Night / Disarmed
     properties:
       "text": >
                 {% if states("alarm_control_panel.alarm") == "armed_home" %}
@@ -435,18 +501,19 @@ objects:
                 {% else %}
                 Disarmed
                 {% endif %}
-  - obj: "p8b13" #alarm icon
-    properties: 
+  - obj: "p8b13" # shield icon: green when disarmed, red when armed
+    properties:
       "text": '{{"\uE68A" if is_state("alarm_control_panel.alarm", "disarmed") else "\uE565" | e }}'
       "text_color": '{{"#00ff7b " if is_state("alarm_control_panel.alarm", "disarmed") else "#FF0000" | e }}'
-  - obj: "p8b1" #keypad
+  - obj: "p8b1" # keypad: every key press goes to script.code_button,
+                #   which collects the digits and arms/disarms (see scripts.yaml)
     event:
       "down":
         sequence:
           action: script.turn_on
-          target: 
+          target:
             entity_id: script.code_button
-          data: 
+          data:
             variables:
               value: "{{ val }}"
               text: "{{ text }}"

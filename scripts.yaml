@@ -1,5 +1,21 @@
 alexa_msg:
-  description: Send a message to all Alexas
+  alias: Alexa message
+  description: Announce a message on every Alexa at the given volume, then set
+    them back to 50 %. Says "test" if no message is given.
+  fields:
+    message:
+      description: What the Alexas should say
+      example: Dinner is ready
+      selector:
+        text: {}
+    volume:
+      description: Announcement volume (0.0 - 1.0)
+      example: 0.7
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.05
   sequence:
   - data:
       entity_id: media_player.all_alexa
@@ -9,7 +25,7 @@ alexa_msg:
   - data:
       target:
       - media_player.all_alexa
-      message: test
+      message: '{{ message | default(''test'') }}'
       data:
         type: tts
     action: notify.alexa_media
@@ -18,9 +34,12 @@ alexa_msg:
       entity_id: media_player.all_alexa
       volume_level: '0.5'
     action: media_player.volume_set
+    note: Put all Alexas back to 50 % volume.
   mode: single
 dinnertime:
   alias: Dinnertime
+  description: Says "Dinner is Ready" on every Alexa at 80 % volume, then plays
+    a doorbell chime.
   sequence:
   - data:
       entity_id: media_player.all_alexa
@@ -41,6 +60,7 @@ dinnertime:
     action: media_player.play_media
 food_ready:
   alias: food ready
+  description: Says "Food is ready" on every Alexa at 80 % volume.
   sequence:
   - data:
       entity_id: media_player.all_alexa
@@ -56,6 +76,7 @@ food_ready:
   mode: single
 bedtime:
   alias: bedtime
+  description: Says "Ve A Dormir" (go to sleep) on every Alexa at 80 % volume.
   sequence:
   - data:
       volume_level: 0.8
@@ -71,6 +92,7 @@ bedtime:
     action: notify.alexa_media
 showers:
   alias: showers
+  description: Says "Everyone Take Showers" on every Alexa at 80 % volume.
   sequence:
   - data:
       entity_id: media_player.all_alexa
@@ -84,66 +106,146 @@ showers:
       message: Everyone Take Showers
     action: notify.alexa_media
 send_tv_power:
+  alias: TV Power
+  description: Bedroom TV power on/off. Sends an NEC infrared code through the
+    bedroom IR blaster (Tasmota, MQTT topic bedroomIR).
   sequence:
-  - data_template:
+  - data:
       payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD48B7"}'
       topic: bedroomIR/cmnd/irSend
-    service: mqtt.publish
-  alias: TV Power
+    action: mqtt.publish
 send_tv_volup:
+  alias: TV Volume Up
+  description: Bedroom TV volume up via the bedroom IR blaster.
   sequence:
-  - service: mqtt.publish
-    data_template:
+  - action: mqtt.publish
+    data:
       topic: bedroomIR/cmnd/irSend
       payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD58A7"}'
 send_tv_voldn:
+  alias: TV Volume Down
+  description: Bedroom TV volume down via the bedroom IR blaster.
   sequence:
-  - service: mqtt.publish
-    data_template:
+  - action: mqtt.publish
+    data:
       topic: bedroomIR/cmnd/irSend
       payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD7887"}'
 send_tv_input:
+  alias: TV Input
+  description: Bedroom TV cycle input via the bedroom IR blaster.
   sequence:
-  - service: mqtt.publish
-    data_template:
+  - action: mqtt.publish
+    data:
       topic: bedroomIR/cmnd/irSend
       payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FDF00F"}'
 send_string_rfcode:
-  description: Send a Command to the String RF device
-  sequence:
-  - data_template:
-      topic: cmnd/rf_bridge/rfraw
-      payload: "{% if command == \"off\" %}\n  AAB021030800FA028A16122818080818081818080808181808080808080808080808180855\n{%
-        elif command == \"on\" %}\n  AAB0230408010E026C00AA16303818080818081818080808181828080808080808080828281855\n{%
-        elif command == \"red\" %}\n  AAB021030800FA028A163A2818080818081818080808181808080808080808080818081855\n{%
-        elif command == \"green\" %}\n  #FFFF05\n{% elif command == \"blue\" %}\n
-        \ #FFFF06\n{% elif command == \"white\" %}\n  #FFFF07\n{% elif command ==
-        \"lime\" %}\n  #FFFF08\n{% elif command == \"cyan\" %}\n  #FFFF09\n{% elif
-        command == \"purple\" %}\n  #FFFF0A\n{% elif command == \"orange\" %}\n  #FFFF0B\n{%
-        elif command == \"dim_up\" %}\n  #FFFF0C\n{% elif command == \"dim_dn\" %}\n
-        \ #FFFF0F\n{% elif command == \"fade3\" %}\n  #FFFF0D\n{% elif command ==
-        \"jump3\" %}\n  #FFFF0E\n{% elif command == \"fade7\" %}\n  #FFFF10\n{% elif
-        command == \"jump7\" %}\n  #FFFF11\n{% elif command == \"auto\" %}\n  #FFFF13\n{%
-        elif command == \"flash\" %}\n  #FFFF14\n{% elif command == \"speed_up\" %}\n
-        \ #FFFF12\n{% elif command == \"speed_dn\" %}\n  #FFFF15\n{% else %}\n  eRRoR\n{%
-        endif %}\n"
-    action: mqtt.publish
   alias: rfsend Command
+  description: Send a command to the RF-controlled string lights through the
+    Sonoff RF Bridge (Tasmota, MQTT topic rf_bridge). Used by the string-light
+    remote on the dashboard. Unknown commands stop with an error.
+  fields:
+    command:
+      description: What to tell the string lights to do
+      example: 'on'
+      selector:
+        select:
+          options:
+          - 'on'
+          - 'off'
+          - red
+          - green
+          - blue
+          - white
+          - lime
+          - cyan
+          - purple
+          - orange
+          - dim_up
+          - dim_dn
+          - fade3
+          - jump3
+          - fade7
+          - jump7
+          - auto
+          - flash
+          - speed_up
+          - speed_dn
+  variables:
+    rf_codes:
+      'off': AAB021030800FA028A16122818080818081818080808181808080808080808080808180855
+      'on': AAB0230408010E026C00AA16303818080818081818080808181828080808080808080828281855
+      red: AAB021030800FA028A163A2818080818081818080808181808080808080808080818081855
+      green: '#FFFF05'
+      blue: '#FFFF06'
+      white: '#FFFF07'
+      lime: '#FFFF08'
+      cyan: '#FFFF09'
+      purple: '#FFFF0A'
+      orange: '#FFFF0B'
+      dim_up: '#FFFF0C'
+      dim_dn: '#FFFF0F'
+      fade3: '#FFFF0D'
+      jump3: '#FFFF0E'
+      fade7: '#FFFF10'
+      jump7: '#FFFF11'
+      auto: '#FFFF13'
+      flash: '#FFFF14'
+      speed_up: '#FFFF12'
+      speed_dn: '#FFFF15'
+  sequence:
+  - if:
+    - condition: template
+      value_template: '{{ command not in rf_codes }}'
+    then:
+    - stop: Unknown string-light command
+      error: true
+    note: Fail visibly in the trace instead of sending junk over RF.
+  - data:
+      topic: '{{ ''cmnd/rf_bridge/rfraw'' if rf_codes[command].startswith(''AAB0'')
+        else ''cmnd/rf_bridge/rfcode'' }}'
+      payload: '{{ rf_codes[command] }}'
+    action: mqtt.publish
+    note: 'Two code types: AAB0... are raw captures and go to the RfRaw command;
+      #FFFFxx are 24-bit codes and go to the RfCode command (they used to go to
+      RfRaw, which ignores them). If a color still does nothing, capture it from
+      the remote with RfRaw 177 and replace its #FFFF code here.'
 code_button:
+  alias: code_button
+  description: 'Alarm keypad logic for the openHASP plates (page 8 on plate 1,
+    page 3 on plate 2). Each key press runs this once. Digit keys shift into
+    input_number.alarmcode_1..4 (newest digit in _1). Pressing Arm Away / Arm
+    Vaca / Arm Home / Arm Night / Disarm sends the 4-digit code to
+    alarm_control_panel.alarm, then clears the digits back to -1. Arm buttons
+    only work while the alarm is disarmed. Delays come from the manual panel
+    (config_folders/alarm/konnected.yaml): Home has none; Away, Night and
+    Vacation give 20 s to leave and 60 s to disarm on entry.'
+  fields:
+    text:
+      description: Label of the key pressed on the plate (a digit, or Arm Away /
+        Arm Vaca / Arm Home / Arm Night / Disarm)
+      example: '5'
+      selector:
+        text: {}
+    value:
+      description: Key index sent by the plate (not used)
+    haspname:
+      description: Plate name (not used)
+    haspMAC:
+      description: Plate MAC address (not used)
   variables:
     codelength: 4
     alarmpanel: alarm_control_panel.alarm
-    curr_code: string
     armhomeservice: alarm_arm_home
-    armnightservice: alarm_arm_home
+    armnightservice: alarm_arm_night
     armawayservice: alarm_arm_away
-    armvacaservice: alarm_arm_away
+    armvacaservice: alarm_arm_vacation
     disarmservice: alarm_disarm
   sequence:
   - choose:
     - conditions:
       - condition: template
         value_template: '{{(text == ''Arm Away'') and (states(alarmpanel) == ''disarmed'')}}'
+        note: Arm Away pressed while disarmed.
       sequence:
       - data:
           entity_id: alarm_control_panel.alarm
@@ -152,6 +254,7 @@ code_button:
             =  code.value|int * 10 + (states("input_number.alarmcode_" ~ (codelength
             - i))|int) -%} {%- endfor -%} {{code.value|int}}'
         action: '{{''alarm_control_panel.'' ~ armawayservice}}'
+        note: Builds the code from alarmcode_4 (first digit) down to alarmcode_1 (last digit).
       - repeat:
           count: '{{codelength}}'
           sequence:
@@ -159,9 +262,11 @@ code_button:
               entity_id: input_number.alarmcode_{{repeat.index}}
               value: -1
             action: input_number.set_value
+        note: Clear the entered digits.
     - conditions:
       - condition: template
         value_template: '{{(text == ''Arm Vaca'') and (states(alarmpanel) == ''disarmed'')}}'
+        note: Arm Vacation pressed while disarmed.
       sequence:
       - data:
           entity_id: alarm_control_panel.alarm
@@ -169,7 +274,7 @@ code_button:
             ~ codelength)|int -%}  {%- for i in range(1,codelength) -%} {%- set code.value
             =  code.value|int * 10 + (states("input_number.alarmcode_" ~ (codelength
             - i))|int) -%} {%- endfor -%} {{code.value|int}}'
-        action: '{{''alarm_control_panel.'' ~ armawayservice}}'
+        action: '{{''alarm_control_panel.'' ~ armvacaservice}}'
       - repeat:
           count: '{{codelength}}'
           sequence:
@@ -177,9 +282,11 @@ code_button:
               entity_id: input_number.alarmcode_{{repeat.index}}
               value: -1
             action: input_number.set_value
+        note: Clear the entered digits.
     - conditions:
       - condition: template
         value_template: '{{(text == ''Arm Home'') and (states(alarmpanel) == ''disarmed'')}}'
+        note: Arm Home pressed while disarmed.
       sequence:
       - data:
           entity_id: alarm_control_panel.alarm
@@ -195,9 +302,11 @@ code_button:
               entity_id: input_number.alarmcode_{{repeat.index}}
               value: -1
             action: input_number.set_value
+        note: Clear the entered digits.
     - conditions:
       - condition: template
         value_template: '{{(text == ''Arm Night'') and (states(alarmpanel) == ''disarmed'')}}'
+        note: Arm Night pressed while disarmed.
       sequence:
       - data:
           entity_id: alarm_control_panel.alarm
@@ -205,7 +314,7 @@ code_button:
             ~ codelength)|int -%}  {%- for i in range(1,codelength) -%} {%- set code.value
             =  code.value|int * 10 + (states("input_number.alarmcode_" ~ (codelength
             - i))|int) -%} {%- endfor -%} {{code.value|int}}'
-        action: '{{''alarm_control_panel.'' ~ armhomeservice}}'
+        action: '{{''alarm_control_panel.'' ~ armnightservice}}'
       - repeat:
           count: '{{codelength}}'
           sequence:
@@ -213,9 +322,11 @@ code_button:
               entity_id: input_number.alarmcode_{{repeat.index}}
               value: -1
             action: input_number.set_value
+        note: Clear the entered digits.
     - conditions:
       - condition: template
         value_template: '{{text == ''Disarm'' }}'
+        note: Disarm pressed (works in any state).
       sequence:
       - data:
           entity_id: alarm_control_panel.alarm
@@ -231,6 +342,7 @@ code_button:
               entity_id: input_number.alarmcode_{{repeat.index}}
               value: -1
             action: input_number.set_value
+        note: Clear the entered digits.
     default:
     - repeat:
         count: '{{(codelength|int) - 1}}'
@@ -240,12 +352,12 @@ code_button:
             entity_id: input_number.alarmcode_{{(codelength|int) - repeat.index +
               1}}
             value: '{{states("input_number.alarmcode_" ~ ((codelength|int) - repeat.index))|int}}'
+      note: 'A digit was pressed: shift stored digits up one slot (3->4, 2->3, 1->2).'
     - action: input_number.set_value
       data:
         entity_id: input_number.alarmcode_1
         value: '{{text|int}}'
-  alias: code_button
-  description: ''
+      note: Store the new digit in slot 1.
 play_youtube:
   alias: Play YouTube
   description: 'Living room: TV on and to HDMI 2 (via SmartThings), Denon to Apple
@@ -423,9 +535,11 @@ openhasp2_play_from_library:
       media_type: '{{ media_type | default(''playlist'') }}'
       search: '{{ name }}'
     response_variable: lib
+    note: Search the library (up to 25 matches).
   - variables:
       match: '{{ ((lib[''items''] | selectattr(''name'', ''eq'', name) | list) + lib[''items''])
         | first | default(none) }}'
+    note: Prefer an exact name match; otherwise take the first search result.
   - if:
     - condition: template
       value_template: '{{ match is not none and match.uri is defined }}'
@@ -440,3 +554,4 @@ openhasp2_play_from_library:
   - action: input_boolean.turn_off
     target:
       entity_id: input_boolean.openhasp2_browse
+    note: Close the Playlists & Mixes panel on the plate.

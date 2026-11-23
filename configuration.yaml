@@ -1,162 +1,133 @@
+# =============================================================================
+#  HOME ASSISTANT — MAIN CONFIGURATION
+# =============================================================================
+#
+#  This file is kept small on purpose. Most config lives elsewhere:
+#
+#    00_packages/                 One "package" per domain, all loaded below.
+#      integrations/automation.yaml   -> automations.yaml (UI-made)
+#                                      + config_folders/automations/ (hand-written)
+#      integrations/sensor.yaml       -> config_folders/sensors/
+#      integrations/binary_sensor.yaml-> config_folders/binary_sensors/ + binary_sensors.yaml
+#      integrations/light.yaml        -> config_folders/lights/
+#      integrations/switch.yaml       -> config_folder/switches   (path typo: loads nothing;
+#                                        config_folders/switches/ uses the old
+#                                        MQTT format and would error if loaded)
+#      integrations/group.yaml        -> config_folders/groups/
+#      integrations/openhasp.yaml     -> openHASP wall plates
+#      ...plus alarm, media_player, weather, zone
+#      esphome_updates.yaml           -> ESPHome firmware-update sensors
+#
+#    mqtt.yaml       MQTT entities (Zigbee2MQTT devices, etc.)
+#    template.yaml   Template sensors / binary sensors
+#    scripts.yaml    Scripts (UI-made and hand-written)
+#    secrets.yaml    Passwords and keys — never committed to git
+#
+#  Integrations set up through Settings -> Devices & Services are stored by
+#  HA internally and do NOT appear here.
+#
+#  After editing: Developer Tools -> YAML -> "Check configuration", then
+#  reload the matching section (or restart if it isn't listed).
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+#  CORE
+# -----------------------------------------------------------------------------
 homeassistant:
+  # Load every file in 00_packages/ as a package (file name = package name).
   packages: !include_dir_named 00_packages
+
+  # Folders integrations may read/write files in (e.g. image downloads).
   allowlist_external_dirs:
-  - "/config"
+    - "/config"
+
+# Turns on HA's standard set of built-in integrations: the config panel,
+# sun, bluetooth, history, logbook, mobile app, energy, backup, etc.
+# (That's why `config:`, `sun:` and `bluetooth:` are not listed separately.)
 default_config:
-config:
+
+
+# -----------------------------------------------------------------------------
+#  INCLUDED FILES
+# -----------------------------------------------------------------------------
 mqtt: !include mqtt.yaml
 template: !include template.yaml
-#scene: !include scenes.yaml
-#openhasp: !include openhasp.yaml
-
-
-#homekit:
-#  - name: HASS Bridge
-#    filter:
-#      include_domains:
-#        - alarm_control_panel
-#        - cover
-#    entity_config:
-#      alarm_control_panel.home:
-#        code: 8697
-
-
-
-
-
-
-
-
-
-
-
-
-#frontend:
-#  themes: !include_dir_merge_named themes
-
 script: !include scripts.yaml
 
-websocket_api:
+# Not loaded right now. Turn this on if you want to save scenes from the UI
+# (the UI scene editor writes to scenes.yaml).
+# scene: !include scenes.yaml
 
+
+# -----------------------------------------------------------------------------
+#  DASHBOARDS
+# -----------------------------------------------------------------------------
+# Dashboards are built and saved in the UI (not YAML).
+# Custom cards are added under Settings -> Dashboards -> Resources (or by HACS).
 lovelace:
   mode: storage
-  # resources:
-  # - url: /community_plugin/light-entity-card/light-entity-card.js
-  # type: js
-  # - url: /local/floorplan/floorplan-card.js?v=1.1.14
-  # type: module
-  # - url: /community_plugin/unused-card/unused-card.js
-  # type: module
-  # - url: /community_plugin/custom-header/custom-header.js
-  # type: module
-  # - url: /community_plugin/fan-control-entity-row/fan-control-entity-row.js
-  # type: js
 
-# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-# http:
-#   base_url: example.duckdns.org:8123
 
-# Text to speech
-#tts:
-#  - platform: google_translate
-
-# Discover some devices automatically
-#discovery:
-
-# alexa_media:
-#  accounts:
-#    - email: !secret amazon_user
-#      password: !secret amazon_password
-#      url: amazon.com
-
-#media_player:
-#  - platform: falcon_pi_player
-#    name: Panel_FPP
-#    host: 192.168.1.165
-
-#rest_command:
-#  matrix_message:
-#    url: "http://192.168.1.165/api/overlays/model/LEDMatrix/text"
-#    method: put
-#    payload: '{"Message": "{{message}}","Position": "{{position}}","Font": "Helvetica","FontSize": {{fontsize}},
-#    "AntiAlias": false,  "PixelsPerSecond": {{pixelspersecond}},  "Color": {{color}},  "AutoEnable": false}'
-#    content_type:  'application/json; charset=utf-8'
-
-# ios:
-#   actions:
-#     - name: ActionDinnerTime
-#       background_color: "#03a9f4"
-#       label:
-#         text: "Dinner Time"
-#         color: "#212121"
-#       icon:
-#         icon: food
-#         color: "#212121"
-#     - name: ActionDownOff
-#       background_color: "#03a9f4"
-#       label:
-#         text: "Down Lights Off"
-#         color: "#212121"
-#       icon:
-#         icon: lightbulb
-#         color: "#212121"
-
-bluetooth:
-
-# Allows you to issue voice commands from the frontend in enabled browsers
-#conversation:
-
-# # Track the sun
-sun:
-#sonoff:
-#    username: !secret ewink_user
-#    password: !secret ewink_pass
-
-# camera:
-#  - platform: mjpeg
-#    mjpeg_url: http://192.168.1.16:38500/mjpg/cam1
-#    name: turret
-#    username: !secret bi_username
-#    password: !secret bi_password
-#    authentication: basic
-
-# Home/Away Mode Switch
-# input_boolean:
-#   notify_home:
-#     name: Notify when someone arrives forecast_home
-#     initial: off
-#     icon: mdi:car
+# -----------------------------------------------------------------------------
+#  LOGGING
+# -----------------------------------------------------------------------------
+# Only warnings and errors go to the log.
+# To troubleshoot one integration, add it under `logs:` at debug level, e.g.
+#   logs:
+#     homeassistant.components.govee: debug
 logger:
   default: warning
-  logs:
-    homeassistant.components.govee: debug
-    custom_components.govee: debug
-    govee_api_laggat: debug
+
+
+# -----------------------------------------------------------------------------
+#  HISTORY DATABASE (recorder)
+# -----------------------------------------------------------------------------
+# Controls what gets saved to home-assistant_v2.db. Excluding noisy,
+# fast-changing sensors keeps the database small and HA fast.
 recorder:
-  purge_keep_days: 10
-  commit_interval: 30
+  purge_keep_days: 10      # keep 10 days of history
+  commit_interval: 30      # write to disk every 30 s instead of every 1 s
+
   exclude:
+    # Whole domains not worth keeping history for
     domains:
-    - camera
-    - image
+      - camera
+      - image
+
+    # Individual entities
     entities:
-    - automation.livinghasp_p_3_b_4_displays_a_clock_with_a_clock_icon_2
-    - sensor.db_top_writers
-  # energymonitor amps: house L1/L2 and car amps are recorded (calibration, 2026-11-22)
-    - sensor.energymonitor_dryer_total_amps
-    - sensor.energymonitor_garage_amps
-    - sensor.energymonitor_solar_amps
-    - sensor.energymonitor_total_house_amps
-    - sensor.energymonitor_total_solar_amps
+      - automation.livinghasp_p_3_b_4_displays_a_clock_with_a_clock_icon_2  # fires every minute
+      - sensor.db_top_writers                                               # DB diagnostics sensor
+
+      # Energy monitor: these amp readings are NOT recorded.
+      # Still recorded: house L1/L2 and car amps (kept for calibration, 2026-11-22).
+      - sensor.energymonitor_dryer_total_amps
+      - sensor.energymonitor_garage_amps
+      - sensor.energymonitor_solar_amps
+      - sensor.energymonitor_total_house_amps
+      - sensor.energymonitor_total_solar_amps
+
+    # Wildcard matches
     entity_globs:
-    - sensor.date_time*
-    - sensor.time*
-    - sensor.energymonitor_*_watts*
-    - sensor.energymonitor_volts*
-    - sensor.energymonitor_freq*
-    - sensor.energymonitor_wifi*
-    - sensor.konnected_*_uptime
-    - sensor.konnected_*_wifi_signal*
+      - sensor.date_time*                  # clock sensors
+      - sensor.time*
+      - sensor.energymonitor_*_watts*      # energy monitor raw readings
+      - sensor.energymonitor_volts*
+      - sensor.energymonitor_freq*
+      - sensor.energymonitor_wifi*
+      - sensor.konnected_*_uptime          # Konnected board diagnostics
+      - sensor.konnected_*_wifi_signal*
+
+
+# -----------------------------------------------------------------------------
+#  SHELL COMMANDS
+# -----------------------------------------------------------------------------
+# Call from automations/scripts as  shell_command.<name>
 shell_command:
+  # Samsung TV (192.168.1.151): open the YouTube app
   samsung_tv_launch_youtube: "curl -s -m 10 -X POST http://192.168.1.151:8001/api/v2/applications/111299001912"
+
+  # Stair Shelly relay (192.168.30.29): set the wall switch to "detached" mode,
+  # so the physical switch sends events but doesn't cut power to the smart bulbs
   shelly_stair_detach: "curl -s -m 10 'http://192.168.30.29/rpc/Switch.SetConfig?id=0&config=%7B%22in_mode%22%3A%22detached%22%7D'"
