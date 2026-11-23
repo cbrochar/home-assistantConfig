@@ -1,0 +1,1082 @@
+objects:
+  # All Pages: Datetime
+  - obj: "p0b4"
+    properties:
+      "val": "{{states('openhasp.openhasp2') | int(0) -1}}"
+  # p0b10 (banner date) is driven by the plate's own clock ("template" in the pages file), time zone set to Eastern on the plate
+  - obj: "p0b10"
+    properties:
+      "x": "190"
+
+  - obj: "p0b5" # temperature label on all pages
+    properties:
+      "text": "{{ state_attr('weather.ecobee','temperature') |string + '°F'}}"
+
+  - obj: "p0b6" #time
+    properties:
+      "text": "{{ now().strftime('%-I:%M %p') }}"
+
+  - obj: "p0b7"
+    properties:
+      "text_color": "{% if -50 <= state_attr('openhasp.openhasp2','rssi') | int(0) %}green{% elif -51 > state_attr('openhasp.openhasp2','rssi') | int(0) >= -60 %}olive{% elif -61 > state_attr('openhasp.openhasp2','rssi') | int(0) >= -70 %}orange{% elif -71 > state_attr('openhasp.openhasp2','rssi') |int (0) >= -80 %}maroon{% else %}red{% endif %}"
+
+  - obj: "p0b9" # temp Thermometer display
+    properties:
+      "text_color":
+        "{% if state_attr('weather.ecobee','temperature') |int(0) <= 30  %}yellow
+        {% elif 30 < state_attr('weather.ecobee','temperature') |int(0) <= 40  %}blue
+        {% elif 40 < state_attr('weather.ecobee','temperature') |int(0) <= 90 %}green
+        {% else %}red{% endif %}"
+
+  #page 1 - Weather
+  # Conditions/icon come from sensor.weather_hourly (the Ecobee reports "sunny" at night).
+  # Temperature still comes from the Ecobee.
+  - obj: "p1b15" # Today's date
+    properties:
+      "text": "{{ now().strftime('%A %m/%d') }}"
+
+  - obj: "p1b16" # Current temp (you can use your own outdoor temp sensor if you have one)
+    properties:
+      "text": "{{ state_attr('weather.ecobee','temperature') |string + '°F' if not is_state('weather.ecobee','unavailable') }}" # or "{{ states('sensor.your_own_temp_sensor') if not is_state('sensor.your_own_temp_sensor','unavailable') else '--' }}°C"
+
+  - obj: "p1b17" # Current weather condition
+    properties:
+      "text": >-
+        {%- set c = states('sensor.weather_hourly') -%}
+        {%- set names = {'clear-night':'Clear night','cloudy':'Cloudy','fog':'Fog','hail':'Hail','lightning':'Lightning','lightning-rainy':'Thunderstorms','partlycloudy':'Partly cloudy','pouring':'Pouring rain','rainy':'Rainy','snowy':'Snowy','snowy-rainy':'Snowy-rainy','sunny':'Sunny','windy':'Windy','windy-variant':'Windy','exceptional':'Exceptional','unavailable':'(not available)','unknown':'(not available)'} -%}
+        {{- names.get(c, c) -}}
+
+  - obj: "p1b18" # Current condition image
+    properties:
+      "src": "{{ 'L:/z-128-' ~ states('sensor.weather_hourly') ~ '.png' if has_value('sensor.weather_hourly') else 'L:/openhasp_dummy_img.png' }}"
+
+  - obj: "p1b21" # Forecast time +4h
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        {%- set update = states('sensor.date') %}
+        {%- set midnight = now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp() %}
+        {%- set event = as_timestamp(strptime(state_attr('sensor.weather_hourly','forecast')[4]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-00T00:00:00+00:00')) %}
+        {%- set delta = ((event - midnight) // 86400) | int %}
+        {%- if delta == 0 %}
+        Today
+        {%- elif delta == 1 %}
+        Tomorrow
+        {%- endif %}
+        {{- event | timestamp_custom(" %-I %p") }}
+        {%- endif %}
+
+  - obj: "p1b22" # Forecast temp +4h
+    properties:
+      "text": "{{ state_attr('sensor.weather_hourly','forecast')[4]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 else '-' }}"
+
+  - obj: "p1b23" # Forecast condition +4h
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        L:/z-128-{{ state_attr('sensor.weather_hourly','forecast')[4]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b25" # Forecast time +8h
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        {%- set update = states('sensor.date') %}
+        {%- set midnight = now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp() %}
+        {%- set event = as_timestamp(strptime(state_attr('sensor.weather_hourly','forecast')[8]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-00T00:00:00+00:00')) %}
+        {%- set delta = ((event - midnight) // 86400) | int %}
+        {%- if delta == 0 %}
+        Today
+        {%- elif delta == 1 %}
+        Tomorrow
+        {%- endif %}
+        {{- event | timestamp_custom(" %-I %p") }}
+        {%- endif %}
+
+  - obj: "p1b26" # Forecast temp +8h
+    properties:
+      "text": "{{ state_attr('sensor.weather_hourly','forecast')[8]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 else '-' }}"
+
+  - obj: "p1b27" # Forecast condition +8h
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        L:/z-128-{{ state_attr('sensor.weather_hourly','forecast')[8]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b31" # Forecast time +12h
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        {%- set update = states('sensor.date') %}
+        {%- set midnight = now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp() %}
+        {%- set event = as_timestamp(strptime(state_attr('sensor.weather_hourly','forecast')[12]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-00T00:00:00+00:00')) %}
+        {%- set delta = ((event - midnight) // 86400) | int %}
+        {%- if delta == 0 %}
+        Today
+        {%- elif delta == 1 %}
+        Tomorrow
+        {%- endif %}
+        {{- event | timestamp_custom(" %-I %p") }}
+        {%- endif %}
+
+  - obj: "p1b32" # Forecast temp +12h
+    properties:
+      "text": "{{ state_attr('sensor.weather_hourly','forecast')[12]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 else '-' }}"
+
+  - obj: "p1b33" # Forecast condition +12h
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        L:/z-128-{{ state_attr('sensor.weather_hourly','forecast')[12]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b41" # Forecast time +16h
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        {%- set update = states('sensor.date') %}
+        {%- set midnight = now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp() %}
+        {%- set event = as_timestamp(strptime(state_attr('sensor.weather_hourly','forecast')[16]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-00T00:00:00+00:00')) %}
+        {%- set delta = ((event - midnight) // 86400) | int %}
+        {%- if delta == 0 %}
+        Today
+        {%- elif delta == 1 %}
+        Tomorrow
+        {%- endif %}
+        {{- event | timestamp_custom(" %-I %p") }}
+        {%- endif %}
+
+  - obj: "p1b42" # Forecast temp +16h
+    properties:
+      "text": "{{ state_attr('sensor.weather_hourly','forecast')[16]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 else '-' }}"
+
+  - obj: "p1b43" # Forecast condition +16h
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        L:/z-128-{{ state_attr('sensor.weather_hourly','forecast')[16]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b51" # Forecast time +20h
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        {%- set update = states('sensor.date') %}
+        {%- set midnight = now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp() %}
+        {%- set event = as_timestamp(strptime(state_attr('sensor.weather_hourly','forecast')[20]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-00T00:00:00+00:00')) %}
+        {%- set delta = ((event - midnight) // 86400) | int %}
+        {%- if delta == 0 %}
+        Today
+        {%- elif delta == 1 %}
+        Tomorrow
+        {%- endif %}
+        {{- event | timestamp_custom(" %-I %p") }}
+        {%- endif %}
+
+  - obj: "p1b52" # Forecast temp +20h
+    properties:
+      "text": "{{ state_attr('sensor.weather_hourly','forecast')[20]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 else '-' }}"
+
+  - obj: "p1b53" # Forecast condition +20h
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        L:/z-128-{{ state_attr('sensor.weather_hourly','forecast')[20]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b61" # Forecast time +24h
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        {%- set update = states('sensor.date') %}
+        {%- set midnight = now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp() %}
+        {%- set event = as_timestamp(strptime(state_attr('sensor.weather_hourly','forecast')[23]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-00T00:00:00+00:00')) %}
+        {%- set delta = ((event - midnight) // 86400) | int %}
+        {%- if delta == 0 %}
+        Today
+        {%- elif delta == 1 %}
+        Tomorrow
+        {%- endif %}
+        {{- event | timestamp_custom(" %-I %p") }}
+        {%- endif %}
+
+  - obj: "p1b62" # Forecast temp +24h
+    properties:
+      "text": "{{ state_attr('sensor.weather_hourly','forecast')[23]['temperature'] if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 else '-' }}"
+
+  - obj: "p1b63" # Forecast condition +24h
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_hourly','forecast') or []) | count > 23 %}
+        L:/z-128-{{ state_attr('sensor.weather_hourly','forecast')[23]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b65" # Forecast date +1
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
+        {%- set now1 = as_timestamp(strptime(state_attr('sensor.weather_daily','forecast')[1]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-01T00:00:00+00:00')) %}
+        {%- set day = now1 | timestamp_custom("%w") %}
+        {%- set days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+        {{ days[ day | int -1 ] }}{{ now1 | timestamp_custom(" %d") }}
+        {%- endif %}
+
+  - obj: "p1b66" # Forecast temp min +1d
+    properties:
+      "text": "{{ state_attr('sensor.weather_daily','forecast')[1]['templow'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
+
+  - obj: "p1b67" # Forecast temp max +1d
+    properties:
+      "text": "{{ state_attr('sensor.weather_daily','forecast')[1]['temperature'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
+
+  - obj: "p1b68" # Forecast condition +1d
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
+        L:/z-128-{{ state_attr('sensor.weather_daily','forecast')[1]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b71" # Forecast date +2d
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
+        {%- set now1 = as_timestamp(strptime(state_attr('sensor.weather_daily','forecast')[2]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-01T00:00:00+00:00')) %}
+        {%- set day = now1 | timestamp_custom("%w") %}
+        {%- set days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+        {{ days[ day | int -1 ] }}{{ now1 | timestamp_custom(" %d") }}
+        {%- endif %}
+
+  - obj: "p1b72" # Forecast temp min +2d
+    properties:
+      "text": "{{ state_attr('sensor.weather_daily','forecast')[2]['templow'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
+
+  - obj: "p1b73" # Forecast temp max +2d
+    properties:
+      "text": "{{ state_attr('sensor.weather_daily','forecast')[2]['temperature'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
+
+  - obj: "p1b74" # Forecast condition +2d
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
+        L:/z-128-{{ state_attr('sensor.weather_daily','forecast')[2]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b81" # Forecast date +3d
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
+        {%- set now1 = as_timestamp(strptime(state_attr('sensor.weather_daily','forecast')[3]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-01T00:00:00+00:00')) %}
+        {%- set day = now1 | timestamp_custom("%w") %}
+        {%- set days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+        {{ days[ day | int -1 ] }}{{ now1 | timestamp_custom(" %d") }}
+        {%- endif %}
+
+  - obj: "p1b82" # Forecast temp min +3d
+    properties:
+      "text": "{{ state_attr('sensor.weather_daily','forecast')[3]['templow'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
+
+  - obj: "p1b83" # Forecast temp max +3d
+    properties:
+      "text": "{{ state_attr('sensor.weather_daily','forecast')[3]['temperature'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
+
+  - obj: "p1b84" # Forecast condition +3d
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
+        L:/z-128-{{ state_attr('sensor.weather_daily','forecast')[3]['condition'] }}.png
+        {%- endif %}
+
+  - obj: "p1b91" # Forecast date +4d
+    properties:
+      "text": >
+        {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
+        {%- set now1 = as_timestamp(strptime(state_attr('sensor.weather_daily','forecast')[4]['datetime'], '%Y-%m-%dT%H:%M:%S%z', default='2020-01-01T00:00:00+00:00')) %}
+        {%- set day = now1 | timestamp_custom("%w") %}
+        {%- set days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+        {{ days[ day | int -1 ] }}{{ now1 | timestamp_custom(" %d") }}
+        {%- endif %}
+
+  - obj: "p1b92" # Forecast temp min +4d
+    properties:
+      "text": "{{ state_attr('sensor.weather_daily','forecast')[4]['templow'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
+
+  - obj: "p1b93" # Forecast temp max +4d
+    properties:
+      "text": "{{ state_attr('sensor.weather_daily','forecast')[4]['temperature'] if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 else '-' }}"
+
+  - obj: "p1b94" # Forecast condition +4d
+    properties:
+      "src": >
+        {%- if (state_attr('sensor.weather_daily','forecast') or []) | count > 4 %}
+        L:/z-128-{{ state_attr('sensor.weather_daily','forecast')[4]['condition'] }}.png
+        {%- endif %}
+
+  #Page 2 - Energy (energymonitor sensors)
+  # total_solar_watts = solar; total_house_watts = grid (+ import, - export); home = solar + grid
+  - obj: "p2b12" # solar
+    properties:
+      "text": >-
+        {%- set v = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
+        {{ (v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W' }}
+
+  - obj: "p2b22" # grid
+    properties:
+      "text": >-
+        {%- set v = states('sensor.energymonitor_total_house_watts')|float(0)|abs -%}
+        {{ (v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W' }}
+      "text_color": "{{ '#1E88E5' if states('sensor.energymonitor_total_house_watts')|float(0) >= 0 else '#8E5CD9' }}"
+  - obj: "p2b23" # grid caption
+    properties:
+      "text": "{{ 'Grid in' if states('sensor.energymonitor_total_house_watts')|float(0) >= 0 else 'Grid out' }}"
+
+  - obj: "p2b32" # home
+    properties:
+      "text": >-
+        {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
+        {%- set v = [s + states('sensor.energymonitor_total_house_watts')|float(0), 0]|max -%}
+        {{ (v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W' }}
+
+  - obj: "p2b45" # solar -> grid flow
+    properties:
+      "text": >-
+        {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
+        {%- set v = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
+        {{ '' if v < 10 else ((v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W') }}
+  - obj: "p2b40"
+    properties:
+      "line_opa": "{{ 255 if 0 - states('sensor.energymonitor_total_house_watts')|float(0) >= 10 else 50 }}"
+
+  - obj: "p2b46" # solar -> home flow
+    properties:
+      "text": >-
+        {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
+        {%- set e = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
+        {%- set v = s - e -%}
+        {{ '' if v < 10 else ((v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W') }}
+  - obj: "p2b41"
+    properties:
+      "line_opa": >-
+        {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
+        {%- set e = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
+        {{ 255 if s - e >= 10 else 50 }}
+
+  - obj: "p2b47" # grid -> home flow
+    properties:
+      "text": >-
+        {%- set v = [states('sensor.energymonitor_total_house_watts')|float(0), 0]|max -%}
+        {{ '' if v < 10 else ((v/1000)|round(1) ~ ' kW' if v >= 1000 else (v|int) ~ ' W') }}
+  - obj: "p2b42"
+    properties:
+      "line_opa": "{{ 255 if states('sensor.energymonitor_total_house_watts')|float(0) >= 10 else 50 }}"
+
+  - obj: "p2b51" # returned to grid gauge (0-8 kW)
+    properties:
+      "val": "{{ [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, 8000]|min|int }}"
+  - obj: "p2b52"
+    properties:
+      "text": >-
+        {%- set v = [0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max -%}
+        {{ (v/1000)|round(2) ~ ' kW' if v >= 1000 else (v|int) ~ ' W' }}
+
+  - obj: "p2b61" # self-consumed solar gauge
+    properties:
+      "val": >-
+        {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
+        {%- set e = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
+        {{ ((s - e) / s * 100)|int if s >= 10 else 0 }}
+  - obj: "p2b62"
+    properties:
+      "text": >-
+        {%- set s = [states('sensor.energymonitor_total_solar_watts')|float(0), 0]|max -%}
+        {%- set e = [[0 - states('sensor.energymonitor_total_house_watts')|float(0), 0]|max, s]|min -%}
+        {{ (((s - e) / s * 100)|round(1) ~ ' %') if s >= 10 else 'No solar' }}
+
+  # 30-day home use bars (p2b100 oldest ... p2b129 today). Data: input_text.openhasp2_energy_days,
+  # filled hourly by automation "openhasp2 Energy Days". Macros in custom_templates/openhasp2_energy.jinja
+  - obj: "p2b67"
+    properties:
+      "text": "{% from 'openhasp2_energy.jinja' import summary %}{{ summary() }}"
+  - obj: "p2b100"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(0) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(0) }}"
+  - obj: "p2b101"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(1) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(1) }}"
+  - obj: "p2b102"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(2) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(2) }}"
+  - obj: "p2b103"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(3) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(3) }}"
+  - obj: "p2b104"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(4) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(4) }}"
+  - obj: "p2b105"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(5) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(5) }}"
+  - obj: "p2b106"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(6) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(6) }}"
+  - obj: "p2b107"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(7) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(7) }}"
+  - obj: "p2b108"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(8) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(8) }}"
+  - obj: "p2b109"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(9) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(9) }}"
+  - obj: "p2b110"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(10) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(10) }}"
+  - obj: "p2b111"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(11) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(11) }}"
+  - obj: "p2b112"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(12) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(12) }}"
+  - obj: "p2b113"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(13) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(13) }}"
+  - obj: "p2b114"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(14) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(14) }}"
+  - obj: "p2b115"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(15) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(15) }}"
+  - obj: "p2b116"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(16) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(16) }}"
+  - obj: "p2b117"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(17) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(17) }}"
+  - obj: "p2b118"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(18) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(18) }}"
+  - obj: "p2b119"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(19) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(19) }}"
+  - obj: "p2b120"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(20) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(20) }}"
+  - obj: "p2b121"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(21) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(21) }}"
+  - obj: "p2b122"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(22) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(22) }}"
+  - obj: "p2b123"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(23) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(23) }}"
+  - obj: "p2b124"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(24) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(24) }}"
+  - obj: "p2b125"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(25) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(25) }}"
+  - obj: "p2b126"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(26) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(26) }}"
+  - obj: "p2b127"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(27) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(27) }}"
+  - obj: "p2b128"
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(28) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(28) }}"
+  - obj: "p2b129" # today (partial)
+    properties:
+      "h": "{% from 'openhasp2_energy.jinja' import bar_h %}{{ bar_h(29) }}"
+      "y": "{% from 'openhasp2_energy.jinja' import bar_y %}{{ bar_y(29) }}"
+
+  #Page 3 - Alarm Panel
+
+  - obj: "p3b14" # Alarm Status
+    properties:
+      "text": >
+        {% if states("alarm_control_panel.alarm") == "armed_home" %}
+        Armed Home
+        {% elif states("alarm_control_panel.alarm")== "armed_away"  %}
+        Armed Away
+        {% elif states("alarm_control_panel.alarm")== "armed_vacation"  %}
+        Armed Vacation
+        {% elif states("alarm_control_panel.alarm")== "armed_night" %}
+        Armed Night
+        {% else %}
+        Disarmed
+        {% endif %}
+  - obj: "p3b13" #alarm icon
+    properties:
+      "text": '{{"\uE68A" if is_state("alarm_control_panel.alarm", "disarmed") else "\uE565" | e }}'
+      "text_color": '{{"#00ff7b " if is_state("alarm_control_panel.alarm", "disarmed") else "#FF0000" | e }}'
+  - obj: "p3b1" #keypad
+    event:
+      "down":
+        sequence:
+          action: script.turn_on
+          target:
+            entity_id: script.code_button
+          data:
+            variables:
+              value: "{{ val }}"
+              text: "{{ text }}"
+              haspname: "{{state_attr('openhasp.openhasp2','friendly_name')}}"
+              haspMAC: "{{state_attr('openhasp.openhasp2','mac')}}"
+
+  #Page 4 - Light Switches
+  # TV Downlights (was My Lamp)
+  - obj: "p4b14" # name label
+    properties:
+      "text": "TV Downlights"
+  - obj: "p4b11" # button
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.tvdownlights
+  - obj: "p4b15" # on/off label
+    properties:
+      "text": '{{ "On" if is_state("light.tvdownlights", "on") else "Off" }}'
+  - obj: "p4b13" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.tvdownlights", "on") else "#6F6F6F" }}'
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.tvdownlights
+  - obj: "p4b12" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.tvdownlights", "on") else "#2C2C2C" }}'
+  - obj: "p4b16" # slider (0-100 %)
+    properties:
+      "val": "{{ ((state_attr('light.tvdownlights', 'brightness') or 0) / 2.55) | round(0) | int }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.tvdownlights
+          data:
+            brightness_pct: "{{ val | int }}"
+    # Dining Table
+  - obj: "p4b21" # button
+    event:
+      "down":
+        - service: homeassistant.toggle
+          data:
+            entity_id: "light.dining_table"
+  - obj: "p4b25" # on/off label
+    properties:
+      "text": '{{ "On" if is_state("light.dining_table", "on") else "Off" }}'
+  - obj: "p4b23" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.dining_table", "on") else "#6F6F6F" }}'
+    event:
+      "down":
+        - service: homeassistant.toggle
+          data:
+            entity_id: "light.dining_table"
+  - obj: "p4b22" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.dining_table", "on") else "#2C2C2C" }}'
+  - obj: "p4b26" # slider (0-100 %)
+    properties:
+      "val": "{{ ((state_attr('light.dining_table', 'brightness') or 0) / 2.55) | round(0) | int }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.dining_table
+          data:
+            brightness_pct: "{{ val | int }}"
+    # foyer_recessed
+  - obj: "p4b31" # button
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.foyer_recessed"
+  - obj: "p4b35" # on/off label
+    properties:
+      "text": '{{ "On" if is_state("light.foyer_recessed", "on") else "Off" }}'
+  - obj: "p4b33" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.foyer_recessed", "on") else "#6F6F6F" }}'
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.foyer_recessed"
+  - obj: "p4b32" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.foyer_recessed", "on") else "#2C2C2C" }}'
+  - obj: "p4b36" # slider - Foyer Recessed is on/off only, so hide it
+    properties:
+      "hidden": "1"
+
+    # Kitchen Recessed
+  - obj: "p4b41" # button
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.kitchen_recessed"
+  - obj: "p4b45" # on/off label
+    properties:
+      "text": '{{ "On" if is_state("light.kitchen_recessed", "on") else "Off" }}'
+  - obj: "p4b43" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.kitchen_recessed", "on") else "#6F6F6F" }}'
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.kitchen_recessed"
+  - obj: "p4b42" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.kitchen_recessed", "on") else "#2C2C2C" }}'
+  - obj: "p4b46" # slider (0-100 %)
+    properties:
+      "val": "{{ ((state_attr('light.kitchen_recessed', 'brightness') or 0) / 2.55) | round(0) | int }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.kitchen_recessed
+          data:
+            brightness_pct: "{{ val | int }}"
+    # Foyer Overhead
+  - obj: "p4b51" # button
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.foyer_overhead"
+  - obj: "p4b55" # on/off label
+    properties:
+      "text": '{{ "On" if is_state("light.foyer_overhead", "on") else "Off" }}'
+  - obj: "p4b53" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.foyer_overhead", "on") else "#6F6F6F" }}'
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.foyer_overhead"
+  - obj: "p4b52" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.foyer_overhead", "on") else "#2C2C2C" }}'
+  - obj: "p4b54" # name label (layout file says Front Entry)
+    properties:
+      "text": "Foyer Overhead"
+  - obj: "p4b56" # slider (0-100 %)
+    properties:
+      "val": "{{ ((state_attr('light.foyer_overhead', 'brightness') or 0) / 2.55) | round(0) | int }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.foyer_overhead
+          data:
+            brightness_pct: "{{ val | int }}"
+    # Kitchen Pendant
+  - obj: "p4b61" # button
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.kitchen_pendant"
+  - obj: "p4b65" # on/off label
+    properties:
+      "text": '{{ "On" if is_state("light.kitchen_pendant", "on") else "Off" }}'
+  - obj: "p4b63" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.kitchen_pendant", "on") else "#6F6F6F" }}'
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.kitchen_pendant"
+  - obj: "p4b62" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.kitchen_pendant", "on") else "#2C2C2C" }}'
+  - obj: "p4b66" # slider (0-100 %)
+    properties:
+      "val": "{{ ((state_attr('light.kitchen_pendant', 'brightness') or 0) / 2.55) | round(0) | int }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.kitchen_pendant
+          data:
+            brightness_pct: "{{ val | int }}"
+    # Stairs (Shelly 1 Mini, light.stair_light)
+  - obj: "p4b71" # button
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.stair_light
+  - obj: "p4b75" # on/off label
+    properties:
+      "text": '{{ "On" if is_state("light.stair_light", "on") else "Off" }}'
+  - obj: "p4b73" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.stair_light", "on") else "#6F6F6F" }}'
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.stair_light
+  - obj: "p4b72" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.stair_light", "on") else "#2C2C2C" }}'
+  - obj: "p4b76" # slider - Shelly is on/off only, so hide it
+    properties:
+      "hidden": "1"
+    # Piano Room: tile/icon/slider = Zigbee bulbs (light.piano_room); power button p4b87 = openhasp1 relay (light.piano_room_lights) that feeds the bulbs
+  - obj: "p4b81" # tile = bulbs
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.piano_room
+  - obj: "p4b85" # status label
+    properties:
+      "text": >-
+        {%- if is_state("light.piano_room_lights", "off") -%}Relay off
+        {%- elif states("light.piano_room_lights") in ["unavailable", "unknown"] -%}Relay offline
+        {%- else -%}{{ "On" if is_state("light.piano_room", "on") else "Off" }}{%- endif -%}
+  - obj: "p4b83" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.piano_room", "on") else "#6F6F6F" }}'
+  - obj: "p4b82" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.piano_room", "on") else "#2C2C2C" }}'
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.piano_room
+  - obj: "p4b87" # relay power button
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.piano_room_lights", "on") else "#2C2C2C" }}'
+      "text_color": '{{ "#e88c03" if is_state("light.piano_room_lights", "on") else "#6F6F6F" }}'
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.piano_room_lights
+  - obj: "p4b86" # slider (0-100 %)
+    properties:
+      "val": "{{ ((state_attr('light.piano_room', 'brightness') or 0) / 2.55) | round(0) | int }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.piano_room
+          data:
+            brightness_pct: "{{ val | int }}"
+    # Living Room Overhead
+  - obj: "p4b91" # button
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.livingroom_overhead"
+  - obj: "p4b95" # on/off label
+    properties:
+      "text": '{{ "On" if is_state("light.livingroom_overhead", "on") else "Off" }}'
+  - obj: "p4b93" # icon
+    properties:
+      "text_color": '{{ "#e88c03" if is_state("light.livingroom_overhead", "on") else "#6F6F6F" }}'
+  - obj: "p4b92" # icon background
+    properties:
+      "bg_color": '{{ "#493416" if is_state("light.livingroom_overhead", "on") else "#2C2C2C" }}'
+    event:
+      "down":
+        - service: homeassistant.toggle
+          entity_id: "light.livingroom_overhead"
+  - obj: "p4b96" # slider (0-100 %)
+    properties:
+      "val": "{{ ((state_attr('light.livingroom_overhead', 'brightness') or 0) / 2.55) | round(0) | int }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.livingroom_overhead
+          data:
+            brightness_pct: "{{ val | int }}"
+
+  #Page 5 - RGB Lights
+  # Left = Piano Room bulbs (light.piano_room). Right = all RGB lights (light.colored_lights group).
+  - obj: "p5b4" # Piano Room on/off
+    properties:
+      "text": '{{ "On" if is_state("light.piano_room", "on") else "Off" }}'
+      "bg_color": '{{ "#e88c03" if is_state("light.piano_room", "on") else "#2C2C2C" }}'
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.piano_room
+  - obj: "p5b6" # Piano Room color wheel
+    properties:
+      "color": >-
+        {%- set c = state_attr('light.piano_room', 'rgb_color') -%}
+        {{ '#%02x%02x%02x' % (c[0], c[1], c[2]) if c else '#FFFFFF' }}
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.piano_room
+          data:
+            rgb_color: ["{{ r }}", "{{ g }}", "{{ b }}"]
+  - obj: "p5b8" # Piano Room brightness (1-255)
+    properties:
+      "val": "{{ state_attr('light.piano_room', 'brightness') or 1 }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.piano_room
+          data:
+            brightness: "{{ val | int }}"
+
+  - obj: "p5b10" # right panel title (was Living Room Light)
+    properties:
+      "text": "All RGB Lights"
+  - obj: "p5b14" # all RGB on/off
+    properties:
+      "text": '{{ "On" if is_state("light.colored_lights", "on") else "Off" }}'
+      "bg_color": '{{ "#e88c03" if is_state("light.colored_lights", "on") else "#2C2C2C" }}'
+    event:
+      "down":
+        - action: light.toggle
+          target:
+            entity_id: light.colored_lights
+  - obj: "p5b16" # all RGB color wheel
+    properties:
+      "color": >-
+        {%- set c = state_attr('light.colored_lights', 'rgb_color') -%}
+        {{ '#%02x%02x%02x' % (c[0], c[1], c[2]) if c else '#FFFFFF' }}
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.colored_lights
+          data:
+            rgb_color: ["{{ r }}", "{{ g }}", "{{ b }}"]
+  - obj: "p5b18" # all RGB brightness (1-255)
+    properties:
+      "val": "{{ state_attr('light.colored_lights', 'brightness') or 1 }}"
+    event:
+      "up":
+        - action: light.turn_on
+          target:
+            entity_id: light.colored_lights
+          data:
+            brightness: "{{ val | int }}"
+
+  #Page 6 - Media (Music Assistant)
+  # Controls whichever speaker input_select.openhasp2_speaker holds.
+  # Speaker grid order = that helper's option order.
+  - obj: "p6b14" # title label
+    properties:
+      "text": "{% set p = states('input_select.openhasp2_speaker') %}{{ state_attr(p,'media_title') or '-' }}"
+
+  - obj: "p6b15" # artist label
+    properties:
+      "text": "{% set p = states('input_select.openhasp2_speaker') %}{{ state_attr(p,'media_artist') or '' }}"
+
+  - obj: "p6b39" # cover art frame (also holds the browse tabs)
+    properties:
+      "hidden": "{% set p = states('input_select.openhasp2_speaker') %}{{ 0 if is_state('input_boolean.openhasp2_browse','on') or state_attr(p,'entity_picture') else 1 }}"
+
+  - obj: "p6b89" # speaker name button - tap to open/close Playlists & Mixes
+    properties:
+      "text": "{{ {'media_player.denon_avr_x1700h_4':'Living Room','media_player.living_room_sound_bar_2':'Sound Bar','media_player.bedroom_tv_2':'Bedroom TV','media_player.master_bedroom_tv':'Master TV'}.get(states('input_select.openhasp2_speaker'), 'Speaker') }}"
+      "text_font": "24"
+    event:
+      "up":
+        - action: input_boolean.toggle
+          target:
+            entity_id: input_boolean.openhasp2_browse
+
+  - obj: "p6b93" # speaker picker grid, selected speaker in orange
+    properties:
+      "text_font": "24"
+      "options": >-
+        {%- set names = {'media_player.denon_avr_x1700h_4':'Living Room','media_player.living_room_sound_bar_2':'Sound Bar','media_player.bedroom_tv_2':'Bedroom TV','media_player.master_bedroom_tv':'Master TV'} -%}
+        {%- set sel = states('input_select.openhasp2_speaker') -%}
+        {%- set nl = '%c' | format(10) -%}
+        {%- set ns = namespace(out=[]) -%}
+        {%- for o in state_attr('input_select.openhasp2_speaker','options') or [] -%}
+        {%- if loop.index0 > 0 and loop.index0 % 2 == 0 %}{% set ns.out = ns.out + [nl] %}{% endif -%}
+        {%- set n = names.get(o, o) -%}
+        {%- set ns.out = ns.out + [('#FFAC00 ' ~ n ~ '#') if o == sel else n] -%}
+        {%- endfor -%}
+        {{- ns.out | to_json -}}
+    event:
+      "down":
+        - action: input_select.select_option
+          target:
+            entity_id: input_select.openhasp2_speaker
+          data:
+            option: "{{ state_attr('input_select.openhasp2_speaker','options')[val | int(0)] }}"
+
+  - obj: "p6b95" # browse tabs
+    properties:
+      "hidden": "{{ 0 if is_state('input_boolean.openhasp2_browse','on') else 1 }}"
+  - obj: "p6b96"
+    properties:
+      "text": "Playlists"
+  - obj: "p6b97"
+    properties:
+      "text": "Mixes"
+
+  - obj: "p6b99" # Playlists dropdown (options filled by automation openhasp2 media lists)
+    event:
+      "changed":
+        - condition: template
+          value_template: "{{ val | int(0) > 0 }}"
+        - action: script.turn_on
+          target:
+            entity_id: script.openhasp2_play_from_library
+          data:
+            variables:
+              name: "{{ text }}"
+              media_type: playlist
+
+  - obj: "p6b98" # Mixes dropdown
+    event:
+      "changed":
+        - condition: template
+          value_template: "{{ val | int(0) > 0 }}"
+        - action: script.turn_on
+          target:
+            entity_id: script.openhasp2_play_from_library
+          data:
+            variables:
+              name: "{{ text }}"
+              media_type: playlist
+
+  - obj: "p6b17" # play/pause/stop
+    properties:
+      "text": >
+        {% if is_state(states('input_select.openhasp2_speaker'), 'playing') %}
+        {{ "\uE3E4" | e }}
+        {%-else %}
+        {{ "\uE40A" | e }}
+        {%-endif %}
+      "text_opa": "{{ '80' if states(states('input_select.openhasp2_speaker')) in ['unavailable', 'unknown'] else '255' }}"
+    event:
+      "down":
+        - action: media_player.media_play_pause
+          target:
+            entity_id: "{{ states('input_select.openhasp2_speaker') }}"
+      "long":
+        - action: media_player.media_stop
+          target:
+            entity_id: "{{ states('input_select.openhasp2_speaker') }}"
+
+  - obj: "p6b16" # prev
+    properties:
+      "text_opa": "{{ '80' if states(states('input_select.openhasp2_speaker')) in ['unavailable', 'unknown'] else '255' }}"
+    event:
+      "down":
+        - action: media_player.media_previous_track
+          target:
+            entity_id: "{{ states('input_select.openhasp2_speaker') }}"
+  - obj: "p6b18" # next
+    properties:
+      "text_opa": "{{ '80' if states(states('input_select.openhasp2_speaker')) in ['unavailable', 'unknown'] else '255' }}"
+    event:
+      "down":
+        - action: media_player.media_next_track
+          target:
+            entity_id: "{{ states('input_select.openhasp2_speaker') }}"
+
+  - obj: "p6b20" # volume slider
+    properties:
+      "val": "{% set p = states('input_select.openhasp2_speaker') %}{{ ((state_attr(p,'volume_level') or 0) * 100) | int }}"
+      "click": "{{ 'false' if states(states('input_select.openhasp2_speaker')) in ['unavailable', 'unknown'] else 'true' }}"
+    event:
+      "up":
+        - action: media_player.volume_set
+          target:
+            entity_id: "{{ states('input_select.openhasp2_speaker') }}"
+          data:
+            volume_level: "{{ val | int / 100 }}"
+
+  - obj: "p6b27" # repeat
+    properties:
+      "text": >
+        {% if is_state_attr(states('input_select.openhasp2_speaker'), 'repeat', 'one') %}
+        {{ "\uE458" | e }}
+        {% elif is_state_attr(states('input_select.openhasp2_speaker'), 'repeat', 'all') %}
+        {{ "\uE456" | e }}
+        {%-else %}
+        {{ "\uE457" | e }}
+        {%-endif %}
+      "text_opa": "{{ '80' if states(states('input_select.openhasp2_speaker')) in ['unavailable', 'unknown'] else '255' }}"
+    event:
+      "down":
+        - action: media_player.repeat_set
+          target:
+            entity_id: "{{ states('input_select.openhasp2_speaker') }}"
+          data:
+            repeat: "{{ {'off':'all','all':'one','one':'off'}.get(state_attr(states('input_select.openhasp2_speaker'), 'repeat'), 'all') }}"
+
+  - obj: "p6b25" # shuffle
+    properties:
+      "text": >
+        {% if state_attr(states('input_select.openhasp2_speaker'), 'shuffle') %}
+        {{ "\uE49D" | e }}
+        {%-else %}
+        {{ "\uE49E" | e }}
+        {%-endif %}
+      "text_opa": "{{ '80' if states(states('input_select.openhasp2_speaker')) in ['unavailable', 'unknown'] else '255' }}"
+    event:
+      "down":
+        - action: media_player.shuffle_set
+          target:
+            entity_id: "{{ states('input_select.openhasp2_speaker') }}"
+          data:
+            shuffle: "{{ not state_attr(states('input_select.openhasp2_speaker'), 'shuffle') }}"
+
+  - obj: "p6b24" # mute
+    properties:
+      "text": >
+        {% if state_attr(states('input_select.openhasp2_speaker'), 'is_volume_muted') %}
+        {{ "\uE75F" | e }}
+        {%-else %}
+        {{ "\uE57E" | e }}
+        {%-endif %}
+      "text_opa": "{{ '80' if states(states('input_select.openhasp2_speaker')) in ['unavailable', 'unknown'] else '255' }}"
+    event:
+      "down":
+        - action: media_player.volume_mute
+          target:
+            entity_id: "{{ states('input_select.openhasp2_speaker') }}"
+          data:
+            is_volume_muted: "{{ not state_attr(states('input_select.openhasp2_speaker'), 'is_volume_muted') }}"

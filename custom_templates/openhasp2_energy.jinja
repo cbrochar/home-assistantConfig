@@ -1,0 +1,24 @@
+{# openhasp2 Energy page bar chart.
+   Data: input_text.openhasp2_energy_days = 30 daily home-use kWh values, oldest first
+   (filled hourly by automation "openhasp2 Energy Days"). Plot baseline y=400, max bar 145 px. #}
+
+{% macro bar_h(i) -%}
+{%- set v = states('input_text.openhasp2_energy_days').split(',') | map('float', 0) | list -%}
+{%- set m = [v | max, 1] | max -%}
+{%- set x = v[i] if i < v | length else 0 -%}
+{{- [(x / m * 145) | round(0) | int, 2] | max -}}
+{%- endmacro %}
+
+{% macro bar_y(i) -%}
+{{- 400 - bar_h(i) | int -}}
+{%- endmacro %}
+
+{% macro summary() -%}
+{%- set v = states('input_text.openhasp2_energy_days').split(',') | map('float', 0) | list -%}
+{%- set d = v[:-1] | select('>', 0) | list -%}
+{%- if d | length > 0 -%}
+avg {{ (d | sum / d | length) | round(0) | int }}  max {{ v | max | round(0) | int }} kWh
+{%- else -%}
+no data yet
+{%- endif -%}
+{%- endmacro %}

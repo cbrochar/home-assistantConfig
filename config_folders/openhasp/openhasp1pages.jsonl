@@ -1,0 +1,115 @@
+{"page":1,"comment":"Connected Relay Buttons"}
+{"page":1,"id":1,"obj":"btn","x":57,"y":80,"w":125,"h":125,"toggle":true,"text":"\ue335","text_font":32,"align":1,"groupid":1}
+{"page":1,"id":10,"obj":"label","x":55,"y":230,"w":200,"h":30,"text":"Piano Room Switch","text_color":"#FFFFFF"}
+{"page":1,"id":11,"obj":"label","x":30,"y":250,"w":200,"h":30,"text":"Interruptor de sala de piano","text_color":"#FFFFFF"}
+{"page":1,"id":2,"obj":"switch","x":30,"y":122,"w":180,"h":75,"radius":40,"radius20":40,"groupid":2,"hidden":true}
+{"page":1,"id":3,"obj":"switch","x":30,"y":205,"w":180,"h":75,"radius":40,"radius20":40,"groupid":3,"hidden":true}
+
+{"page":2,"comment":"Light Control Panel"}
+{"page":2,"id":103,"obj":"switch","x":10,"y":10,"w":60,"h":30,"radius":15}
+{"page":2,"id":104,"obj":"label","x":80,"y":10,"w":200,"h":30,"text":"Kitchen Pendant ","text_color":"#FFFFFF"}
+{"page":2,"id":105,"obj":"slider","x":20,"y":50,"w":210,"h":30,"min":0,"max":255}
+{"page":2,"id":106,"obj":"switch","x":10,"y":100,"w":60,"h":30,"radius":15}
+{"page":2,"id":107,"obj":"label","x":80,"y":100,"w":200,"h":30,"text":"Kitchen Recessed ","text_color":"#FFFFFF"}
+{"page":2,"id":108,"obj":"slider","x":20,"y":140,"w":210,"h":30,"min":0,"max":255}
+{"page":2,"id":109,"obj":"switch","x":10,"y":190,"w":60,"h":30,"radius":15}
+{"page":2,"id":110,"obj":"label","x":80,"y":190,"w":200,"h":30,"text":"Dining Table ","text_color":"#FFFFFF"}
+{"page":2,"id":111,"obj":"slider","x":20,"y":230,"w":210,"h":30,"min":0,"max":255}
+
+{"page":3,"comment":"RGB Control Panel"}
+{"page":3,"id":103,"obj":"switch","x":12,"y":38,"w":60,"h":30,"radius":15}
+{"page":3,"id":104,"obj":"label","x":10,"y":10,"w":200,"h":40,"text":"Piano Room Light","text_color":"#FFFFFF"}
+{"page":3,"id":105,"obj":"label","x":10,"y":235,"w":180,"h":32,"text":"Brightness","text_color":"#FFFFFF"}
+{"page":3,"id":106,"obj":"slider","x":34,"y":105,"w":25,"h":120,"min":0,"max":255}
+{"page":3,"id":107,"obj":"cpicker","x":65,"y":40,"w":175,"h":175}
+
+{"page":4,"comment":"RGB Control Panel"}
+{"page":4,"id":103,"obj":"switch","x":12,"y":38,"w":60,"h":30,"radius":15}
+{"page":4,"id":104,"obj":"label","x":10,"y":10,"w":200,"h":40,"text":"Foyer Light","text_color":"#FFFFFF"}
+{"page":4,"id":105,"obj":"label","x":10,"y":235,"w":180,"h":32,"text":"Brightness","text_color":"#FFFFFF"}
+{"page":4,"id":106,"obj":"slider","x":34,"y":105,"w":25,"h":120,"min":0,"max":255}
+{"page":4,"id":107,"obj":"cpicker","x":65,"y":40,"w":175,"h":175}
+
+{"page":5,"comment":"Backlight"}
+{"page":5,"id":1,"obj":"label","x":5,"y":5,"w":230,"h":25,"text":"Backlight","align":"center"}
+{"page":5,"id":10,"obj":"btn","x":20,"y":40,"w":90,"h":75,"text":"10%","action":{"up":"backlight {'state':'on','brightness':26}"}}
+{"page":5,"id":11,"obj":"btn","x":130,"y":40,"w":90,"h":75,"text":"40%","action":{"up":"backlight {'state':'on','brightness':103}"}}
+{"page":5,"id":12,"obj":"btn","x":20,"y":122,"w":90,"h":75,"text":"70%","action":{"up":"backlight {'state':'on','brightness':179}"}}
+{"page":5,"id":13,"obj":"btn","x":130,"y":122,"w":90,"h":75,"text":"100%","action":{"up":"backlight {'state':'on','brightness':255}"}}
+{"page":5,"id":14,"obj":"btn","x":20,"y":205,"w":200,"h":75,"text":"Off","action":{"up":"backlight {'state':'off'}"}}
+
+{"page":6,"comment":"Moodlight"}
+{"page":6,"id":1,"obj":"label","x":5,"y":5,"w":230,"h":25,"text":"Moodlight","align":"center"}
+{"page":6,"id":10,"obj":"btn","x":20,"y":40,"w":90,"h":75,"text":"Red","action":{"up":"moodlight {'state':'on','brightness':255,'color':'red'}","hold":"moodlight {'state':'on','brightness':255,'color':'maroon'}"}}
+{"page":6,"id":11,"obj":"btn","x":20,"y":122,"w":90,"h":75,"text":"Green","action":{"up":"moodlight {'state':'on','brightness':255,'color':'green'}","hold":"moodlight {'state':'on','brightness':255,'color':'lime'}"}}
+{"page":6,"id":12,"obj":"btn","x":20,"y":205,"w":90,"h":75,"text":"Blue","action":{"up":"moodlight {'state':'on','brightness':255,'color':'blue'}","hold":"moodlight {'state':'on','brightness':255,'color':'cyan'}"}}
+{"page":6,"id":13,"obj":"btn","x":130,"y":40,"w":90,"h":75,"text":"Yellow","action":{"up":"moodlight {'state':'on','brightness':255,'color':'yellow'}","hold":"moodlight {'state':'on','brightness':255,'color':'orange'}"}}
+{"page":6,"id":14,"obj":"btn","x":130,"y":122,"w":90,"h":75,"text":"Purple","action":{"up":"moodlight {'state':'on','brightness':255,'color':'purple'}","hold":"moodlight {'state':'on','brightness':255,'color':'magenta'}"}}
+{"page":6,"id":15,"obj":"btn","x":130,"y":205,"w":90,"h":75,"text":"Off","action":{"up":"moodlight {'state':'off'}","hold":"moodlight {'state':'on','brightness':255,'color':'white'}"}}
+
+{"page":7,"comment":"Weather"}
+{"page":7,"id":1,"obj":"btn","x":0,"y":0,"w":240,"h":30,"text":"WEATHER","text_font":16,"bg_color":"#2C3E50","text_color":"#FFFFFF","radius":0,"border_side":0,"click":0}
+{"page":7,"id":2,"obj":"obj","x":5,"y":35,"w":230,"h":250,"click":0}
+
+{"page":7,"id":14,"obj":"img","src":"L:/openhasp_dummy_img.png","parentid":2,"auto_size":1,"w":128,"offset_x":-6,"offset_y":-10}
+
+{"page":7,"id":15,"obj":"label","x":100,"y":10,"w":130,"h":25,"align":"center","text":"date current","parentid":2}
+{"page":7,"id":16,"obj":"label","x":125,"y":34,"w":95,"h":40,"align":"center","text":"00.0\u00b0C","parentid":2,"text_font":32}
+{"page":7,"id":17,"obj":"label","x":110,"y":78,"w":120,"h":25,"align":"center","text":"condition","parentid":2}
+{"page":7,"id":19,"obj":"label","x":90,"y":95,"w":60,"h":30,"text":"#000000 \u2022# #909090 \u2022#","parentid":2,"text_font":24,"align":"center","text_color":"grey"}
+
+{"page":7,"id":10,"obj":"tabview","x":0,"y":0,"w":240,"h":260,"parentid":2,"btn_pos":0,"bg_opa":0,"border_width":0}
+{"page":7,"id":11,"obj":"tab","parentid":10}
+{"page":7,"id":12,"obj":"tab","parentid":10}
+
+{"page":7,"id":21,"obj":"label","x":8,"y":123,"w":130,"h":22,"align":"left","text":"hour+2","parentid":11,"pad_top":3,"click":0}
+{"page":7,"id":22,"obj":"label","x":124,"y":123,"w":50,"h":22,"align":"center","text":"00.0","parentid":11,"pad_top":-2,"text_font":24,"click":0}
+{"page":7,"id":23,"obj":"img","x":182,"y":118,"w":32,"h":32,"src":"L:/openhasp_dummy_img.png","parentid":11,"click":0}
+
+{"page":7,"id":31,"obj":"label","x":8,"y":154,"w":130,"h":22,"align":"left","text":"hour+3","parentid":11,"pad_top":3,"click":0}
+{"page":7,"id":32,"obj":"label","x":124,"y":154,"w":50,"h":22,"align":"center","text":"00.0","parentid":11,"pad_top":-2,"text_font":24,"click":0}
+{"page":7,"id":33,"obj":"img","x":182,"y":150,"w":32,"h":32,"src":"L:/openhasp_dummy_img.png","parentid":11,"click":0}
+
+{"page":7,"id":41,"obj":"label","x":8,"y":186,"w":130,"h":22,"align":"left","text":"hour+4","parentid":11,"pad_top":3,"click":0}
+{"page":7,"id":42,"obj":"label","x":124,"y":186,"w":50,"h":22,"align":"center","text":"00.0","parentid":11,"pad_top":-2,"text_font":24,"click":0}
+{"page":7,"id":43,"obj":"img","x":182,"y":182,"w":32,"h":32,"src":"L:/openhasp_dummy_img.png","parentid":11,"click":0}
+
+{"page":7,"id":51,"obj":"label","x":8,"y":218,"w":130,"h":22,"align":"left","text":"hour+5","parentid":11,"pad_top":3,"click":0}
+{"page":7,"id":52,"obj":"label","x":124,"y":218,"w":50,"h":22,"align":"center","text":"00.0","parentid":11,"pad_top":-2,"text_font":24,"click":0}
+{"page":7,"id":53,"obj":"img","x":182,"y":214,"w":32,"h":32,"src":"L:/openhasp_dummy_img.png","parentid":11,"click":0}
+
+{"page":7,"id":61,"obj":"label","x":6,"y":123,"w":100,"h":22,"align":"left","text":"date+1","parentid":12,"pad_top":3,"click":0}
+{"page":7,"id":62,"obj":"label","x":102,"y":123,"w":40,"h":22,"align":"center","text":"00.0","parentid":12,"pad_top":-2,"text_font":24,"text_color":"Navy","click":0}
+{"page":7,"id":63,"obj":"label","x":150,"y":123,"w":40,"h":22,"align":"center","text":"00.0","parentid":12,"pad_top":-2,"text_font":24,"text_color":"Blush","click":0}
+{"page":7,"id":64,"obj":"img","x":194,"y":118,"w":32,"h":32,"src":"L:/openhasp_dummy_img.png","parentid":12,"click":0}
+
+{"page":7,"id":71,"obj":"label","x":6,"y":154,"w":100,"h":22,"align":"left","text":"date+2","parentid":12,"pad_top":3,"click":0}
+{"page":7,"id":72,"obj":"label","x":102,"y":154,"w":40,"h":22,"align":"center","text":"00.0","parentid":12,"pad_top":-2,"text_font":24,"text_color":"Navy","click":0}
+{"page":7,"id":73,"obj":"label","x":150,"y":154,"w":40,"h":22,"align":"center","text":"00.0","parentid":12,"pad_top":-2,"text_font":24,"text_color":"Blush","click":0}
+{"page":7,"id":74,"obj":"img","x":194,"y":150,"w":32,"h":32,"src":"L:/openhasp_dummy_img.png","parentid":12,"click":0}
+
+{"page":7,"id":81,"obj":"label","x":6,"y":186,"w":100,"h":22,"align":"left","text":"date+3","parentid":12,"pad_top":3,"click":0}
+{"page":7,"id":82,"obj":"label","x":102,"y":186,"w":40,"h":22,"align":"center","text":"00.0","parentid":12,"pad_top":-2,"text_font":24,"text_color":"Navy","click":0}
+{"page":7,"id":83,"obj":"label","x":150,"y":186,"w":40,"h":22,"align":"center","text":"00.0","parentid":12,"pad_top":-2,"text_font":24,"text_color":"Blush","click":0}
+{"page":7,"id":84,"obj":"img","x":194,"y":182,"w":32,"h":32,"src":"L:/openhasp_dummy_img.png","parentid":12,"click":0}
+
+{"page":7,"id":91,"obj":"label","x":6,"y":218,"w":100,"h":22,"align":"left","text":"date+4","parentid":12,"pad_top":3,"click":0}
+{"page":7,"id":92,"obj":"label","x":102,"y":218,"w":40,"h":22,"align":"center","text":"00.0","parentid":12,"pad_top":-2,"text_font":24,"text_color":"Navy","click":0}
+{"page":7,"id":93,"obj":"label","x":150,"y":218,"w":40,"h":22,"align":"center","text":"00.0","parentid":12,"pad_top":-2,"text_font":24,"text_color":"Blush","click":0}
+{"page":7,"id":94,"obj":"img","x":194,"y":214,"w":32,"h":32,"src":"L:/openhasp_dummy_img.png","parentid":12,"click":0}
+
+{"page":8,"comment":" ----------- Page 8 layout - Alarm Panel ------------"}
+
+{"page":8,"id":1,"obj":"btnmatrix","x":10,"y":10,"w":220,"h":220,"options":["1","2","3","\n","4","5","6","\n","7","8","9","\n","Arm Home","0","Arm Away","\n","Arm Night","Arm Vaca","Disarm"],"toggle":false,"one_check":false}
+{"page":8,"id":2,"obj":"label","x":104,"y":22,"h":30,"w":40,"text":"    ","text_color":"white","align":0,"bg_color":"#2C3E50"}
+{"page":8,"id":13,"obj":"label","x":30,"y":230,"w":80,"h":80,"text":"\ue09a","mode":"expand","text_font":48,"text_color":"#e88c03"}
+{"page":8,"id":14,"obj":"label","x":110,"y":240,"w":100,"h":80,"text":"Un- availalbe","text_font":18,"mode":"break","align":"center"}
+
+{"page":0,"comment":"Navigation Controls"}
+{"page":0,"id":1,"obj":"btn","action":"prev","x":0,"y":290,"w":79,"h":32,"bg_color":"#2C3E50","text":"\ue141","text_color":"#FFFFFF","radius":0,"border_side":0,"text_font":28}
+{"page":0,"id":2,"obj":"btn","action":"p7","x":80,"y":290,"w":80,"h":32,"bg_color":"#2C3E50","text":"\ue2dc","text_color":"#FFFFFF","radius":0,"border_side":0,"text_font":22}
+{"page":0,"id":3,"obj":"btn","action":"next","x":161,"y":290,"w":79,"h":32,"bg_color":"#2C3E50","text":"\ue142","text_color":"#FFFFFF","radius":0,"border_side":0,"text_font":28}
+{"page":0,"id":6,"obj":"obj","swipe":1,"x":0,"y":0,"h":30,"w":240,"opacity":0,"comment":"swipe-area-at-top"}
+
+{"page":8,"id":0,"next":1}
+{"page":1,"id":0,"prev":8}

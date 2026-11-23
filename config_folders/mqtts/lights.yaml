@@ -1,0 +1,9 @@
+light:
+  name: "String Lights"
+  command_topic: "cmnd/rf_bridge/rfraw"
+  availability_topic: "tele/rf_bridge/LWT"
+  payload_available: "Online"
+  payload_not_available: "Offline"
+  payload_on: "AAB0230408010E026C00AA16303818080818081818080808181828080808080808080828281855"
+  payload_off: "AAB021030800FA028A16122818080818081818080808181808080808080808080808180855"
+  optimistic: true

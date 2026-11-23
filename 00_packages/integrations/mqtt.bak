@@ -1,0 +1,1 @@
+mqtt manual: !include_dir_merge_named ../../config_folders/mqtts

@@ -1,6 +1,442 @@
-restart_script:
-  alias: Restart Script
+alexa_msg:
+  description: Send a message to all Alexas
   sequence:
-  - service: homeassistant.restart
-    data: {}
+  - data:
+      entity_id: media_player.all_alexa
+      volume_level: '{{ volume }}'
+    action: media_player.volume_set
+  - delay: 00:00:01
+  - data:
+      target:
+      - media_player.all_alexa
+      message: test
+      data:
+        type: tts
+    action: notify.alexa_media
+  - delay: 00:00:01
+  - data:
+      entity_id: media_player.all_alexa
+      volume_level: '0.5'
+    action: media_player.volume_set
   mode: single
+dinnertime:
+  alias: Dinnertime
+  sequence:
+  - data:
+      entity_id: media_player.all_alexa
+      volume_level: 0.8
+    action: media_player.volume_set
+  - data:
+      data:
+        type: tts
+      target:
+      - media_player.all_alexa
+      message: Dinner is Ready
+    action: notify.alexa_media
+  - data:
+      entity_id:
+      - media_player.all_alexa
+      media_content_type: sound
+      media_content_id: amzn_sfx_doorbell_chime_01
+    action: media_player.play_media
+food_ready:
+  alias: food ready
+  sequence:
+  - data:
+      entity_id: media_player.all_alexa
+      volume_level: 0.8
+    action: media_player.volume_set
+  - data:
+      data:
+        type: tts
+      target:
+      - media_player.all_alexa
+      message: Food is ready
+    action: notify.alexa_media
+  mode: single
+bedtime:
+  alias: bedtime
+  sequence:
+  - data:
+      volume_level: 0.8
+    action: media_player.volume_set
+    target:
+      entity_id: media_player.all_alexa
+  - data:
+      data:
+        type: tts
+      target:
+      - media_player.all_alexa
+      message: Ve A Dormir
+    action: notify.alexa_media
+showers:
+  alias: showers
+  sequence:
+  - data:
+      entity_id: media_player.all_alexa
+      volume_level: 0.8
+    action: media_player.volume_set
+  - data:
+      data:
+        type: tts
+      target:
+      - media_player.all_alexa
+      message: Everyone Take Showers
+    action: notify.alexa_media
+send_tv_power:
+  sequence:
+  - data_template:
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD48B7"}'
+      topic: bedroomIR/cmnd/irSend
+    service: mqtt.publish
+  alias: TV Power
+send_tv_volup:
+  sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: bedroomIR/cmnd/irSend
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD58A7"}'
+send_tv_voldn:
+  sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: bedroomIR/cmnd/irSend
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FD7887"}'
+send_tv_input:
+  sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: bedroomIR/cmnd/irSend
+      payload: '{"Protocol":"NEC","Bits":32,"Data":"0x02FDF00F"}'
+send_string_rfcode:
+  description: Send a Command to the String RF device
+  sequence:
+  - data_template:
+      topic: cmnd/rf_bridge/rfraw
+      payload: "{% if command == \"off\" %}\n  AAB021030800FA028A16122818080818081818080808181808080808080808080808180855\n{%
+        elif command == \"on\" %}\n  AAB0230408010E026C00AA16303818080818081818080808181828080808080808080828281855\n{%
+        elif command == \"red\" %}\n  AAB021030800FA028A163A2818080818081818080808181808080808080808080818081855\n{%
+        elif command == \"green\" %}\n  #FFFF05\n{% elif command == \"blue\" %}\n
+        \ #FFFF06\n{% elif command == \"white\" %}\n  #FFFF07\n{% elif command ==
+        \"lime\" %}\n  #FFFF08\n{% elif command == \"cyan\" %}\n  #FFFF09\n{% elif
+        command == \"purple\" %}\n  #FFFF0A\n{% elif command == \"orange\" %}\n  #FFFF0B\n{%
+        elif command == \"dim_up\" %}\n  #FFFF0C\n{% elif command == \"dim_dn\" %}\n
+        \ #FFFF0F\n{% elif command == \"fade3\" %}\n  #FFFF0D\n{% elif command ==
+        \"jump3\" %}\n  #FFFF0E\n{% elif command == \"fade7\" %}\n  #FFFF10\n{% elif
+        command == \"jump7\" %}\n  #FFFF11\n{% elif command == \"auto\" %}\n  #FFFF13\n{%
+        elif command == \"flash\" %}\n  #FFFF14\n{% elif command == \"speed_up\" %}\n
+        \ #FFFF12\n{% elif command == \"speed_dn\" %}\n  #FFFF15\n{% else %}\n  eRRoR\n{%
+        endif %}\n"
+    action: mqtt.publish
+  alias: rfsend Command
+code_button:
+  variables:
+    codelength: 4
+    alarmpanel: alarm_control_panel.alarm
+    curr_code: string
+    armhomeservice: alarm_arm_home
+    armnightservice: alarm_arm_home
+    armawayservice: alarm_arm_away
+    armvacaservice: alarm_arm_away
+    disarmservice: alarm_disarm
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{(text == ''Arm Away'') and (states(alarmpanel) == ''disarmed'')}}'
+      sequence:
+      - data:
+          entity_id: alarm_control_panel.alarm
+          code: '{%- set code = namespace() -%}  {%- set code.value = states("input_number.alarmcode_"
+            ~ codelength)|int -%}  {%- for i in range(1,codelength) -%} {%- set code.value
+            =  code.value|int * 10 + (states("input_number.alarmcode_" ~ (codelength
+            - i))|int) -%} {%- endfor -%} {{code.value|int}}'
+        action: '{{''alarm_control_panel.'' ~ armawayservice}}'
+      - repeat:
+          count: '{{codelength}}'
+          sequence:
+          - data:
+              entity_id: input_number.alarmcode_{{repeat.index}}
+              value: -1
+            action: input_number.set_value
+    - conditions:
+      - condition: template
+        value_template: '{{(text == ''Arm Vaca'') and (states(alarmpanel) == ''disarmed'')}}'
+      sequence:
+      - data:
+          entity_id: alarm_control_panel.alarm
+          code: '{%- set code = namespace() -%}  {%- set code.value = states("input_number.alarmcode_"
+            ~ codelength)|int -%}  {%- for i in range(1,codelength) -%} {%- set code.value
+            =  code.value|int * 10 + (states("input_number.alarmcode_" ~ (codelength
+            - i))|int) -%} {%- endfor -%} {{code.value|int}}'
+        action: '{{''alarm_control_panel.'' ~ armawayservice}}'
+      - repeat:
+          count: '{{codelength}}'
+          sequence:
+          - data:
+              entity_id: input_number.alarmcode_{{repeat.index}}
+              value: -1
+            action: input_number.set_value
+    - conditions:
+      - condition: template
+        value_template: '{{(text == ''Arm Home'') and (states(alarmpanel) == ''disarmed'')}}'
+      sequence:
+      - data:
+          entity_id: alarm_control_panel.alarm
+          code: '{%- set code = namespace() -%}  {%- set code.value = states("input_number.alarmcode_"
+            ~ codelength)|int -%}  {%- for i in range(1,codelength) -%} {%- set code.value
+            =  code.value|int * 10 + (states("input_number.alarmcode_" ~ (codelength
+            - i))|int) -%} {%- endfor -%} {{code.value|int}}'
+        action: '{{''alarm_control_panel.'' ~ armhomeservice}}'
+      - repeat:
+          count: '{{codelength}}'
+          sequence:
+          - data:
+              entity_id: input_number.alarmcode_{{repeat.index}}
+              value: -1
+            action: input_number.set_value
+    - conditions:
+      - condition: template
+        value_template: '{{(text == ''Arm Night'') and (states(alarmpanel) == ''disarmed'')}}'
+      sequence:
+      - data:
+          entity_id: alarm_control_panel.alarm
+          code: '{%- set code = namespace() -%}  {%- set code.value = states("input_number.alarmcode_"
+            ~ codelength)|int -%}  {%- for i in range(1,codelength) -%} {%- set code.value
+            =  code.value|int * 10 + (states("input_number.alarmcode_" ~ (codelength
+            - i))|int) -%} {%- endfor -%} {{code.value|int}}'
+        action: '{{''alarm_control_panel.'' ~ armhomeservice}}'
+      - repeat:
+          count: '{{codelength}}'
+          sequence:
+          - data:
+              entity_id: input_number.alarmcode_{{repeat.index}}
+              value: -1
+            action: input_number.set_value
+    - conditions:
+      - condition: template
+        value_template: '{{text == ''Disarm'' }}'
+      sequence:
+      - data:
+          entity_id: alarm_control_panel.alarm
+          code: '{%- set code = namespace() -%}  {%- set code.value = states("input_number.alarmcode_"
+            ~ codelength)|int -%}  {%- for i in range(1,codelength) -%} {%- set code.value
+            =  code.value|int * 10 + (states("input_number.alarmcode_" ~ (codelength
+            - i))|int) -%} {%- endfor -%} {{code.value|int}}'
+        action: '{{''alarm_control_panel.'' ~ disarmservice}}'
+      - repeat:
+          count: '{{codelength}}'
+          sequence:
+          - data:
+              entity_id: input_number.alarmcode_{{repeat.index}}
+              value: -1
+            action: input_number.set_value
+    default:
+    - repeat:
+        count: '{{(codelength|int) - 1}}'
+        sequence:
+        - action: input_number.set_value
+          data:
+            entity_id: input_number.alarmcode_{{(codelength|int) - repeat.index +
+              1}}
+            value: '{{states("input_number.alarmcode_" ~ ((codelength|int) - repeat.index))|int}}'
+    - action: input_number.set_value
+      data:
+        entity_id: input_number.alarmcode_1
+        value: '{{text|int}}'
+  alias: code_button
+  description: ''
+play_youtube:
+  alias: Play YouTube
+  description: 'Living room: TV on and to HDMI 2 (via SmartThings), Denon to Apple
+    TV, then open YouTube on the Apple TV.'
+  icon: mdi:youtube
+  mode: single
+  sequence:
+  - action: media_player.turn_on
+    note: SmartThings (cloud) entity; the local Samsung integration can't power this
+      TV on.
+    target:
+      entity_id: media_player.living_room_television_3
+  - action: media_player.turn_on
+    target:
+      entity_id: media_player.denon_avr_x1700h_2
+  - continue_on_timeout: true
+    note: Continues immediately if the TV is already on.
+    timeout:
+      seconds: 30
+    wait_template: '{{ is_state(''media_player.living_room_television_3'', ''on'')
+      }}'
+  - if:
+    - condition: state
+      entity_id: media_player.living_room_television_3
+      state: 'off'
+    then:
+    - action: media_player.turn_on
+      note: Retry once if the TV ignored the first power-on (e.g. still shutting down).
+      target:
+        entity_id: media_player.living_room_television_3
+    - continue_on_timeout: true
+      timeout:
+        seconds: 30
+      wait_template: '{{ is_state(''media_player.living_room_television_3'', ''on'')
+        }}'
+  - delay:
+      seconds: 4
+    note: Let the TV finish booting before changing input.
+  - action: media_player.select_source
+    continue_on_error: true
+    data:
+      source: hdmi2
+    note: Denon is plugged into TV HDMI 2.
+    target:
+      entity_id: media_player.living_room_television_3
+  - action: media_player.select_source
+    data:
+      source: Apple TV
+    target:
+      entity_id: media_player.denon_avr_x1700h_2
+  - action: remote.turn_on
+    note: Wakes the Apple TV.
+    target:
+      entity_id: remote.living_room_living_room
+  - delay:
+      seconds: 4
+  - action: media_player.select_source
+    data:
+      source: YouTube
+    target:
+      entity_id: media_player.living_room_living_room
+living_room_media_off:
+  alias: Living Room Media Off
+  description: Turns off the living room Apple TV, Denon, and TV (TV via SmartThings).
+  icon: mdi:power
+  mode: single
+  sequence:
+  - action: remote.turn_off
+    continue_on_error: true
+    target:
+      entity_id: remote.living_room_living_room
+  - action: media_player.turn_off
+    continue_on_error: true
+    target:
+      entity_id: media_player.denon_avr_x1700h_2
+  - action: media_player.turn_off
+    continue_on_error: true
+    target:
+      entity_id: media_player.living_room_television_3
+play_youtube_samsung:
+  alias: Play YouTube on Samsung
+  description: 'Living room: TV on (SmartThings), Denon to TV Audio, then open the
+    Samsung''s built-in YouTube app via the TV''s local REST API.'
+  icon: mdi:youtube
+  mode: single
+  sequence:
+  - action: media_player.turn_on
+    target:
+      entity_id: media_player.living_room_television_3
+  - action: media_player.turn_on
+    target:
+      entity_id: media_player.denon_avr_x1700h_2
+  - continue_on_timeout: true
+    note: Continues immediately if the TV is already on.
+    timeout:
+      seconds: 30
+    wait_template: '{{ is_state(''media_player.living_room_television_3'', ''on'')
+      }}'
+  - if:
+    - condition: state
+      entity_id: media_player.living_room_television_3
+      state: 'off'
+    then:
+    - action: media_player.turn_on
+      note: Retry once if the TV ignored the first power-on.
+      target:
+        entity_id: media_player.living_room_television_3
+    - continue_on_timeout: true
+      timeout:
+        seconds: 30
+      wait_template: '{{ is_state(''media_player.living_room_television_3'', ''on'')
+        }}'
+  - action: media_player.select_source
+    data:
+      source: TV Audio
+    target:
+      entity_id: media_player.denon_avr_x1700h_2
+  - delay:
+      seconds: 5
+    note: Let the TV finish booting so its app API is listening.
+  - action: shell_command.samsung_tv_launch_youtube
+    note: POST to the TV's port 8001 API; YouTube app id 111299001912.
+denon_music_mode:
+  alias: Music mode
+  description: Denon to Multi Ch Stereo so every speaker plays music, rears included.
+  icon: mdi:music-note
+  mode: single
+  sequence:
+  - action: media_player.select_sound_mode
+    data:
+      sound_mode: MCH STEREO
+    target:
+      entity_id: media_player.denon_avr_x1700h_2
+denon_tv_mode:
+  alias: TV mode
+  description: 'Denon to Movie mode: true surround for 5.1 shows, Dolby Surround spread
+    for stereo, voices up front.'
+  icon: mdi:surround-sound
+  mode: single
+  sequence:
+  - action: media_player.select_sound_mode
+    data:
+      sound_mode: MOVIE
+    target:
+      entity_id: media_player.denon_avr_x1700h_2
+openhasp2_play_from_library:
+  alias: openhasp2 play from library
+  description: Called by the Living Room openHASP media page. Finds a Music Assistant
+    library item by name and plays it on the speaker picked on the plate, then closes
+    the browse panel.
+  fields:
+    media_type:
+      default: playlist
+      description: Music Assistant media type
+      selector:
+        select:
+          options:
+          - playlist
+          - album
+          - artist
+          - track
+          - radio
+    name:
+      description: Name of the playlist (as shown on the plate)
+      required: true
+      selector:
+        text: {}
+  icon: mdi:play-box-multiple
+  mode: restart
+  sequence:
+  - action: music_assistant.get_library
+    data:
+      config_entry_id: 01M6XSE4DCZ3Z8NPJR9MRAGHMX
+      limit: 25
+      media_type: '{{ media_type | default(''playlist'') }}'
+      search: '{{ name }}'
+    response_variable: lib
+  - variables:
+      match: '{{ ((lib[''items''] | selectattr(''name'', ''eq'', name) | list) + lib[''items''])
+        | first | default(none) }}'
+  - if:
+    - condition: template
+      value_template: '{{ match is not none and match.uri is defined }}'
+    then:
+    - action: music_assistant.play_media
+      data:
+        enqueue: replace
+        media_id: '{{ match.uri }}'
+        media_type: '{{ media_type | default(''playlist'') }}'
+      target:
+        entity_id: '{{ states(''input_select.openhasp2_speaker'') }}'
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.openhasp2_browse

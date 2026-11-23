@@ -1,0 +1,17 @@
+substitutions:
+  name: "konnected-56accc"
+  friendly_name: Mi Casa Alarm Panel 56accc
+packages:
+  konnected.alarm-panel-esp8266: github://konnected-io/konnected-esphome/alarm-panel-esp8266.yaml@master
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+api:
+  encryption:
+    key: !secret konnected_56accc_api_key
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password

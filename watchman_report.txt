@@ -1,0 +1,59 @@
+-== Watchman Report ==- 
+
+-== Missing 1 service(s) from 40 found in your config:
++--------------------------------------------------------------+---------+--------------------------------------------------------------+
+| Service ID                                                   | State   | Location                                                     |
++--------------------------------------------------------------+---------+--------------------------------------------------------------+
+| notify.alexa_media                                           | missing | scripts.yaml:14,28,48,63,77                                  |
++--------------------------------------------------------------+---------+--------------------------------------------------------------+
+
+-== Missing 39 entity(ies) from 83 found in your config:
++--------------------------------------------------------------+---------+--------------------------------------------------------------+
+| Entity ID                                                    | State   | Location                                                     |
++--------------------------------------------------------------+---------+--------------------------------------------------------------+
+| group.house_alexa                                            | missing | scripts.yaml:6,11,20,26,33,38,46,53,61,68,75,82              |
+| light.bedroom_lights                                         | unknown | scripts.yaml:118                                             |
+| light.string_lights                                          | unavail | scripts.yaml:119                                             |
+| light.piano_room                                             | unknown | openhasp.yaml:73,74,78,81,81,86,91,96,97,104,1018,1021,1031  |
+| light.livingroom_overhead                                    | unknown | openhasp.yaml:109,110,114,117,117,122,127,132,133,140,1037,1 |
+|                                                              |         | 040,1050                                                     |
+| light.my_lamp                                                | unknown | openhasp.yaml:841,844,851,857,857,862,867                    |
+| light.foyer_overhead                                         | unknown | openhasp.yaml:961,964,971                                    |
+| input_select.remote                                          | missing | yaml_lovelace.yaml:30,37,43                                  |
+| sensor.shield_app                                            | missing | yaml_lovelace.yaml:70,100,128                                |
+| light.living_room_overhead_1                                 | unknown | scenes.yaml:24                                               |
+| light.living_room_overhead_2                                 | unknown | scenes.yaml:49                                               |
+| alarm_control_panel.home                                     | missing | configuration.yaml:22                                        |
+| binary_sensor.upstairs_halwayy_motion                        | missing | mqtt.yaml:18                                                 |
+| group.kids_electronics                                       | missing | automations.yaml:19,41,58                                    |
+| input_datetime.weekend_nights_off                            | missing | automations.yaml:48                                          |
+| group.foyer                                                  | missing | automations.yaml:213,217,221,555,559,563                     |
+| switch.turkish_lamp                                          | unknown | automations.yaml:266,271,689,694                             |
+| media_player.nathaly_vasquez_ruizs_library                   | missing | automations.yaml:461,897                                     |
+| light.kitchen_recessed                                       | missing | automations.yaml:746                                         |
+| light.garage_entry                                           | unknown | automations.yaml:908                                         |
+| light.living_room_overhead                                   | missing | automations.yaml:938                                         |
+| binary_sensor.livinghasp_motion                              | unknown | automations.yaml:950                                         |
+| binary_sensor.upstairs_hallway_motion                        | unknown | automations.yaml:1061,1075                                   |
+| binary_sensor.bedroom_tv_on                                  | unavail | 00_packages/integrations/smartir.yaml:10                     |
+| sensor.bedroomtvmonitor_energy_power                         | unknown | config_folders/binary_sensors/power_monitors.yaml:6          |
+| sensor.livingtvmonitor_energy_power                          | unavail | config_folders/binary_sensors/power_monitors.yaml:12         |
+| sensor.projectormonitor_energy_power                         | unavail | config_folders/binary_sensors/power_monitors.yaml:18         |
+| sensor.plug_monitor_3_energy_power                           | unavail | config_folders/binary_sensors/power_monitors.yaml:24         |
+| switch.alarm                                                 | unknown | config_folders/automations/alarm.yaml:57,69                  |
+| binary_sensor.pantry_door                                    | missing | config_folders/automations/other.yaml:36                     |
+| light.turtle_light                                           | unavail | config_folders/automations/other.yaml:58,69                  |
+| sensor.grid_import_power                                     | missing | config_folders/sensors/energy.yaml:4                         |
+| sensor.grid_export_power                                     | missing | config_folders/sensors/energy.yaml:11                        |
+| switch.patiodisco                                            | unavail | config_folders/scripts/other_scripts.yaml:6,20               |
+| switch.patiofan                                              | unavail | config_folders/scripts/other_scripts.yaml:9,23               |
+| media_player.adults                                          | missing | config_folders/scripts/other_scripts.yaml:12,26              |
+| switch.living_room_lamp                                      | unknown | config_folders/lights/light_groups.yaml:6                    |
+| media_player.MediaPlayerEntityFeature                        | missing | custom_components/mass/services.yaml:9,40,63,64              |
+| weather.home                                                 | missing | blueprints/automation/HASwitchPlate/hasp_Display_Template.ya |
+|                                                              |         | ml:135                                                       |
++--------------------------------------------------------------+---------+--------------------------------------------------------------+
+
+-== Report created on 22 Sep 2024 18:28:35
+-== Parsed 102 files in 15.98s., ignored 0 files 
+-== Generated in: 0.10s. Validated in: 0.00s.

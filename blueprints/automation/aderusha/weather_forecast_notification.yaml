@@ -1,0 +1,65 @@
+blueprint:
+  name: Weather forecast notification
+  domain: automation
+  input:
+    weather_provider:
+      name: Weather provider
+      description: Select the weather provider to obtain the forecast
+      selector:
+        entity:
+          domain:
+          - weather
+          multiple: false
+    forecast_interval:
+      name: Forecast interval
+      description: Forecast interval, one of "hourly", "twice daily", or "daily".
+        Not all intervals are available for all providers.
+      default: daily
+      selector:
+        select:
+          options:
+          - hourly
+          - twice_daily
+          - daily
+          sort: false
+          multiple: false
+          custom_value: false
+    forecast_index:
+      name: Forecast index
+      description: Select a specific forecast, the current time interval will be index
+        "0". Increment this number for future forecasts based on the interval above.
+        For example, a "daily" interval with index 2 will be the daily forecast 2
+        days from now
+      default: 0
+      selector:
+        number:
+          min: 0.0
+          max: 48.0
+          mode: slider
+          unit_of_measurement: index
+          step: 1.0
+    forecast_attribute:
+      name: Enter the desired forecast attribute
+      description: Type in the name of the desired forecast attribute for your provider.
+        "condition" is a common attribute for many providers.
+      default: condition
+      selector:
+        text: {}
+  source_url: https://gist.github.com/aderusha/ed5bfe80622ec08feaca2a8986ae688a
+variables:
+  weather_provider: !input weather_provider
+  forecast_interval: !input forecast_interval
+  forecast_index: !input forecast_index
+  forecast_attribute: !input forecast_attribute
+trigger:
+action:
+- service: weather.get_forecasts
+  target:
+    entity_id: !input weather_provider
+  data:
+    type: '{{forecast_interval}}'
+  response_variable: weather_forecast
+- service: notify.persistent_notification
+  data:
+    title: Weather Forecast
+    message: 'Forecast: {{ weather_forecast }}'

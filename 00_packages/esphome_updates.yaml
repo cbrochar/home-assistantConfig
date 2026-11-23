@@ -1,0 +1,52 @@
+rest:
+- resource: https://pypi.org/pypi/esphome/json
+  scan_interval: 21600
+  sensor:
+  - name: ESPHome latest version
+    unique_id: esphome_latest_version
+    icon: mdi:new-box
+    value_template: "{{ value_json.info.version }}"
+template:
+- sensor:
+  - name: ESPHome devices needing update
+    unique_id: esphome_devices_needing_update
+    icon: mdi:update
+    unit_of_measurement: devices
+    state: >
+      {% from 'esphome_updates.jinja' import esphome_outdated %}
+      {% set s = esphome_outdated() | trim %}
+      {{ s.split(', ') | count if s else 0 }}
+    attributes:
+      devices: >
+        {% from 'esphome_updates.jinja' import esphome_outdated %}
+        {{ esphome_outdated() | trim or 'none' }}
+      latest_version: "{{ states('sensor.esphome_latest_version') }}"
+- update:
+  - name: Garage ESPHome firmware
+    unique_id: esphome_fw_garage
+    device_class: firmware
+    title: ESPHome
+    installed_version: "{% from 'esphome_updates.jinja' import esphome_fw %}{{ esphome_fw('binary_sensor.ratgdov25i_120684_motion') | trim }}"
+    latest_version: "{{ states('sensor.esphome_latest_version') }}"
+    release_url: https://esphome.io/changelog/
+  - name: Mi Casa Alarm Panel ESPHome firmware
+    unique_id: esphome_fw_alarm_panel
+    device_class: firmware
+    title: ESPHome
+    installed_version: "{% from 'esphome_updates.jinja' import esphome_fw %}{{ esphome_fw('binary_sensor.konnected_56accc_56accc_zone_1') | trim }}"
+    latest_version: "{{ states('sensor.esphome_latest_version') }}"
+    release_url: https://esphome.io/changelog/
+  - name: Energymonitor ESPHome firmware
+    unique_id: esphome_fw_energymonitor
+    device_class: firmware
+    title: ESPHome
+    installed_version: "{% from 'esphome_updates.jinja' import esphome_fw %}{{ esphome_fw('sensor.energymonitor_house_kwh') | trim }}"
+    latest_version: "{{ states('sensor.esphome_latest_version') }}"
+    release_url: https://esphome.io/changelog/
+  - name: Motion Switch 1 ESPHome firmware
+    unique_id: esphome_fw_motion_switch_1
+    device_class: firmware
+    title: ESPHome
+    installed_version: "{% from 'esphome_updates.jinja' import esphome_fw %}{{ esphome_fw('switch.guest_bathroom_light') | trim }}"
+    latest_version: "{{ states('sensor.esphome_latest_version') }}"
+    release_url: https://esphome.io/changelog/

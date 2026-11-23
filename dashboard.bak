@@ -1,0 +1,1350 @@
+animated_background:
+  default_url: 'https://cdn.flixel.com/flixel/ypy8bw9fgw1zv2b4htp2.hd.mp4'
+  entity: weather.ecobee
+  included_users:
+    - Chad
+  state_url:
+    clear-night:
+      - 'https://cdn.flixel.com/flixel/x9dr8caygivq5secll7i.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/v26zyfd6yf0r33s46vpe.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/ypy8bw9fgw1zv2b4htp2.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/rosz2gi676xhkiw1ut6i.hd.mp4'
+    cloudy:
+      - 'https://cdn.flixel.com/flixel/13e0s6coh6ayapvdyqnv.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/aorl3skmssy7udwopk22.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/qed6wvf2igukiioykg3r.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/3rd72eezaj6d23ahlo7y.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/9m11gd43m6qn3y93ntzp.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/hrkw2m8eofib9sk7t1v2.hd.mp4'
+    fog:
+      - 'https://cdn.flixel.com/flixel/vwqzlk4turo2449be9uf.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/5363uhabodwwrzgnq6vx.hd.mp4'
+    mostlycloudy:
+      - 'https://cdn.flixel.com/flixel/e95h5cqyvhnrk4ytqt4q.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/l2bjw34wnusyf5q2qq3p.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/rrgta099ulami3zb9fd2.hd.mp4'
+    partlycloudy:
+      - 'https://cdn.flixel.com/flixel/13e0s6coh6ayapvdyqnv.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/aorl3skmssy7udwopk22.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/qed6wvf2igukiioykg3r.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/3rd72eezaj6d23ahlo7y.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/9m11gd43m6qn3y93ntzp.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/hrkw2m8eofib9sk7t1v2.hd.mp4'
+    rainy: 'https://cdn.flixel.com/flixel/f0w23bd0enxur5ff0bxz.hd.mp4'
+    sunny:
+      - 'https://cdn.flixel.com/flixel/hlhff0h8md4ev0kju5be.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/zjqsoc6ecqhntpl5vacs.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/jvw1avupguhfbo11betq.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/8cmeusxf3pkanai43djs.hd.mp4'
+      - 'https://cdn.flixel.com/flixel/guwb10mfddctfvwioaex.hd.mp4'
+custom_header:
+  active_tab_color: var(--state-icon-active-color)
+  background: var(--app-header-background-color)
+  compact_mode: true
+  elements_color: var(--app-header-text-color)
+  exceptions:
+    - conditions:
+        user: Logan
+      config:
+        default_tab: logan
+        hide_config: true
+        hide_help: true
+        hide_raw: true
+        hide_tabs: logan
+        hide_unused: true
+        menu_hide: true
+  menu_dropdown: true
+  tab_indicator_color: var(--state-icon-active-color)
+title: Mi Casa
+views:
+  - icon: 'mdi:home'
+    panel: false
+    path: default_view
+    theme: Google Dark Theme
+    title: Home
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+    badges:
+      - entity: person.chad
+      - entity: person.logan
+      - entity: person.nathaly
+      - entity: sensor.kitchen_temperature
+    cards:
+      - entity: weather.ecobee
+        type: weather-forecast
+      - type: 'custom:search-card'
+        max_results: 10
+      - columns: 3
+        entities:
+          - entity: light.bedroom_lights
+          - entity: light.ridge
+          - entity: light.colored_lights
+          - entity: light.foyer_overhead
+          - entity: light.living_room_lamp
+          - entity: light.turkish_lamp
+        title: Lights
+        type: glance
+      - type: alarm-panel
+        states:
+          - arm_home
+          - arm_away
+        entity: alarm_control_panel.alarm
+        name: Home Alarm
+        theme: Dark Turqoise
+      - card:
+          title: Lights On
+          type: glance
+        columns: 3
+        entities:
+          - entity: light.living_room_lamp
+            tap_action:
+              action: toggle
+          - entity: light.turkish_lamp
+            tap_action:
+              action: toggle
+          - entity: light.kitchen_recessed
+            tap_action:
+              action: toggle
+          - entity: light.kitchen_recessed_2
+            tap_action:
+              action: toggle
+          - entity: light.kitchen_table
+            tap_action:
+              action: toggle
+          - entity: light.front_entry
+            tap_action:
+              action: toggle
+          - entity: light.foyer_recessed
+            tap_action:
+              action: toggle
+          - entity: light.foyer_overhead
+            tap_action:
+              action: toggle
+          - entity: light.dining
+            tap_action:
+              action: toggle
+        state_filter:
+          - 'on'
+        type: entity-filter
+      - artwork: cover
+        entity: media_player.everywhere
+        hide_power: true
+        tts:
+          entity_id:
+            - group.house_alexa
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - entity: climate.ecobee
+        type: thermostat
+      - artwork: cover
+        entity: media_player.nathaly_vasquez_ruizs_library
+        hide_power: true
+        type: 'custom:mini-media-player'
+      - entities:
+          - entity: input_boolean.notify_home
+        show_header_toggle: false
+        title: Home/Away
+        type: entities
+      - ip: 192.168.0.39/
+        title: Ridge
+        topic: wled/3d3345
+        type: 'custom:wled-control-card'
+      - card:
+          title: Televisions On
+          type: glance
+        columns: 3
+        entities:
+          - entity: binary_sensor.daneila_tv_on
+            tap_action:
+              action: toggle
+          - entity: binary_sensor.bedroom_tv_on
+            tap_action:
+              action: toggle
+          - entity: media_player.main_tv
+            tap_action:
+              action: toggle
+          - entity: binary_sensor.projector_on
+            tap_action:
+              action: toggle
+        state_filter:
+          - 'on'
+        type: entity-filter
+      - artwork: cover
+        entity: media_player.kitchen_echo
+        hide_power: true
+        tts:
+          entity_id: media_player.kitchen_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - type: entities
+        entities:
+          - binary_sensor.front_door_ding
+          - sensor.front_door_last_activity
+          - sensor.front_door_last_ding
+          - sensor.front_door_last_motion
+          - binary_sensor.front_door_motion_2
+          - sensor.front_door_volume
+      - type: picture-entity
+        entity: camera.front_door
+      - type: entities
+        entities:
+          - vacuum.rosie
+      - type: entities
+        entities:
+          - vacuum.wall_e
+      - type: media-control
+        entity: media_player.itunes
+      - type: entities
+        entities:
+          - binary_sensor.bedroom_windows
+          - binary_sensor.front_and_garage_door
+          - binary_sensor.great_room_windows
+          - binary_sensor.kitchen_motion
+          - binary_sensor.kitchen_windows
+          - binary_sensor.living_dining_rm_windows
+      - type: entity
+        entity: light.front_entry
+      - type: entities
+        entities:
+          - cover.garage_door
+      - type: entities
+        entities:
+          - lock.yale_door_lock_2
+  - icon: 'mdi:television'
+    path: living-room
+    theme: Google Dark Theme
+    title: Living Room
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+    badges: []
+    cards:
+      - entities:
+          - entity: light.kitchen_recessed
+            tap_action:
+              action: toggle
+          - entity: light.kitchen_recessed_2
+          - entity: light.dining_table
+        title: Lights
+        type: glance
+      - entities:
+          - customTheme: false
+            entity: fan.sonoff_100092e2b2
+            name: Living Room Fan
+            type: 'custom:fan-control-entity-row'
+        show_header_toggle: false
+        type: entities
+      - entity: media_player.living_room_sound_bar_2
+        hide:
+          controls: true
+          play_pause: true
+        type: 'custom:mini-media-player'
+      - type: entities
+        entities:
+          - remote.apple_tv
+      - type: media-control
+        entity: media_player.apple_tv
+      - type: entities
+        entities:
+          - switch.livingroom_tv
+          - sensor.livingroom_tv_media_input_source
+          - sensor.livingroom_tv_media_playback_status
+          - sensor.livingroom_tv_tv_channel
+          - sensor.livingroom_tv_tv_channel_name
+          - sensor.livingroom_tv_volume
+  - icon: 'mdi:bed-king'
+    theme: Google Dark Theme
+    title: Bedroom
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+    badges:
+      - entity: binary_sensor.bedroom_occupancy
+      - entity: sensor.bedroom_temperature
+    cards:
+      - entities:
+          - entity: light.masteroverhead2
+            name: Lamp
+          - entity: light.master_overhead1_1
+          - entity: light.masteroverhead2_2
+          - entity: light.bedroom_lights
+        title: Lights
+        type: entities
+      - artwork: cover
+        entity: media_player.bedroom_echo_show
+        hide_power: true
+        tts:
+          entity_id: media_player.bedroom_echo_show
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - artwork: cover
+        entity: media_player.master_tv
+        hide_power: false
+        type: 'custom:mini-media-player'
+      - artwork: cover
+        entity: media_player.bedroom_echo
+        hide_power: true
+        tts:
+          entity_id: media_player.bedroom_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - type: media-control
+        entity: media_player.bedroom_39
+      - type: entities
+        entities:
+          - entity: light.master_fan
+          - entity: fan.master_fan
+  - icon: 'mdi:desk'
+    path: office
+    theme: Google Dark Theme
+    title: Office
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+    badges:
+      - entity: sensor.office_temperature
+    cards:
+      - artwork: cover
+        entity: media_player.extra_echo
+        hide_power: true
+        tts:
+          entity_id: media_player.extra_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - entity: light.dimmer
+        type: light
+      - artwork: cover
+        entity: media_player.broken_echo
+        hide_power: true
+        tts:
+          entity_id:
+            - media_player.broken_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - entities:
+          - entity: automation.turn_on_office_light_when_there_is_movement
+          - entity: light.dimmer
+        show_header_toggle: false
+        type: entities
+      - entities:
+          - light.officehasp_backlight
+        show_header_toggle: false
+        title: officehasp Backlight
+        type: entities
+      - type: entities
+        entities:
+          - sensor.hp_envy_pro_6400_series
+          - sensor.hp_envy_pro_6400_series_black_cartridge
+          - sensor.hp_envy_pro_6400_series_tri_color_cartridge
+  - badges: []
+    cards:
+      - entities:
+          - entity: switch.patiodisco
+          - entity: switch.patiofan
+        show_header_toggle: false
+        title: Patio Party
+        type: entities
+      - entities:
+          - entity: light.string_lights
+          - entity: switch.backyard_lights
+          - entity: light.barn1
+          - entity: light.barn2
+          - entity: light.barn3
+        title: Lights
+        type: entities
+      - elements:
+          - image: /local/string_lights_remote/script.send_string_auto.png
+            style:
+              left: 25%
+              top: 90%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: auto
+            type: image
+          - image: /local/string_lights_remote/script.send_string_flash.png
+            style:
+              left: 50%
+              top: 90%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: flash
+            type: image
+          - image: /local/string_lights_remote/script.send_string_speed_dn.png
+            style:
+              left: 75%
+              top: 90%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: speed_dn
+            type: image
+          - image: /local/string_lights_remote/script.send_string_fade7.png
+            style:
+              left: 25%
+              top: 77.5%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: fade7
+            type: image
+          - image: /local/string_lights_remote/script.send_string_jump7.png
+            style:
+              left: 50%
+              top: 77.5%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: jump7
+            type: image
+          - image: /local/string_lights_remote/script.send_string_speed_up.png
+            style:
+              left: 75%
+              top: 77.5%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: speed_up
+            type: image
+          - image: /local/string_lights_remote/script.send_string_fade3.png
+            style:
+              left: 25%
+              top: 65%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: fade3
+            type: image
+          - image: /local/string_lights_remote/script.send_string_jump3.png
+            style:
+              left: 50%
+              top: 65%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: jump3
+            type: image
+          - image: /local/string_lights_remote/script.send_string_dim_dn.png
+            style:
+              left: 75%
+              top: 65%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: dim_dn
+            type: image
+          - image: /local/string_lights_remote/script.send_string_purple.png
+            style:
+              left: 25%
+              top: 52.5%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: purple
+            type: image
+          - image: /local/string_lights_remote/script.send_string_orange.png
+            style:
+              left: 50%
+              top: 52.5%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: orange
+            type: image
+          - image: /local/string_lights_remote/script.send_string_dim_up.png
+            style:
+              left: 75%
+              top: 52.5%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: dim_up
+            type: image
+          - image: /local/string_lights_remote/script.send_string_white.png
+            style:
+              left: 25%
+              top: 40%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: white
+            type: image
+          - image: /local/string_lights_remote/script.send_string_lime.png
+            style:
+              left: 50%
+              top: 40%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: lime
+            type: image
+          - image: /local/string_lights_remote/script.send_string_cyan.png
+            style:
+              left: 75%
+              top: 40%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: cyan
+            type: image
+          - image: /local/string_lights_remote/script.send_string_red.png
+            style:
+              left: 25%
+              top: 27.5%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: red
+            type: image
+          - image: /local/string_lights_remote/script.send_string_green.png
+            style:
+              left: 50%
+              top: 27.55%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: green
+            type: image
+          - image: /local/string_lights_remote/script.send_string_blue.png
+            style:
+              left: 75%
+              top: 27.5%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: blue
+            type: image
+          - image: /local/string_lights_remote/script.send_string_on.png
+            style:
+              left: 25%
+              top: 15%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: 'on'
+            type: image
+          - entity: switch.backyard_lights
+            image: /local/string_lights_remote/switch.backyard_lights.png
+            style:
+              left: 50%
+              top: 15%
+            tap_action:
+              action: toggle
+            type: image
+          - image: /local/string_lights_remote/script.send_string_off.png
+            style:
+              left: 75%
+              top: 15%
+            tap_action:
+              action: call-service
+              service: script.send_string_rfcode
+              service_data:
+                command: 'off'
+            type: image
+        image: local\string_lights_remote\background.png
+        type: picture-elements
+      - artwork: cover
+        entity: media_player.firetvbox
+        hide_power: true
+        tts:
+          entity_id: media_player.firetvbox
+          platform: cast
+        type: 'custom:mini-media-player'
+      - entity: media_player.firetvbox
+        type: media-control
+      - entity: media_player.projector
+        type: media-control
+      - entities:
+          - switch.led_power
+          - binary_sensor.led_power_switch1
+          - sensor.led_power_status
+        type: entities
+    icon: 'mdi:grill'
+    path: backyard
+    theme: Google Dark Theme
+    title: Backyard
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+  - badges: []
+    cards:
+      - entities:
+          - entity: light.david_lamp
+        title: Lights
+        type: entities
+      - entities:
+          - entity: light.logan1
+          - entity: light.logan2
+          - entity: light.sonoff_1000991392
+        title: Logans Lights
+        type: entities
+      - entities:
+          - entity: light.vanessa1
+          - entity: light.vanessa2
+          - entity: light.vanessa3
+          - entity: light.vanessa4
+        title: Vanessa's Lights
+        type: entities
+      - entities:
+          - entity: light.turtle_light
+          - entity: light.daniela1_2
+          - entity: light.daniela2_2
+          - entity: light.daniela3_2
+          - entity: light.daniela4_2
+          - entity: light.daniela5_2
+        title: Daniela
+        type: entities
+      - entity: media_player.mibox
+        type: media-control
+      - entities:
+          - binary_sensor.plug_monitor_3_button1
+          - switch.plug_monitor_3
+          - sensor.plug_monitor_3_energy_apparentpower
+          - sensor.plug_monitor_3_energy_current
+          - sensor.plug_monitor_3_energy_factor
+          - sensor.plug_monitor_3_energy_power
+          - sensor.plug_monitor_3_energy_reactivepower
+          - sensor.plug_monitor_3_energy_today
+          - sensor.plug_monitor_3_energy_total
+          - sensor.plug_monitor_3_energy_totalstarttime
+          - sensor.plug_monitor_3_energy_voltage
+          - sensor.plug_monitor_3_energy_yesterday
+          - sensor.plug_monitor_3_status
+        type: entities
+    icon: 'mdi:human-child'
+    path: kidssroom
+    theme: Google Dark Theme
+    title: Kids Rooms
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+  - badges: []
+    cards:
+      - entities:
+          - entity: automation.pantry_door_alarm
+          - entity: automation.homeschool_schedules
+          - entity: automation.homeschool_logan_2
+          - entity: automation.homeschool_logan_3
+          - entity: automation.homeschool_logan_4
+          - entity: automation.homeschool_logan_5
+          - entity: automation.homeschool_logan_7
+          - entity: automation.homeschool_daniela_1
+          - entity: automation.homeschool_daniela_2
+          - entity: automation.homeschool_daniela_3
+          - entity: automation.homeschool_daniela_4
+          - entity: automation.homeschool_daniela_5
+          - entity: automation.homeschool_daniela_6
+          - entity: automation.homeschool_test
+        title: Announcements
+        type: entities
+    icon: 'mdi:school'
+    path: homeschool
+    theme: Google Dark Theme
+    title: HomeSchool
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+  - badges: []
+    cards:
+      - camera_image: '  camera.anycubici3_camera'
+        camera_view: live
+        entity: camera.anycubici3_camera
+        image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+        name: Camera View
+        show_name: false
+        show_state: false
+        style: |
+          ha-card {
+             transform: rotate(180deg);
+            }
+        type: picture-entity
+      - entities:
+          - entity: binary_sensor.anycubici3_printing
+          - entity: binary_sensor.anycubici3_printing_error
+          - entity: sensor.anycubici3_current_state
+          - entity: sensor.anycubici3_job_percentage
+          - entity: sensor.anycubici3_time_elapsed
+          - entity: sensor.anycubici3_time_remaining
+          - entity: sensor.anycubici3_actual_bed_temp
+          - entity: sensor.anycubici3_actual_tool0_temp
+        title: Anycubic
+        type: entities
+      - entities:
+          - entity: sensor.anycubici3_actual_bed_temp
+          - entity: sensor.anycubici3_actual_tool0_temp
+        hours_to_show: 1
+        refresh_interval: 0
+        title: Anycubic Printer
+        type: history-graph
+    icon: 'mdi:printer'
+    path: 3d-printer
+    theme: Google Dark Theme
+    title: 3d_printer
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+  - badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: entity
+            entity: input_text.alexatesttextinput
+          - type: entity
+            entity: input_select.alexatestinputselect
+      - entities:
+          - entity: input_boolean.zigbee_permit_join
+          - entity: timer.zigbee_permit_join
+          - entity: sensor.bridge_state
+        show_header_toggle: false
+        title: Zigbee
+        type: entities
+      - cards:
+          - hold_action:
+              action: call-service
+              service: homeassistant.restart
+            icon: 'mdi:reload'
+            icon_height: 75px
+            name: Restart HA
+            tap_action:
+              action: call-service
+              service: homeassistant.check_config
+            type: button
+          - hold_action:
+              action: none
+            icon: 'mdi:head-sync-outline'
+            icon_height: 75px
+            name: Reload AutoM
+            tap_action:
+              action: call-service
+              service: automation.reload
+            type: button
+        type: horizontal-stack
+      - elements:
+          - image: /local/RemotePNG/goodnight_bedroom.png
+            style:
+              left: 25%
+              top: 15%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.goodnight_bedroom
+            type: image
+          - image: /local/RemotePNG/tv_input.png
+            style:
+              left: 50%
+              top: 15%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_input
+            type: image
+          - image: /local/RemotePNG/power.png
+            style:
+              left: 75%
+              top: 15%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_power
+            type: image
+          - image: /local/RemotePNG/1.png
+            style:
+              left: 25%
+              top: 22.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_1
+            type: image
+          - image: /local/RemotePNG/2.png
+            style:
+              left: 50%
+              top: 22.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_2
+            type: image
+          - image: /local/RemotePNG/3.png
+            style:
+              left: 75%
+              top: 22.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_3
+            type: image
+          - image: /local/RemotePNG/4.png
+            style:
+              left: 25%
+              top: 30%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_4
+            type: image
+          - image: /local/RemotePNG/5.png
+            style:
+              left: 50%
+              top: 30%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_5
+            type: image
+          - image: /local/RemotePNG/6.png
+            style:
+              left: 75%
+              top: 30%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_6
+            type: image
+          - image: /local/RemotePNG/7.png
+            style:
+              left: 25%
+              top: 37.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_7
+            type: image
+          - image: /local/RemotePNG/8.png
+            style:
+              left: 50%
+              top: 37.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_8
+            type: image
+          - image: /local/RemotePNG/9.png
+            style:
+              left: 75%
+              top: 37.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_9
+            type: image
+          - image: /local/RemotePNG/-.png
+            style:
+              left: 25%
+              top: 45%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_-
+            type: image
+          - image: /local/RemotePNG/0.png
+            style:
+              left: 50%
+              top: 45%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_0
+            type: image
+          - image: /local/RemotePNG/enter.png
+            style:
+              left: 75%
+              top: 45%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_ent
+            type: image
+          - image: /local/RemotePNG/blue.png
+            style:
+              left: 20%
+              top: 52.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_blue
+            type: image
+          - image: /local/RemotePNG/script.yellow.png
+            style:
+              left: 40%
+              top: 52.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_yellow
+            type: image
+          - image: /local/RemotePNG/green.png
+            style:
+              left: 60%
+              top: 52.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_green
+            type: image
+          - image: /local/RemotePNG/red.png
+            style:
+              left: 80%
+              top: 52.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_tv_red
+            type: image
+          - image: /local/RemotePNG/chanup.png
+            style:
+              left: 20%
+              top: 62.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_chanup
+            type: image
+          - image: /local/RemotePNG/chandn.png
+            style:
+              left: 20%
+              top: 77.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_chandn
+            type: image
+          - image: /local/RemotePNG/script.volup.png
+            style:
+              left: 80%
+              top: 62.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_volup
+            type: image
+          - image: /local/RemotePNG/voldn.png
+            style:
+              left: 80%
+              top: 77.5%
+              width: 20%
+            tap_action:
+              action: call-service
+              service: script.send_voldn
+            type: image
+        image: /local/RemotePNG/remote.png
+        type: picture-elements
+    icon: 'mdi:script'
+    path: development
+    theme: Google Dark Theme
+    title: Development
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+  - badges:
+      - entity: sensor.kulpcontroller_branch
+      - entity: sensor.kulpcontroller_version
+      - entity: sensor.kulpcontroller_status
+      - entity: sensor.kulpcontroller_position_status
+      - entity: sensor.kulpcontroller_name_status
+      - entity: sensor.kulpcontroller_repeat_status
+      - entity: sensor.kulpcontroller_section_status
+      - entity: sensor.kulpcontroller_section_position_status
+      - entity: sensor.kulpcontroller_sequence_status
+      - entity: sensor.kulpcontroller_media_title
+      - entity: sensor.kulpcontroller_media_status
+      - entity: sensor.kulpcontroller_media_artist
+      - entity: sensor.kulpcontroller_playlist_details
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.kulpcontroller_status
+          - entity: sensor.kulpcontroller_name_status
+          - entity: sensor.kulpcontroller_media_status
+        title: FPP Staus
+      - type: entities
+        entities:
+          - input_select.playlists
+      - cards:
+          - entity: script.falconplayer_start_playlist
+            icon: 'mdi:play'
+            name: Play
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.falconplayer_start_playlist
+            type: entity-button
+          - entity: script.falconplayer_stop_now
+            icon: 'mdi:stop'
+            name: Stop
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.falconplayer_stop_now
+            type: entity-button
+          - entity: script.falconplayer_prev_seq
+            icon: 'mdi:skip-previous'
+            name: Previous
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.falconplayer_prev_seq
+            type: entity-button
+          - entity: script.falconplayer_next_seq
+            icon: 'mdi:skip-next'
+            name: Next
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.falconplayer_next_seq
+            type: entity-button
+          - entity: script.falconplayer_repeat
+            icon: 'mdi:repeat'
+            name: Repeat
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.falconplayer_repeat
+            type: entity-button
+          - entity: script.falconplayer_repeat_off
+            icon: 'mdi:repeat-off'
+            name: Repeat Off
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.falconplayer_repeat_off
+            type: entity-button
+        title: Falcon Player Control
+        type: horizontal-stack
+      - entities:
+          - entity: switch.led_power
+            title: LED Power
+        type: entities
+      - entities:
+          - sensor.ridge_estimated_current
+          - switch.ridge_nightlight
+          - switch.ridge_sync_receive
+          - switch.ridge_sync_send
+        type: entities
+      - entity: light.ridge_2
+        type: light
+    icon: 'mdi:pine-tree'
+    path: christmas-lights
+    theme: Google Dark Theme
+    title: Christmas Lights
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+  - title: Network
+    path: network
+    icon: 'mdi:lan'
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+    badges: []
+    cards:
+      - type: entities
+        entities:
+          - entity: switch.danielas_iphone
+          - entity: switch.laptop_6fidhk1u
+          - entity: switch.desktop_t0dr5gk
+          - entity: switch.danielas_ipad
+          - entity: switch.logans_laptop
+          - entity: switch.logans_iphone
+          - entity: switch.iphone
+          - entity: switch.ipad
+      - artwork: cover
+        entity: media_player.daniela_s_echo
+        hide_power: true
+        tts:
+          entity_id: media_player.daniela_s_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - artwork: cover
+        entity: media_player.davids_echo
+        hide_power: true
+        tts:
+          entity_id: media_player.davids_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - artwork: cover
+        entity: media_player.logans_echo
+        hide_power: true
+        tts:
+          entity_id: media_player.logans_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - artwork: cover
+        entity: media_player.vanessa_echo
+        hide_power: true
+        tts:
+          entity_id: media_player.vanessa_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+      - type: vertical-stack
+        cards:
+          - type: entities
+            entities:
+              - entity: input_datetime.school_nights_off
+              - entity: input_datetime.school_nights_on
+              - entity: input_datetime.weekend_night_off
+  - icon: 'mdi:emoticon-wink'
+    path: nathaly
+    theme: Google Dark Theme
+    title: Nathaly
+    visible:
+      - user: 837a5523500842daa826b11517f06247
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+    badges: []
+    cards:
+      - cards:
+          - entities:
+              - entity: light.kitchen_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.living_room_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.danielas_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+            title: Lights
+            type: glance
+          - entities:
+              - entity: light.patio
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.dimmer
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.barn_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+            type: glance
+          - entities:
+              - entity: light.bedroom_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.vanessas_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.gym_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+            type: glance
+          - entities:
+              - entity: light.upstairs_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.downstairs_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.all_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.colored_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+            type: glance
+          - entities:
+              - entity: switch.backyard_lights
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: light.ridge
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - entity: switch.patiodisco
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+            type: glance
+        type: vertical-stack
+      - entity: climate.ecobee
+        type: thermostat
+      - entity: weather.ecobee
+        type: weather-forecast
+      - hold_action:
+          action: more-info
+        icon: 'mdi:earth'
+        icon_height: '-8px'
+        name: Everything
+        show_icon: true
+        show_name: true
+        tap_action:
+          action: navigate
+          navigation_path: >-
+            https://rc7bp41vnqxwq3ht6i44z7uubovwi6zw.ui.nabu.casa/lovelace-standard/default_view
+        type: button
+      - artwork: cover
+        entity: media_player.everywhere
+        hide_power: true
+        tts:
+          entity_id:
+            - media_player.bedroom_echo_show
+            - media_player.broken_echo
+            - media_player.chad_s_aio
+            - media_player.davids_echo
+            - media_player.den_fire_tv
+            - media_player.extra_echo
+            - media_player.firetvbox
+            - media_player.girls_echo
+            - media_player.kitchen_echo
+            - media_player.living_echo
+            - media_player.logans_echo_show
+            - media_player.office_echo
+          platform: alexa
+        type: 'custom:mini-media-player'
+  - panel: true
+    path: logan
+    theme: Google Dark Theme
+    title: Logan
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+      - user: be244a28e9084656be5a372cf9c8089d
+    badges: []
+    cards:
+      - entities:
+          - entity: light.sonoff_1000991392
+        title: Logans Lights
+        type: entities
+  - title: Office HASP
+    path: office-hasp
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+    badges: []
+    cards:
+      - type: entities
+        title: HASP officehasp
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - entity: number.officehasp_active_page
+          - type: divider
+          - entity: light.officehasp_backlight
+            secondary_info: brightness
+          - type: divider
+          - entity: light.officehasp_selected_foreground_color
+            icon: 'mdi:palette'
+            name: Selected Foreground Color
+            secondary_info: brightness
+          - entity: light.officehasp_selected_background_color
+            icon: 'mdi:palette'
+            name: Selected Background Color
+            secondary_info: brightness
+          - entity: light.officehasp_unselected_foreground_color
+            icon: 'mdi:palette'
+            name: Unselected Foreground Color
+            secondary_info: brightness
+          - entity: light.officehasp_unselected_background_color
+            icon: 'mdi:palette'
+            name: Unselected Background Color
+            secondary_info: brightness
+          - type: divider
+        footer:
+          type: buttons
+          entities:
+            - entity: sensor.officehasp_sensor
+              name: Blueprints
+              icon: 'mdi:palette-swatch'
+              tap_action:
+                action: navigate
+                navigation_path: /config/blueprint/dashboard
+            - entity: sensor.officehasp_sensor
+              name: Automations
+              icon: 'mdi:robot'
+              tap_action:
+                action: navigate
+                navigation_path: /config/automation/dashboard
+            - entity: sensor.officehasp_sensor
+              name: HASP Admin
+              icon: 'mdi:cellphone-text'
+              tap_action:
+                action: url
+                url_path: 'http://192.168.1.185'
+  - title: Tablet
+    path: tablet
+    icon: 'mdi:tablet'
+    panel: true
+    visible:
+      - user: 4f6f33d1508c4c6893885f0fb1e200d9
+      - user: b916831fbf58439f9c09271640139614
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: alarm-panel
+                states:
+                  - arm_home
+                  - arm_away
+                entity: alarm_control_panel.alarm
+              - type: entities
+                entities:
+                  - entity: light.downstairs_lights
+                  - entity: light.upstairs_lights
+                  - entity: light.all_lights
+                title: Light Groups
+                show_header_toggle: false
+              - type: entities
+                entities:
+                  - entity: light.foyer_overhead
+                  - entity: light.foyer_recessed
+                  - entity: light.front_entry
+                  - entity: light.kitchen_recessed
+                  - entity: light.kitchen_recessed_2
+                  - entity: light.dining_table
+                title: Lights
+          - type: horizontal-stack
+            cards:
+              - type: media-control
+                entity: media_player.nathaly_vasquez_ruizs_library
+              - type: entities
+                entities:
+                  - entity: script.dinnertime
+                  - entity: script.food_ready
+                  - entity: script.bedtime
+                  - entity: script.showers
+                title: Announcements

@@ -1,0 +1,110 @@
+- id: '1677301834730'
+  name: Watch Tv
+  entities:
+    light.kitchen_recessed:
+      supported_color_modes:
+      - brightness
+      friendly_name: Kitchen recessed
+      supported_features: 32
+      state: 'off'
+    light.kitchen_pendant:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 69
+      friendly_name: Kitchen pendant
+      supported_features: 32
+      state: 'on'
+    light.dining_table:
+      supported_color_modes:
+      - brightness
+      friendly_name: dining table
+      supported_features: 32
+      state: 'off'
+    light.living_room_overhead_1:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6666
+      min_mireds: 150
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
+      supported_color_modes:
+      - color_temp
+      - hs
+      color:
+        x: 0.382
+        y: 0.377
+      linkquality: 87
+      update:
+        state: available
+      update_available: true
+      friendly_name: Living Room Overhead 1
+      supported_features: 44
+      state: 'off'
+    light.living_room_overhead_2:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6666
+      min_mireds: 150
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
+      supported_color_modes:
+      - color_temp
+      - hs
+      color:
+        x: 0.382
+        y: 0.377
+      linkquality: 116
+      update:
+        state: available
+      update_available: true
+      friendly_name: Living Room Overhead 2
+      supported_features: 44
+      state: 'off'
+    switch.livingroom_tv:
+      friendly_name: Samsung 7 Series (70)
+      state: 'on'
+  icon: mdi:television-ambient-light
+  metadata: {}
+- id: '1682254881647'
+  name: Eat Dinner
+  entities:
+    light.kitchen_pendant:
+      supported_color_modes:
+      - brightness
+      friendly_name: Kitchen pendant
+      supported_features: 32
+      color_mode: brightness
+      brightness: 117
+      state: 'on'
+    light.kitchen_recessed:
+      supported_color_modes:
+      - brightness
+      friendly_name: Kitchen recessed
+      supported_features: 32
+      color_mode: brightness
+      brightness: 76
+      state: 'on'
+    light.dining_table:
+      supported_color_modes:
+      - brightness
+      friendly_name: dining table
+      supported_features: 32
+      color_mode: brightness
+      brightness: 255
+      state: 'on'
+    switch.livingroom_tv:
+      friendly_name: LivingRoom TV
+      state: 'on'
+  icon: mdi:food
+  metadata: {}

@@ -1,0 +1,45 @@
+# You can whitelist files/folders with !, these will not be ignored.
+!*.yaml
+!.gitignore
+!*.md
+!packages/*
+
+# specific file ignores
+__pycache__
+.*
+./ssl/*
+.cloud
+.google.token
+.storage
+.Trash*
+.vs
+*.__pycache__
+*.db-shm
+*.conf
+*.crt
+*.csr
+*.db-wal
+*.json
+*.key
+*.pickle
+*.pid
+*.log
+*.db
+alexa_media*
+deps
+esphome/**/
+esphome/secrets.yaml
+ip_bans.yaml
+known_devices.yaml
+known_devices.yaml
+packages/integrations/zones.yaml
+secrets.yaml
+backups/*
+
+
+# Ignore folders.
+
+
+
+# Third-party integrations (reinstall via HACS)
+custom_components/

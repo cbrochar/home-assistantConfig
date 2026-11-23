@@ -1,0 +1,4 @@
+# Example configuration.yaml entry
+sensor:
+  - platform: dnsip
+    name: miCasaIP

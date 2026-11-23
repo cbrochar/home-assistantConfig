@@ -1,0 +1,9 @@
+- platform: mqtt
+  name: "String Lights"
+  command_topic: "cmnd/rf_bridge/rfcode"
+  availability_topic: "tele/rf_bridge/LWT"
+  payload_available: "Online"
+  payload_not_available: "Offline"
+  payload_on: "#FFFF01"
+  payload_off: "#FFFF03"
+  optimistic: true

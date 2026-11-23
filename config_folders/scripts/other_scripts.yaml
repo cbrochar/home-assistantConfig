@@ -1,78 +1,3 @@
-alexa_msg:
-  description: "Send a message to all Alexas"
-  sequence:
-    - data:
-        entity_id:
-        - media_player.extra_echo
-        - media_player.kitchen_echo
-        - media_player.bedroom_echo_show
-        - media_player.chad_s_aio
-        - media_player.davids_echo
-        - media_player.girls_echo
-        - media_player.living_echo
-        - media_player.logans_echo_show
-        - media_player.broken_echo
-        media_content_id: amzn_sfx_doorbell_chime_01
-        media_content_type: sound
-      service: media_player.play_media
-    - data_template:
-        data:
-          type: tts
-        message: "{{ message }}"
-        target:
-        - media_player.extra_echo
-        - media_player.kitchen_echo
-        - media_player.bedroom_echo_show
-        - media_player.chad_s_aio
-        - media_player.davids_echo
-        - media_player.girls_echo
-        - media_player.living_echo
-        - media_player.logans_echo_show
-        - media_player.broken_echo
-      service: notify.alexa_media
-party:
-  alias: party
-  sequence:
-  - service: switch.turn_on
-    data:
-      entity_id: switch.patiodisco
-  - service: switch.turn_on
-    data:
-      entity_id: switch.patiofan
-  - service: media_player.play_media
-    data:  
-      entity_id: media_player.adults
-      media_content_id: party playlist in adults group,
-      media_content_type: AMAZON_MUSIC
-end_party:
-  alias: party
-  sequence:
-  - service: switch.turn_off
-    data:
-      entity_id: switch.patiodisco
-  - service: switch.turn_off
-    data:
-      entity_id: switch.patiofan
-  - service: media_player.media_stop
-    data:  
-      entity_id: media_player.adults
-pantry_door_alarm:
-  alias: pantry door alarm
-  sequence:
-  - service: notify.alexa_media
-    data:
-      data:
-        type: tts
-      target: 
-        - media_player.kitchen_echo
-        - media_player.bedroom_echo_show
-        - media_player.chad_s_aio
-        - media_player.davids_echo
-        - media_player.girls_echo
-        - media_player.living_echo
-        - media_player.logans_echo_show
-        - media_player.broken_echo
-      message: 'Someone is in the Pantry'
 send_tv_power:
   sequence:
   - data_template:
@@ -108,13 +33,7 @@ goodnight_bedroom:
       entity_id: light.bedroom_lights
     service: light.turn_off
   - data:
-      entity_id: light.barn_lights
-    service: light.turn_off
-  - data:
       entity_id: light.downstairs_lights
-    service: light.turn_off
-  - data:
-      entity_id: light.ridge
     service: light.turn_off
   alias: Good Night Bedroom
 send_string_rfcode:

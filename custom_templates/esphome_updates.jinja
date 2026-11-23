@@ -1,0 +1,23 @@
+{# ESPHome devices whose firmware is older than sensor.esphome_latest_version. Returns "Name (version), ..." or empty. #}
+{% macro esphome_outdated() -%}
+{%- set latest = states('sensor.esphome_latest_version') -%}
+{%- set ns = namespace(out=[]) -%}
+{%- if latest not in ['unknown', 'unavailable'] -%}
+{%- for d in integration_entities('esphome') | map('device_id') | reject('none') | unique -%}
+{%- set sw = device_attr(d, 'sw_version') or '' -%}
+{%- if sw is search('20\d\d\.\d+\.\d+') -%}
+{%- set v = sw | regex_findall_index('(20\d\d\.\d+\.\d+)') -%}
+{%- if version(v) < latest -%}
+{%- set ns.out = ns.out + [(device_attr(d, 'name_by_user') or device_attr(d, 'name')) ~ ' (' ~ v ~ ')'] -%}
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{{ ns.out | join(', ') }}
+{%- endmacro %}
+
+{# ESPHome version running on the device that owns entity_id, e.g. "2026.10.2", or empty. #}
+{% macro esphome_fw(entity_id) -%}
+{%- set sw = device_attr(device_id(entity_id), 'sw_version') or '' -%}
+{{ sw | regex_findall_index('(20\d\d\.\d+\.\d+)') if sw is search('20\d\d\.\d+\.\d+') else '' }}
+{%- endmacro %}

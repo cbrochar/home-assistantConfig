@@ -1,0 +1,278 @@
+# energymonitor - rebuilt 2026-11-08
+# CircuitSetup-style 6-channel ATM90E32 board on an ESP32.
+# Sensor names match the old firmware so Home Assistant keeps the same entities/history.
+# CT gains start at the board defaults; calibrated against the old firmware's readings.
+
+substitutions:
+  gain_voltage: "7305"
+  gain_ct1: "27961"
+  gain_ct2: "27961"
+  gain_ct3: "27961"
+  gain_ct4: "27961"
+  gain_ct5: "27961"
+  gain_ct6: "27961"
+
+esphome:
+  name: energymonitor
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: !secret energymonitor_api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+  - platform: web_server
+
+web_server:
+  port: 80
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: energymonitor Fallback Hotspot
+    password: !secret energymonitor_ap_password
+
+captive_portal:
+
+time:
+  - platform: homeassistant
+    id: ha_time
+
+spi:
+  clk_pin: 18
+  miso_pin: 19
+  mosi_pin: 23
+
+switch:
+  - platform: restart
+    name: energymonitor Restart
+
+sensor:
+  - platform: wifi_signal
+    name: energymonitor WiFi
+    update_interval: 60s
+
+  # Chip 1 (CT1-CT3) - also measures line voltage and frequency
+  - platform: atm90e32
+    cs_pin: 5
+    phase_a:
+      voltage:
+        name: energymonitor Volts
+        id: volts
+        accuracy_decimals: 1
+      current:
+        name: energymonitor House L1 Amps
+        id: ct1_amps
+        accuracy_decimals: 2
+      power:
+        name: energymonitor House L1 Watts
+        id: ct1_watts
+        accuracy_decimals: 2
+      gain_voltage: ${gain_voltage}
+      gain_ct: ${gain_ct1}
+    phase_b:
+      current:
+        name: energymonitor House L2 Amps
+        id: ct2_amps
+        accuracy_decimals: 2
+      power:
+        name: energymonitor House L2 Watts
+        id: ct2_watts
+        accuracy_decimals: 2
+      gain_voltage: ${gain_voltage}
+      gain_ct: ${gain_ct2}
+    phase_c:
+      current:
+        name: energymonitor Dryer Total Amps
+        id: ct3_amps
+        accuracy_decimals: 2
+      power:
+        name: energymonitor Dryer Total Watts
+        id: ct3_watts
+        accuracy_decimals: 2
+      gain_voltage: ${gain_voltage}
+      gain_ct: ${gain_ct3}
+    frequency:
+      name: energymonitor Freq
+      icon: mdi:current-ac
+      accuracy_decimals: 1
+    line_frequency: 60Hz
+    gain_pga: 1X
+    update_interval: 10s
+
+  # Chip 2 (CT4-CT6)
+  - platform: atm90e32
+    cs_pin: 4
+    phase_a:
+      current:
+        name: energymonitor Elec Car Amps
+        id: ct4_amps
+        accuracy_decimals: 2
+      power:
+        name: energymonitor Elec Car Watts
+        id: ct4_watts
+        accuracy_decimals: 2
+      gain_voltage: ${gain_voltage}
+      gain_ct: ${gain_ct4}
+    phase_b:
+      current:
+        name: energymonitor Garage Amps
+        id: ct5_amps
+        accuracy_decimals: 2
+      power:
+        name: energymonitor Garage Watts
+        id: ct5_watts
+        accuracy_decimals: 2
+      gain_voltage: ${gain_voltage}
+      gain_ct: ${gain_ct5}
+    phase_c:
+      current:
+        name: energymonitor Solar Amps
+        id: ct6_amps
+        accuracy_decimals: 2
+      power:
+        name: energymonitor Solar Watts
+        id: ct6_watts
+        accuracy_decimals: 2
+      gain_voltage: ${gain_voltage}
+      gain_ct: ${gain_ct6}
+    line_frequency: 60Hz
+    gain_pga: 1X
+    update_interval: 10s
+
+  # ---- Totals ----
+  - platform: template
+    name: energymonitor Total House Amps
+    unit_of_measurement: A
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 2
+    update_interval: 10s
+    lambda: return id(ct1_amps).state + id(ct2_amps).state;
+
+  - platform: template
+    name: energymonitor Total House Watts
+    id: house_watts
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 1
+    update_interval: 10s
+    lambda: return id(ct1_watts).state + id(ct2_watts).state;
+
+  - platform: template
+    name: energymonitor Total House Positive Watts
+    id: house_pos_watts
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 1
+    update_interval: 10s
+    lambda: return std::max(0.0f, id(ct1_watts).state + id(ct2_watts).state);
+
+  - platform: template
+    name: energymonitor Total House Return To Grid Watts
+    id: house_return_watts
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 1
+    update_interval: 10s
+    lambda: return std::max(0.0f, -(id(ct1_watts).state + id(ct2_watts).state));
+
+  - platform: template
+    name: energymonitor Total Solar Amps
+    unit_of_measurement: A
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 2
+    update_interval: 10s
+    lambda: return id(ct6_amps).state;
+
+  - platform: template
+    name: energymonitor Total Solar Watts
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 1
+    update_interval: 10s
+    lambda: return id(ct6_watts).state;
+
+  # Absolute-value helpers for the daily kWh counters (not sent to HA)
+  - platform: template
+    id: dryer_abs_w
+    internal: true
+    unit_of_measurement: W
+    update_interval: 10s
+    lambda: return fabsf(id(ct3_watts).state);
+  - platform: template
+    id: car_abs_w
+    internal: true
+    unit_of_measurement: W
+    update_interval: 10s
+    lambda: return fabsf(id(ct4_watts).state);
+  - platform: template
+    id: garage_abs_w
+    internal: true
+    unit_of_measurement: W
+    update_interval: 10s
+    lambda: return fabsf(id(ct5_watts).state);
+  - platform: template
+    id: solar_abs_w
+    internal: true
+    unit_of_measurement: W
+    update_interval: 10s
+    lambda: return fabsf(id(ct6_watts).state);
+
+  # ---- Daily energy (resets at midnight) ----
+  - platform: total_daily_energy
+    name: energymonitor House kWh
+    power_id: house_pos_watts
+    unit_of_measurement: kWh
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+  - platform: total_daily_energy
+    name: energymonitor House Return To Grid kWh
+    power_id: house_return_watts
+    unit_of_measurement: kWh
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+  - platform: total_daily_energy
+    name: energymonitor Solar kWh
+    power_id: solar_abs_w
+    unit_of_measurement: kWh
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+  - platform: total_daily_energy
+    name: energymonitor Elec Car kWh
+    power_id: car_abs_w
+    unit_of_measurement: kWh
+    accuracy_decimals: 4
+    filters:
+      - multiply: 0.001
+  - platform: total_daily_energy
+    name: energymonitor Dryer kWh
+    power_id: dryer_abs_w
+    unit_of_measurement: kWh
+    accuracy_decimals: 4
+    filters:
+      - multiply: 0.001
+  - platform: total_daily_energy
+    name: energymonitor Garage kWh
+    power_id: garage_abs_w
+    unit_of_measurement: kWh
+    accuracy_decimals: 4
+    filters:
+      - multiply: 0.001

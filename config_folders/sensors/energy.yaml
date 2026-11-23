@@ -1,0 +1,14 @@
+sensor:
+  - platform: integration
+    name: Grid Import Energy
+    source: sensor.grid_import_power
+    unit_prefix: k
+    unit_time: h
+    method: left
+    
+  - platform: integration
+    name: Grid Export Energy
+    source: sensor.grid_export_power
+    unit_prefix: k
+    unit_time: h
+    method: left            

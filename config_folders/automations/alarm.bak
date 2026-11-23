@@ -1,0 +1,73 @@
+################### automations.yaml ###################
+########## ALARM ###########
+  - alias: Trigger alarm while armed home or away
+    id: "201910486971"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion
+        to: 'on'    
+      - platform: state
+        entity_id: binary_sensor.great_room_windows
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.kitchen_windows
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.living_dining_rm_windows
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.front_and_garage_door
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.bedroom_windows
+        to: 'on'
+      - platform: state
+        entity_id: cover.garage_door
+        to: 'open'
+      - platform: state
+        entity_id: binary_sensor.upstairs_hallway_motion
+        to: 'on'
+    condition:
+      condition: or
+      conditions: 
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_away
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: armed_home
+    action:
+      service: alarm_control_panel.alarm_trigger
+      entity_id: alarm_control_panel.alarm
+  - alias: Alarm Triggered
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.alarm
+        to: 'triggered'
+    action:
+      - service: notify.mobile_app_chads_iphone
+        data:
+          message: "ALARM! The alarm has been triggered at {{ states('sensor.date_time') }}"
+          title: HOME ALARM
+      - data:
+          volume: "0.8"
+          message: "The Alarm has been triggered. Input the disarm code or an automated message will be sent to the police in 30 seconds."
+        service: script.alexa_msg
+      - service: homeassistant.turn_on
+        entity_id: switch.alarm
+  - alias: 'Perform actions when alarm is Disarmed'
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.alarm
+        to: "disarmed"
+    action:
+      - service: notify.mobile_app_chads_iphone
+        data:
+          message: "ALARM! The alarm is Disarmed at {{ states('sensor.date_time') }}"
+          title: HOME ALARM
+      - service: homeassistant.turn_off
+        entity_id: switch.alarm
+      - service: ifttt.trigger
+        data:
+          event: Alarm_Armed
+          value1: Disarmed

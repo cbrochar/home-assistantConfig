@@ -1,51 +1,1454 @@
-- id: '1607972210708'
-  name: a_motion_automation
-  alias: motionactivatedlight
+- id: '1612488532555'
+  alias: Internet Off
+  description: Turn off Selected Internet Devices by Date_time inputhelper
+  trigger:
+  - platform: time
+    at: input_datetime.school_nights_off
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - sun
+  action:
+  - service: homeassistant.turn_off
+    data:
+      entity_id:
+      - group.kids_electronics
+  mode: single
+- alias: Internet On
+  id: '1612488532405'
+  description: Turn on Selected Internet Devices at time specified by Date_time inputhelper
+  trigger:
+  - platform: time
+    at: input_datetime.school_nights_on
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+  action:
+    service: homeassistant.turn_on
+    data:
+      entity_id:
+      - group.kids_electronics
+  mode: single
+- id: '2226486676166'
+  alias: frontdoor_hasp p[7].b[all] displays an alarm control panel
   description: ''
   use_blueprint:
-    path: homeassistant/motion_light.yaml
+    path: HASwitchPlate/hasp_Display_Alarm_Control_page7.yaml
     input:
-      no_motion_wait: '120'
-      motion_entity: binary_sensor.office_motion
-      light_target:
-        entity_id: light.dimmer
-- id: '1609733373052'
-  alias: 'Alexa Message #1'
-  description: Test Message
-  use_blueprint:
-    path: chadsblueprints/alexamessage.yaml
-    input:
-      timeofday: '23:12:00'
-      target_media_player:
-        device_id:
-        - dbf63c80d96ea9e683dbbf86630e8b87
-        - 8e03d2fbbc55350ac1a1ec8c20ecc6a4
-      message: Blueprint Test Message
-- id: '1609733805618'
-  alias: 1 Alexa Message
-  description: Test2
-  use_blueprint:
-    path: chadsblueprints/alexamessage.yaml
-    input:
-      timeofday: '23:20:00'
-      target_media_player:
-        device_id: dbf63c80d96ea9e683dbbf86630e8b87
-      message: Testing again
-- id: '1609767749736'
-  alias: Alexa Media Player TTS/Announce from Lovelace UI
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      alarmpanel: alarm_control_panel.alarm
+      b15armservice: alarm_arm_away
+- id: '22161812493'
+  alias: frontdoor_hasp p[2].b[4] Foyer Recessed
   description: ''
   use_blueprint:
-    path: NachtaktiverHalbaffe/alexa-tts-announcement-from-lovelace-ui-and-without-nabu-casa-alexa-media-player.yaml
+    path: HASwitchPlate/hasp_Display_Toggle.yaml
     input:
-      message: input_text.alexatesttextinput
-      target: input_select.alexatestinputselect
-      announce: false
-- id: '1609768294060'
-  alias: Alexa Media Player TTS/Announce from Lovelace UI
+      ycen_select: 1 - Centered
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 2
+      entity: light.foyer_recessed
+      action_on:
+      - target:
+          entity_id: light.foyer_recessed
+        action: homeassistant.turn_on
+        data: {}
+      action_off:
+      - target:
+          entity_id: light.foyer_recessed
+        action: homeassistant.turn_off
+        data: {}
+      text_on: Hallway On
+      text_off: Hallway Off
+      font_select: 6 - Noto Sans 32
+      xcen_select: 1 - Centered
+- id: '22170476720'
+  alias: frontdoor_hasp p[1].b[5] displays Food Ready
+  description: 'Front door panel page 1, button 5: shows ''Food Ready'' and runs script.food_ready
+    (house-wide Alexa announcement) when pressed.'
+  use_blueprint:
+    input:
+      action_off:
+      - action: script.turn_on
+        target:
+          entity_id: script.food_ready
+      action_on:
+      - action: script.turn_on
+        target:
+          entity_id: script.food_ready
+      entity: script.food_ready
+      font_select: 6 - Noto Sans 32
+      haspbutton: 5
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 1
+      state_on: 'on'
+      text_off: Food Ready
+      text_on: Announcing...
+      xcen_select: 1 - Centered
+      ycen_select: 1 - Centered
+    path: HASwitchPlate/hasp_Display_Toggle.yaml
+- id: '22180198563'
+  alias: frontdoor_hasp p[3].b[4] displays a clock with a clock icon
   description: ''
   use_blueprint:
-    path: NachtaktiverHalbaffe/alexa-tts-announcement-from-lovelace-ui-and-without-nabu-casa-alexa-media-player.yaml
+    path: HASwitchPlate/hasp_Display_Clock_with_Icon.yaml
     input:
-      message: input_text.alexatesttextinput
-      target: input_select.alexatestinputselect
-      announce: true
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 3
+      hour24: false
+- id: '22181095078'
+  alias: frontdoor_hasp p[3].b[7] displays the month + date with a calendar icon
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Calendar_with_Icon.yaml
+    input:
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 3
+      haspbutton: 7
+- id: '22181098981'
+  alias: frontdoor_hasp p[3].b[6] displays the current temperature with icon and colors
+  description: ''
+  triggers:
+  - platform: state
+    entity_id: weather.pirateweather
+  - platform: template
+    value_template: '{{ is_state(haspsensor, ''ON'') }}'
+  - platform: homeassistant
+    event: start
+  - platform: mqtt
+    topic: '{{jsontopic}}'
+  - platform: mqtt
+    topic: '{{selectedfgtopic}}'
+  - platform: mqtt
+    topic: '{{selectedbgtopic}}'
+  - platform: mqtt
+    topic: '{{unselectedfgtopic}}'
+  - platform: mqtt
+    topic: '{{unselectedbgtopic}}'
+  conditions:
+  - condition: template
+    value_template: '{{ is_state(haspsensor, ''ON'') }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{-\n  (trigger is not defined)\nor\n  (trigger.platform
+          is none)\nor\n  ((trigger.platform == 'homeassistant') and (trigger.event
+          == 'start'))\nor\n  ((trigger.platform == 'template') and (trigger.entity_id
+          == haspsensor) and (trigger.to_state.state == 'ON'))\n-}}"
+      sequence:
+      - data:
+          topic: '{{jsoncommandtopic}}'
+          payload: '["{{haspobject}}.font={{font}}", "{{haspobject}}.xcen={{xcen}}",
+            "{{haspobject}}.ycen={{ycen}}", "{{haspobject}}.pco={{textcolor}}", "{{haspobject}}.bco={{selectedbg}}",
+            "{{haspobject}}.pco2={{unselectedfg}}", "{{haspobject}}.bco2={{unselectedbg}}",
+            "{{haspobject}}.txt=\"{{text}} \"" {%- if activepage|int == hasppage|int
+            -%} ,"delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""
+            {%- endif -%}]'
+        action: mqtt.publish
+    - conditions:
+      - condition: template
+        value_template: '{{ (trigger.platform == "state") and (trigger.entity_id ==
+          weather_provider) }}'
+      sequence:
+      - data:
+          topic: '{{jsoncommandtopic}}'
+          payload: '["{{haspobject}}.pco={{textcolor}}", "{{haspobject}}.txt=\"{{text}}
+            \"" {%- if activepage|int == hasppage|int -%} ,"delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""
+            {%- endif -%}]'
+        action: mqtt.publish
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.platform == "mqtt" }}'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ (trigger.topic == jsontopic) and trigger.payload_json
+              is defined }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ (trigger.topic == jsontopic ) and (trigger.payload_json.event
+                  == haspobject ) and (trigger.payload_json.value == "OFF") and (activepage|int
+                  == hasppage|int)}}'
+              sequence:
+              - data:
+                  topic: '{{jsoncommandtopic}}'
+                  payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
+                action: mqtt.publish
+            - conditions:
+              - condition: template
+                value_template: '{{ (trigger.topic == jsontopic ) and (trigger.payload_json.event
+                  == "page" ) and (trigger.payload_json.value == hasppage|int) }}'
+              sequence:
+              - data:
+                  topic: '{{jsoncommandtopic}}'
+                  payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
+                action: mqtt.publish
+        - conditions:
+          - condition: template
+            value_template: '{{ trigger.topic == selectedfgtopic }}'
+          sequence:
+          - data:
+              topic: '{{commandtopic}}.pco'
+              payload: '{{trigger.payload}}'
+            action: mqtt.publish
+          - condition: template
+            value_template: '{{ activepage|int == hasppage|int }}'
+          - delay: '00:00:00.5'
+          - data:
+              topic: '{{jsoncommandtopic}}'
+              payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
+            action: mqtt.publish
+        - conditions:
+          - condition: template
+            value_template: '{{ trigger.topic == selectedbgtopic }}'
+          sequence:
+          - data:
+              topic: '{{commandtopic}}.bco'
+              payload: '{{trigger.payload}}'
+            action: mqtt.publish
+          - condition: template
+            value_template: '{{ activepage|int == hasppage|int }}'
+          - delay: '00:00:00.5'
+          - data:
+              topic: '{{jsoncommandtopic}}'
+              payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
+            action: mqtt.publish
+        - conditions:
+          - condition: template
+            value_template: '{{ trigger.topic == unselectedfgtopic }}'
+          sequence:
+          - data:
+              topic: '{{commandtopic}}.pco2'
+              payload: '{{trigger.payload}}'
+            action: mqtt.publish
+          - condition: template
+            value_template: '{{ activepage|int == hasppage|int }}'
+          - delay: '00:00:00.5'
+          - data:
+              topic: '{{jsoncommandtopic}}'
+              payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
+            action: mqtt.publish
+        - conditions:
+          - condition: template
+            value_template: '{{ trigger.topic == unselectedbgtopic }}'
+          sequence:
+          - data:
+              topic: '{{commandtopic}}.bco2'
+              payload: '{{trigger.payload}}'
+            action: mqtt.publish
+          - condition: template
+            value_template: '{{ activepage|int == hasppage|int }}'
+          - delay: '00:00:00.5'
+          - data:
+              topic: '{{jsoncommandtopic}}'
+              payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
+            action: mqtt.publish
+  mode: parallel
+  max_exceeded: silent
+  variables:
+    haspname: "{%- for entity in device_entities(haspdevice) -%}\n  {%- if entity|regex_search(\"^sensor\\.\")
+      -%}\n    {{- entity|regex_replace(find=\"^sensor\\.\", replace=\"\", ignorecase=true)|regex_replace(find=\"_sensor(?:_\\d+|)$\",
+      replace=\"\", ignorecase=true) -}}\n  {%- endif -%}\n{%- endfor -%}"
+    haspsensor: "{%- for entity in device_entities(haspdevice) -%}\n  {%- if entity|regex_search(\"^sensor\\..+_sensor(?:_\\d+|)$\")
+      -%}\n    {{ entity }}\n  {%- endif -%}\n{%- endfor -%}"
+    hasppage: 3
+    haspbutton: 6
+    weather_provider: weather.pirateweather
+    temperature_sensor:
+    temperature_attribute: state
+    suffix_select: °F
+    thermometer_empty_color: 2047
+    thermometer_quarter_threshold: 0
+    thermometer_quarter_color: 31
+    thermometer_half_threshold: 32
+    thermometer_half_color: 1536
+    thermometer_three_quarter_threshold: 80
+    thermometer_three_quarter_color: 64512
+    thermometer_full_threshold: 95
+    thermometer_full_color: 63488
+    colortemp: true
+    roundtemp: true
+    haspobject: '{{ "p[" ~ hasppage ~ "].b[" ~ haspbutton ~ "]" }}'
+    commandtopic: '{{ "hasp/" ~ haspname ~ "/command/" ~ haspobject }}'
+    jsoncommandtopic: '{{ "hasp/" ~ haspname ~ "/command/json" }}'
+    jsontopic: '{{ "hasp/" ~ haspname ~ "/state/json" }}'
+    temperature_value: "{%- if temperature_sensor|lower == \"none\" -%}\n  {{- state_attr(weather_provider,
+      \"temperature\") -}}\n{%- elif temperature_attribute|lower == \"state\" -%}\n
+      \ {{- states(temperature_sensor) -}}\n{%- else -%}\n  {{- state_attr(temperature_sensor,
+      temperature_attribute) -}}\n{%- endif -%}"
+    temperature: "{%- if roundtemp == true -%}\n  {{- temperature_value | round -}}\n{%-
+      else -%}\n  {{- temperature_value -}}\n{%- endif -%}"
+    icon: "{%- set temp = temperature|int -%} {%- if temp <= thermometer_quarter_threshold|int
+      -%}\n  \n{%- elif temp < thermometer_half_threshold|int -%}\n  \n{% elif temp
+      < thermometer_three_quarter_threshold|int -%}\n  \n{%- elif temp < thermometer_full_threshold|int
+      -%}\n  \n{%- else -%}\n  \n{%- endif -%}"
+    suffixstring: '{% if suffix_select != ''No suffix'' %}{{ suffix_select }}{% endif
+      %}'
+    text: '{{temperature}}{{suffixstring}}'
+    font: 10
+    ypos: '{{(haspbutton|int - 4) * 67 + 2}}'
+    xpos: 0
+    iconwidth: 40
+    iconheight: 65
+    iconfont: 8
+    xcen: 2
+    ycen: 1
+    activepage: "{%- set activepage = namespace() -%} {%- for entity in device_entities(haspdevice)
+      -%}\n  {%- if entity|regex_search(\"^number\\..*_active_page(?:_\\d+|)$\") -%}\n
+      \   {%- set activepage.entity=entity -%}\n  {%- endif -%}\n{%- endfor -%} {%
+      if states(activepage.entity)|lower == \"none\" %}-1{% else %}{{ states(activepage.entity)
+      | int }}{% endif %}"
+    selectedfgtopic: '{{ "hasp/" ~ haspname ~ "/light/selectedforegroundcolor/rgb"
+      }}'
+    selectedbgtopic: '{{ "hasp/" ~ haspname ~ "/light/selectedbackgroundcolor/rgb"
+      }}'
+    unselectedfgtopic: '{{ "hasp/" ~ haspname ~ "/light/unselectedforegroundcolor/rgb"
+      }}'
+    unselectedbgtopic: '{{ "hasp/" ~ haspname ~ "/light/unselectedbackgroundcolor/rgb"
+      }}'
+    selectedfg: "{%- set color = namespace() -%} {%- for entity in device_entities(haspdevice)
+      -%}\n  {%- if entity|regex_search(\"^light\\..*_selected_foreground_color(?:_\\d+|)$\")
+      -%}\n    {%- set color.source=entity -%}\n  {%- endif -%}\n{%- endfor -%} {%-
+      set brightness = state_attr(color.source, \"brightness\")|int(default=255) /
+      255 -%} {%- set red=(state_attr(color.source, \"rgb_color\")[0] * brightness)|int(default=0)
+      -%} {%- set green=(state_attr(color.source, \"rgb_color\")[1] * brightness)|int(default=0)
+      -%} {%- set blue=(state_attr(color.source, \"rgb_color\")[2] * brightness)|int(default=0)
+      -%} {{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int
+      }}"
+    selectedbg: "{%- set color = namespace() -%} {%- for entity in device_entities(haspdevice)
+      -%}\n  {%- if entity|regex_search(\"^light\\..*_selected_background_color(?:_\\d+|)$\")
+      -%}\n    {%- set color.source=entity -%}\n  {%- endif -%}\n{%- endfor -%} {%-
+      set brightness = state_attr(color.source, \"brightness\")|int(default=255) /
+      255 -%} {%- set red=(state_attr(color.source, \"rgb_color\")[0] * brightness)|int(default=0)
+      -%} {%- set green=(state_attr(color.source, \"rgb_color\")[1] * brightness)|int(default=0)
+      -%} {%- set blue=(state_attr(color.source, \"rgb_color\")[2] * brightness)|int(default=0)
+      -%} {{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int
+      }}"
+    unselectedfg: "{%- set color = namespace() -%} {%- for entity in device_entities(haspdevice)
+      -%}\n  {%- if entity|regex_search(\"^light\\..*_unselected_foreground_color(?:_\\d+|)$\")
+      -%}\n    {%- set color.source=entity -%}\n  {%- endif -%}\n{%- endfor -%} {%-
+      set brightness = state_attr(color.source, \"brightness\")|int(default=255) /
+      255 -%} {%- set red=(state_attr(color.source, \"rgb_color\")[0] * brightness)|int(default=0)
+      -%} {%- set green=(state_attr(color.source, \"rgb_color\")[1] * brightness)|int(default=0)
+      -%} {%- set blue=(state_attr(color.source, \"rgb_color\")[2] * brightness)|int(default=0)
+      -%} {{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int
+      }}"
+    unselectedbg: "{%- set color = namespace() -%} {%- for entity in device_entities(haspdevice)
+      -%}\n  {%- if entity|regex_search(\"^light\\..*_unselected_background_color(?:_\\d+|)$\")
+      -%}\n    {%- set color.source=entity -%}\n  {%- endif -%}\n{%- endfor -%} {%-
+      set brightness = state_attr(color.source, \"brightness\")|int(default=255) /
+      255 -%} {%- set red=(state_attr(color.source, \"rgb_color\")[0] * brightness)|int(default=0)
+      -%} {%- set green=(state_attr(color.source, \"rgb_color\")[1] * brightness)|int(default=0)
+      -%} {%- set blue=(state_attr(color.source, \"rgb_color\")[2] * brightness)|int(default=0)
+      -%} {{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int
+      }}"
+    tempcolor: "{%- set temp = temperature|int -%} {%- if temp <= thermometer_quarter_threshold|int
+      -%}\n  {%- set color = thermometer_empty_color -%}\n{%- elif temp < thermometer_half_threshold|int
+      -%}\n  {%- set color = thermometer_quarter_color -%}\n{%- elif temp < thermometer_three_quarter_threshold|int
+      -%}\n  {%- set color = thermometer_half_color -%}\n{%- elif temp < thermometer_full_threshold|int
+      -%}\n  {%- set color = thermometer_three_quarter_color -%}\n{%- else -%}\n  {%-
+      set color = thermometer_full_color -%}\n{%- endif -%} {%- if color|int < 0 -%}\n
+      \ {{- selectedfg -}}\n{%- else -%}\n  {{- color -}}\n{%- endif -%}"
+    textcolor: "{%- if colortemp == true -%}\n  {{- tempcolor -}}\n{%- else -%}\n
+      \ {{- selectedfg -}}\n{%- endif -%}"
+  trigger_variables:
+    haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+    haspname: "{%- for entity in device_entities(haspdevice) -%}\n  {%- if entity|regex_search(\"^sensor\\.\")
+      -%}\n    {{- entity|regex_replace(find=\"^sensor\\.\", replace=\"\", ignorecase=true)|regex_replace(find=\"_sensor(?:_\\d+|)$\",
+      replace=\"\", ignorecase=true) -}}\n  {%- endif -%}\n{%- endfor -%}"
+    haspsensor: "{%- for entity in device_entities(haspdevice) -%}\n  {%- if entity|regex_search(\"^sensor\\..+_sensor(?:_\\d+|)$\")
+      -%}\n    {{ entity }}\n  {%- endif -%}\n{%- endfor -%}"
+    jsontopic: '{{ "hasp/" ~ haspname ~ "/state/json" }}'
+    selectedfgtopic: '{{ "hasp/" ~ haspname ~ "/light/selectedforegroundcolor/rgb"
+      }}'
+    selectedbgtopic: '{{ "hasp/" ~ haspname ~ "/light/selectedbackgroundcolor/rgb"
+      }}'
+    unselectedfgtopic: '{{ "hasp/" ~ haspname ~ "/light/unselectedforegroundcolor/rgb"
+      }}'
+    unselectedbgtopic: '{{ "hasp/" ~ haspname ~ "/light/unselectedbackgroundcolor/rgb"
+      }}'
+- id: '22181099405'
+  alias: frontdoor_hasp p[3].b[5] displays the current weather condition with icons
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Weather_Condition_with_Icon.yaml
+    input:
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 3
+      haspbutton: 5
+      weather_provider: weather.pirateweather
+- id: '22184367006'
+  alias: frontdoor_hasp p[2].b[5] Foyer Overhead
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Toggle.yaml
+    input:
+      ycen_select: 1 - Centered
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 2
+      entity: group.foyer
+      action_on:
+      - target:
+          entity_id: group.foyer
+        action: homeassistant.turn_on
+        data: {}
+      action_off:
+      - target:
+          entity_id: group.foyer
+        action: homeassistant.turn_off
+        data: {}
+      text_on: Foyer on
+      text_off: Foyer off
+      xcen_select: 1 - Centered
+      haspbutton: 5
+      font_select: 6 - Noto Sans 32
+- id: '22186107782'
+  alias: frontdoor_hasp p[2].b[6] Front Entry
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Toggle.yaml
+    input:
+      ycen_select: 1 - Centered
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 2
+      haspbutton: 6
+      action_on:
+      - type: turn_on
+        device_id: 29e7c1c86b5cc2a11b2e780a06135980
+        entity_id: light.front_entry
+        domain: light
+      action_off:
+      - type: turn_off
+        device_id: 29e7c1c86b5cc2a11b2e780a06135980
+        entity_id: light.front_entry
+        domain: light
+      text_on: Porch on
+      text_off: Porch off
+      entity: light.front_entry
+      xcen_select: 1 - Centered
+      font_select: 6 - Noto Sans 32
+- id: '2226488474776'
+  alias: frontdoor_hasp p[4].b[7] Kitchen Overhead dimmer with a toggle on/off icon
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Dimmer_with_Icon.yaml
+    input:
+      ycen_select: 0 - Top aligned
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      haspbutton: 7
+      dimmer: light.kitchen_recessed_2
+      wrap: true
+      xcen_select: 1 - Centered
+      text_on: Kitchen Recessed
+- id: '2238931281355'
+  alias: frontdoor_hasp p[1].b[4] Dinnertime Text
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Text.yaml
+    input:
+      ycen_select: 1 - Centered
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      text: Dinnertime
+      xcen_select: 1 - Centered
+      font_select: 6 - Noto Sans 32
+- id: '2239165215874'
+  alias: frontdoor_hasp p[1].b[7] displays Bedtime
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Text.yaml
+    input:
+      ycen_select: 1 - Centered
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      haspbutton: 7
+      text: Bedtime
+      xcen_select: 1 - Centered
+      font_select: 6 - Noto Sans 32
+- id: '1640916837834'
+  alias: frontdoor_hasp p[4].b[8] Kitchen Pendant dimmer with a toggle on/off icon
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Dimmer_with_Icon.yaml
+    input:
+      ycen_select: 0 - Top aligned
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      haspbutton: 8
+      dimmer: light.kitchen_pendant
+      wrap: true
+      xcen_select: 1 - Centered
+      text_on: Kitchen Pendant
+- alias: Kitchen Off
+  id: '1619322139512'
+  description: ''
+  trigger:
+  - platform: device
+    domain: tasmota
+    device_id: 7a65ec53b8c8464308b961e9f7c946c3
+    type: button_triple_press
+    subtype: button_1
+    discovery_id: DC4F227A83AA_button_1_TRIPLE
+  - platform: device
+    domain: tasmota
+    device_id: c46585c237acac618e9347a33d87dbd2
+    type: button_triple_press
+    subtype: button_1
+    discovery_id: DC4F227AAC4C_button_1_TRIPLE
+  - platform: device
+    domain: tasmota
+    device_id: 2a13aa9b52e644c85d29d04340ff8abb
+    type: button_triple_press
+    subtype: button_1
+    discovery_id: DC4F227A226E_button_1_TRIPLE
+  condition: []
+  action:
+  - service: homeassistant.turn_off
+    target:
+      device_id:
+      - c46585c237acac618e9347a33d87dbd2
+      - 7a65ec53b8c8464308b961e9f7c946c3
+      - 2a13aa9b52e644c85d29d04340ff8abb
+  mode: single
+- id: '1619321256372'
+  alias: Dining_Table
+  description: 'Toggle Dining Table: double press on Kitchen Pendant or Kitchen Recessed
+    (via MQTT), or single press on the third switch.'
+  triggers:
+  - trigger: mqtt
+    topic: stat/KitchenPendant/RESULT
+    value_template: '{{ value_json.Button1.Action if value_json.Button1 is defined
+      else '''' }}'
+    payload: DOUBLE
+    id: pendant_double
+  - trigger: mqtt
+    topic: stat/KitchenRecessed/RESULT
+    value_template: '{{ value_json.Button1.Action if value_json.Button1 is defined
+      else '''' }}'
+    payload: DOUBLE
+    id: recessed_double
+  - domain: tasmota
+    device_id: 709952529709bc83bd60d532aacfd22a
+    type: button_short_press
+    subtype: button_1
+    discovery_id: 84F3EB63EA0A_button_1_SINGLE
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    target:
+      entity_id: light.dining_table
+  mode: single
+- alias: Foyer Overhead Toggle
+  id: '1640735074505'
+  description: ''
+  trigger:
+  - platform: device
+    domain: tasmota
+    device_id: 29e7c1c86b5cc2a11b2e780a06135980
+    type: button_double_press
+    subtype: button_1
+    discovery_id: BCDDC2B720B1_button_1_DOUBLE
+  condition: []
+  action:
+  - service: light.toggle
+    target:
+      entity_id: light.foyer_overhead
+  mode: single
+- id: '1620310391318'
+  alias: Garage Open at Night
+  description: ''
+  triggers:
+  - at: '22:00:00'
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: cover.ratgdov25i_120684_door
+    state: open
+  actions:
+  - action: notify.alexa_media
+    metadata: {}
+    data:
+      message: It's after 10:00 and the Garage Door is open
+      target: media_player.bedroom_echo
+    continue_on_error: true
+  mode: single
+- id: '1641153570881'
+  alias: frontdoor_hasp p[5].b[7] Stair
+  description: ''
+  use_blueprint:
+    input:
+      dimmer: light.stair_light
+      font_select: 6 - Noto Sans 32
+      haspbutton: 7
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 5
+      text_on: Stair
+      wrap: true
+      xcen_select: 1 - Centered
+      ycen_select: 0 - Top aligned
+    path: HASwitchPlate/hasp_Display_Dimmer_with_Icon.yaml
+- id: '1641153709316'
+  alias: 'frontdoor_hasp p[5].b[8] Piano Overhead '
+  description: ''
+  use_blueprint:
+    input:
+      dimmer: light.piano_room_lights
+      font_select: 6 - Noto Sans 32
+      haspbutton: 8
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      hasppage: 5
+      text_on: Piano Room
+      wrap: true
+      xcen_select: 1 - Centered
+      ycen_select: 0 - Top aligned
+    path: HASwitchPlate/hasp_Display_Dimmer_with_Icon.yaml
+- id: '1682255286297'
+  alias: frontdoor_hasp p[1].b[6] Eat Dinner
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Display_Toggle.yaml
+    input:
+      ycen_select: 1 - Centered
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      entity: scene.eat_dinner
+      state_on: 'off'
+      action_on:
+      - target:
+          entity_id: scene.eat_dinner
+        metadata: {}
+        action: scene.turn_on
+        data: {}
+      font_select: 6 - Noto Sans 32
+      xcen_select: 1 - Centered
+      haspbutton: 6
+      text_on: Eat Dinner
+      text_off: Eat Dinner
+- id: '1692241959005'
+  alias: Hallway Lamp Off
+  description: Turn off the Hallway Lamp once there has been no motion for 5 minutes
+    and the Ecobee no longer sees anyone upstairs
+  triggers:
+  - entity_id: binary_sensor.upstairs_hallway_motion
+    for:
+      minutes: 5
+    to: 'off'
+    trigger: state
+  - entity_id: binary_sensor.upstairs_occupancy
+    to: 'off'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.upstairs_hallway_motion
+    for:
+      minutes: 5
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.upstairs_occupancy
+    state: 'off'
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: light.hallway_lamp
+  mode: single
+- id: '1692242024477'
+  alias: Hallway Lamp On
+  description: Turn on the hallway lamps when the upstairs hallway motion sensor sees
+    movement
+  triggers:
+  - target:
+      entity_id: binary_sensor.upstairs_hallway_motion
+    trigger: motion.detected
+  conditions: []
+  actions:
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.hallway_lamp
+      - light.grande_hall_lamp
+  mode: restart
+- id: '1709171170792'
+  alias: Toggle garage door ios
+  description: Toggle garage door ios
+  trigger:
+  - platform: event
+    event_type: ios.action_fired
+    event_data:
+      actionID: C4E9FCBD-2223-4D8A-B17B-632A126BAAE9
+  condition: []
+  action:
+  - device_id: 6cd0cbcea8fd4c5eeb314529e1088b2d
+    domain: button
+    entity_id: 96765e47aee6d7a9ba5d7ffa3593af35
+    type: press
+  mode: single
+- id: '1738882242818'
+  alias: Trigger alarm while armed
+  description: Triggers the Alarm when any alarm door or window (Konnected zones 1-5)
+    or the garage door opens while the alarm is armed (home, away, night or vacation).
+    Motion sensors are deliberately left out (kids and dogs).
+  triggers:
+  - target:
+      entity_id: binary_sensor.konnected_56accc_56accc_zone_1
+    trigger: door.opened
+  - target:
+      entity_id:
+      - binary_sensor.konnected_56accc_56accc_zone_2
+      - binary_sensor.konnected_56accc_56accc_zone_3
+      - binary_sensor.konnected_56accc_56accc_zone_4
+      - binary_sensor.konnected_56accc_56accc_zone_5
+    trigger: window.opened
+  - target:
+      entity_id: cover.ratgdov25i_120684_door
+    trigger: garage_door.opened
+  conditions:
+  - condition: state
+    entity_id: alarm_control_panel.alarm
+    state:
+    - armed_away
+    - armed_home
+    - armed_night
+    - armed_vacation
+  actions:
+  - action: alarm_control_panel.alarm_trigger
+    target:
+      entity_id: alarm_control_panel.alarm
+  mode: single
+- id: '1759413138216'
+  alias: openhasp2-detect-mediaplayer-coverart
+  description: Pushes cover art for the speaker picked on the Living Room openHASP
+    media page (input_select.openhasp2_speaker) to p6b40.
+  triggers:
+  - attribute: entity_picture
+    entity_id:
+    - media_player.denon_avr_x1700h_4
+    - media_player.living_room_sound_bar_2
+    - media_player.bedroom_tv_2
+    - media_player.master_bedroom_tv
+    id: art
+    trigger: state
+  - entity_id: input_select.openhasp2_speaker
+    id: speaker
+    trigger: state
+  - entity_id: openhasp.openhasp2
+    from: unavailable
+    id: plate
+    trigger: state
+  conditions:
+  - condition: or
+    conditions:
+    - condition: trigger
+      id:
+      - speaker
+      - plate
+    - condition: template
+      value_template: '{{ trigger.entity_id == states(''input_select.openhasp2_speaker'')
+        }}'
+  actions:
+  - variables:
+      pic: '{{ state_attr(states(''input_select.openhasp2_speaker''), ''entity_picture'')
+        or '''' }}'
+  - if:
+    - condition: template
+      value_template: '{{ pic != '''' }}'
+    then:
+    - action: openhasp.push_image
+      data:
+        height: 355
+        image: '{{ pic if pic.startswith(''http'') else ''http://127.0.0.1:8123''
+          ~ pic }}'
+        obj: p6b40
+        width: 355
+      target:
+        entity_id: openhasp.openhasp2
+  mode: restart
+- id: '1763429602602'
+  alias: front Core functionality
+  description: ''
+  use_blueprint:
+    path: HASwitchPlate/hasp_Core_Functionality.yaml
+    input:
+      haspdevice: 21dff422c8dcae4a4d04a06f158b2ddf
+      page_names:
+        page0: SETUP
+        page1: Script
+        page2: Lights
+        page3: Home
+        page4: Kitchen
+        page5: Dimmers
+        page6: Temp
+        page7: Alarm
+        page8: Media
+        page9: Temp
+        page10: NA
+        page11: NA
+      page_scroll_list: 1,2,3,4,5,7
+      page_scroll: true
+      page1text: 
+      page2text: Home
+      page3text: 
+      reset_hasp: false
+      show_lovelace: false
+      page2font_select: 5 - Noto Sans 24
+- id: '1767067092684'
+  alias: Garage door opened late
+  description: ''
+  triggers:
+  - trigger: garage_door.opened
+    target:
+      entity_id: cover.ratgdov25i_120684_door
+  conditions:
+  - condition: time
+    after: '22:00:00'
+    before: 06:00:00
+  actions:
+  - action: notify.alexa_media
+    metadata: {}
+    data:
+      message: It's late and the Garage Door has been opened
+      target: media_player.bedroom_echo
+    continue_on_error: true
+  - action: notify.alexa_media
+    metadata: {}
+    data:
+      message: It's late and the Garage Door has been opened
+      target: media_player.living_echo
+    continue_on_error: true
+- id: Outside_Temp_Color_Change
+  alias: Outside Temp Color Change
+  description: Sets Garage Hall and BackLight switch LEDs to a color based on outdoor
+    temp. Re-applies if an LED turns off or the Garage Hall light is switched. Skips
+    when the outdoor temperature is not a number.
+  triggers:
+  - entity_id: sensor.outdoor_temperature
+    trigger: state
+  - entity_id:
+    - light.garage_hall_led
+    - light.backlight_tasmota2
+    for:
+      seconds: 3
+    to: 'off'
+    trigger: state
+  - entity_id: switch.garage_hall
+    for:
+      seconds: 3
+    not_to:
+    - unavailable
+    - unknown
+    trigger: state
+  - event: start
+    trigger: homeassistant
+  conditions:
+  - condition: template
+    value_template: '{{ is_number(states(''sensor.outdoor_temperature'')) }}'
+  actions:
+  - variables:
+      blue:
+      - 255
+      - 255
+      - 244
+      - 234
+      - 222
+      - 211
+      - 202
+      - 190
+      - 178
+      - 167
+      - 156
+      - 146
+      - 158
+      - 169
+      - 179
+      - 191
+      - 200
+      - 212
+      - 222
+      - 232
+      - 245
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 252
+      - 250
+      - 250
+      - 247
+      - 245
+      - 245
+      - 242
+      - 242
+      - 240
+      - 238
+      - 217
+      - 198
+      - 182
+      - 161
+      - 143
+      - 122
+      - 101
+      - 83
+      - 66
+      - 46
+      - 41
+      - 36
+      - 31
+      - 28
+      - 23
+      - 18
+      - 13
+      - 8
+      - 5
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      green:
+      - 255
+      - 255
+      - 232
+      - 209
+      - 184
+      - 161
+      - 138
+      - 115
+      - 89
+      - 66
+      - 43
+      - 20
+      - 18
+      - 15
+      - 13
+      - 13
+      - 10
+      - 8
+      - 5
+      - 3
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 25
+      - 50
+      - 75
+      - 103
+      - 126
+      - 155
+      - 178
+      - 206
+      - 228
+      - 255
+      - 250
+      - 245
+      - 242
+      - 237
+      - 232
+      - 227
+      - 222
+      - 219
+      - 214
+      - 209
+      - 214
+      - 219
+      - 222
+      - 227
+      - 232
+      - 237
+      - 242
+      - 245
+      - 250
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 247
+      - 238
+      - 230
+      - 221
+      - 213
+      - 204
+      - 200
+      - 191
+      - 183
+      - 174
+      - 162
+      - 149
+      - 136
+      - 119
+      - 106
+      - 94
+      - 81
+      - 68
+      - 55
+      - 43
+      - 38
+      - 34
+      - 30
+      - 21
+      - 17
+      - 13
+      - 9
+      - 4
+      - 0
+      red:
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 245
+      - 235
+      - 224
+      - 214
+      - 207
+      - 198
+      - 186
+      - 175
+      - 167
+      - 157
+      - 140
+      - 123
+      - 111
+      - 93
+      - 76
+      - 64
+      - 47
+      - 30
+      - 17
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 5
+      - 10
+      - 15
+      - 20
+      - 26
+      - 31
+      - 36
+      - 41
+      - 46
+      - 51
+      - 61
+      - 66
+      - 75
+      - 88
+      - 96
+      - 106
+      - 112
+      - 122
+      - 132
+      - 140
+      - 153
+      - 162
+      - 174
+      - 187
+      - 195
+      - 208
+      - 221
+      - 234
+      - 242
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      - 255
+      t: '{{ [[states(''sensor.outdoor_temperature'') | float(0) | int(0), 0] | max,
+        100] | min }}'
+  - action: light.turn_on
+    data:
+      rgb_color: '{{ [red[t], green[t], blue[t]] }}'
+    target:
+      entity_id:
+      - light.backlight_tasmota2
+      - light.garage_hall_led
+  mode: restart
+- id: '1794067196822'
+  alias: frontdoor_hasp restore theme colors
+  description: 'HASPone doesn''t report its theme colors back to Home Assistant, so
+    they''re lost on every restart and the HASwitchPlate blueprints fail (blank panel).
+    This sets the teal theme again on startup and whenever the plate reconnects: dark
+    text on teal buttons, white background when selected/on. Setting a color also
+    makes the blueprints repaint their buttons. Don''t use 0,0,0 for black (Home Assistant
+    treats it as off); use 0,0,1 instead.'
+  triggers:
+  - event: start
+    trigger: homeassistant
+  - entity_id: sensor.frontdoorhasp_sensor
+    to: 'ON'
+    trigger: state
+  actions:
+  - delay: 00:00:05
+    note: Give MQTT discovery a moment to load the plate's color lights after a restart.
+  - action: light.turn_on
+    data:
+      rgb_color:
+      - 0
+      - 128
+      - 128
+    note: Teal button background
+    target:
+      entity_id: light.frontdoorhasp_unselected_background_color
+  - action: light.turn_on
+    data:
+      rgb_color:
+      - 24
+      - 24
+      - 24
+    note: Dark text
+    target:
+      entity_id: light.frontdoorhasp_unselected_foreground_color
+  - action: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 255
+      - 255
+    note: White background when selected/on
+    target:
+      entity_id: light.frontdoorhasp_selected_background_color
+  - action: light.turn_on
+    data:
+      rgb_color:
+      - 24
+      - 24
+      - 24
+    note: Dark text when selected/on
+    target:
+      entity_id: light.frontdoorhasp_selected_foreground_color
+  mode: restart
+- id: '1794198165419'
+  alias: Grande Hall Lamp Off
+  description: Turn off the Grande Hall Lamp 5 minutes after the last motion in the
+    upstairs hallway
+  triggers:
+  - entity_id: binary_sensor.upstairs_hallway_motion
+    for:
+      minutes: 5
+    to: 'off'
+    trigger: state
+  conditions: []
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: light.grande_hall_lamp
+  mode: single
+- id: '1794368678152'
+  alias: Master Closet Motion Lights
+  description: Turn on the master closet lights (Closet Chad, Closet Nathaly, Master
+    Hall) when the closet motion sensor sees movement; turn them off once there has
+    been no motion for 5 minutes. Separate on/off triggers so it also works after
+    restarts or if the lights were turned on by hand.
+  triggers:
+  - entity_id: binary_sensor.closet_motion
+    id: motion
+    to: 'on'
+    trigger: state
+  - entity_id: binary_sensor.closet_motion
+    for:
+      minutes: 5
+    id: clear
+    to: 'off'
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: motion
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.master_closet
+    - conditions:
+      - condition: trigger
+        id: clear
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.master_closet
+  mode: queued
+- id: '1794616815197'
+  alias: Dryer Done Announcement
+  description: Announces on all Echos when the Samsung dryer finishes (SmartThings
+    machine state goes from run to stop).
+  triggers:
+  - entity_id: sensor.laundry_room_dryer_machine_state
+    from: run
+    to: stop
+    trigger: state
+  conditions: []
+  actions:
+  - action: notify.alexa_media
+    continue_on_error: true
+    data:
+      data:
+        type: tts
+      message: The dryer is done.
+      target:
+      - media_player.all_alexa
+  mode: single
+- id: '1794792275055'
+  alias: Door or Window Opened Announcement
+  description: 'Announces on the Living Echo when any alarm door or window zone opens:
+    "<sensor name> is open".'
+  triggers:
+  - entity_id:
+    - binary_sensor.konnected_56accc_56accc_zone_1
+    - binary_sensor.konnected_56accc_56accc_zone_2
+    - binary_sensor.konnected_56accc_56accc_zone_3
+    - binary_sensor.konnected_56accc_56accc_zone_4
+    - binary_sensor.konnected_56accc_56accc_zone_5
+    from: 'off'
+    to: 'on'
+    trigger: state
+  conditions: []
+  actions:
+  - action: notify.alexa_media
+    continue_on_error: true
+    data:
+      data:
+        type: tts
+      message: '{{ trigger.to_state.name }} is open'
+      target:
+      - media_player.living_echo
+  mode: queued
+- id: '1794882425947'
+  alias: Stair switch double press toggles Foyer light
+  description: Double press on the stair Shelly (any stair switch location) toggles
+    the Foyer Overhead light.
+  triggers:
+  - options:
+      event_type:
+      - double_push
+    target:
+      entity_id: event.shelly1minig4_1020bafdb8cc_input
+    trigger: event.received
+  conditions: []
+  actions:
+  - action: light.toggle
+    target:
+      entity_id: light.foyer_overhead
+  mode: single
+- id: '1794882965963'
+  alias: Stair switch single press toggles Stair light
+  description: 'Shelly input is detached from its relay, so HA handles the press:
+    single press toggles the stair light (double press is the Foyer automation).'
+  triggers:
+  - options:
+      event_type:
+      - single_push
+    target:
+      entity_id: event.shelly1minig4_1020bafdb8cc_input
+    trigger: event.received
+  conditions: []
+  actions:
+  - action: light.toggle
+    target:
+      entity_id: light.stair_light
+  mode: single
+- id: '1794884108024'
+  alias: openhasp2 media lists
+  description: Fills the Playlists and Mixes dropdowns on the Living Room openHASP
+    media page (page 6) from Music Assistant.
+  triggers:
+  - event: start
+    trigger: homeassistant
+  - entity_id: openhasp.openhasp2
+    from: unavailable
+    trigger: state
+  - entity_id: input_boolean.openhasp2_browse
+    to: 'on'
+    trigger: state
+  actions:
+  - delay:
+      seconds: 5
+  - action: music_assistant.get_library
+    data:
+      config_entry_id: 01M6XSE4DCZ3Z8NPJR9MRAGHMX
+      limit: 100
+      media_type: playlist
+      order_by: name
+    response_variable: lib
+  - variables:
+      names: '{{ lib[''items''] | map(attribute=''name'') | list }}'
+  - variables:
+      mixes: '{% set words = [''(from library)'', ''Infinite Mix'', ''Recently added'',
+        ''Recently played'', ''All favorited''] %}{% set ns = namespace(o=[]) %}{%
+        for n in names %}{% if words | select(''in'', n) | list | count > 0 %}{% set
+        ns.o = ns.o + [n] %}{% endif %}{% endfor %}{{ ns.o }}'
+  - variables:
+      playlists: '{{ names | reject(''in'', mixes) | list }}'
+  - action: openhasp.command
+    data:
+      keyword: p6b99.options
+      parameters: '{{ ([''Choose a playlist...''] + playlists) | join(''%c'' | format(10))
+        }}'
+    target:
+      entity_id: openhasp.openhasp2
+  - action: openhasp.command
+    data:
+      keyword: p6b98.options
+      parameters: '{{ ([''Choose a mix...''] + mixes) | join(''%c'' | format(10))
+        }}'
+    target:
+      entity_id: openhasp.openhasp2
+  mode: restart
+- id: openhasp2_energy_days
+  alias: openhasp2 Energy Days
+  description: Fills input_text.openhasp2_energy_days with 30 daily home-use totals
+    in kWh (oldest first) for the bar chart on the openhasp2 Energy page. Home use
+    = grid import + solar - export, from the energymonitor statistics. The *_2 ids
+    hold Nov 9-21 2026 (before the 2026-11-21 rename); they can be dropped from the
+    list after 2026-12-21.
+  triggers:
+  - minutes: '5'
+    trigger: time_pattern
+  - event: start
+    trigger: homeassistant
+  conditions: []
+  actions:
+  - action: recorder.get_statistics
+    data:
+      period: day
+      start_time: '{{ (today_at() - timedelta(days=29)).isoformat() }}'
+      statistic_ids:
+      - sensor.energymonitor_house_kwh
+      - sensor.energymonitor_solar_kwh
+      - sensor.energymonitor_house_return_to_grid_kwh
+      - sensor.energymonitor_house_kwh_2
+      - sensor.energymonitor_solar_kwh_2
+      - sensor.energymonitor_house_return_to_grid_kwh_2
+      types:
+      - change
+    response_variable: stats
+  - action: input_text.set_value
+    data:
+      value: "{%- set s = stats.statistics -%}\n{%- set imp_ids = ['sensor.energymonitor_house_kwh',
+        'sensor.energymonitor_house_kwh_2'] -%}\n{%- set sol_ids = ['sensor.energymonitor_solar_kwh',
+        'sensor.energymonitor_solar_kwh_2'] -%}\n{%- set exp_ids = ['sensor.energymonitor_house_return_to_grid_kwh',
+        'sensor.energymonitor_house_return_to_grid_kwh_2'] -%}\n{%- set ns = namespace(out=[])
+        -%}\n{%- for i in range(30) -%}\n  {%- set day = (today_at() - timedelta(days=29
+        - i)).date() | string -%}\n  {%- set t = namespace(imp=0, sol=0, exp=0) -%}\n
+        \ {%- for sid in imp_ids -%}{%- for e in s.get(sid, []) if (as_datetime(e.start)
+        | as_local).date() | string == day and e.change | float(0) > 0 -%}{%- set
+        t.imp = t.imp + e.change | float(0) -%}{%- endfor -%}{%- endfor -%}\n  {%-
+        for sid in sol_ids -%}{%- for e in s.get(sid, []) if (as_datetime(e.start)
+        | as_local).date() | string == day and e.change | float(0) > 0 -%}{%- set
+        t.sol = t.sol + e.change | float(0) -%}{%- endfor -%}{%- endfor -%}\n  {%-
+        for sid in exp_ids -%}{%- for e in s.get(sid, []) if (as_datetime(e.start)
+        | as_local).date() | string == day and e.change | float(0) > 0 -%}{%- set
+        t.exp = t.exp + e.change | float(0) -%}{%- endfor -%}{%- endfor -%}\n  {%-
+        set ns.out = ns.out + [([t.imp + t.sol - t.exp, 0] | max) | round(1)] -%}\n{%-
+        endfor -%}\n{{ ns.out | join(',') }}"
+    target:
+      entity_id: input_text.openhasp2_energy_days
+  mode: single

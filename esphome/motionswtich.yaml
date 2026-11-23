@@ -1,0 +1,233 @@
+substitutions:
+  devicename: milfra-mfa05f-switch1
+  friendlyname: Motion Switch 1
+  modelname: Milfra MFA05F
+  update_interval_wifi: "60s"
+  baud_rate: "9600"
+
+esphome:
+  name: ${devicename}
+  friendly_name: ${friendlyname}
+  comment: "Milfra MFA05F motion switch"
+  project:
+    name: "Milfra.MFA05F"
+    version: "2025.2.1"
+
+bk72xx:
+  board: generic-bk7231n-qfn32-tuya
+
+# Enable logging
+logger:
+  #level: VERY_VERBOSE
+  level: DEBUG
+  # This stops logging from being sent out UART.
+  baud_rate: 0
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Milfra MFA05F Fallback Hotspot"
+
+captive_portal:
+
+web_server:
+  include_internal: True
+  log: True
+  port: 80
+  version: 3
+
+uart:
+  rx_pin: RX1
+  tx_pin: TX1
+  baud_rate: ${baud_rate}
+
+tuya:
+  # the 'tuya' device must have an ID so we can call it in the lambdas
+  id: "tuyadevice"
+  time_id: homeassistant_time
+  ignore_mcu_update_on_datapoints: 103
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+select:
+  # On power restore - switch state
+  - platform: tuya
+    name: Power-restore switch setting
+    enum_datapoint: 14
+    optimistic: true
+    entity_category: config
+    options:
+      0: "Off"
+      1: "On"
+      2: "Memory"
+  # White (off state) LED - motion doesn't seem to do anything
+  - platform: tuya
+    name: LED status
+    enum_datapoint: 15
+    optimistic: true
+    entity_category: config
+    options:
+      0: "Off"
+      1: "On"
+      2: "Motion"
+  # Photosensitive state - ??Enable/disable motion turning on light??
+  - platform: tuya
+    name: Motion light control
+    enum_datapoint: 44
+    optimistic: true
+    entity_category: config
+    options:
+      0: "On"
+      1: "Off"
+    internal: false
+  # Time based motion control
+  - platform: tuya
+    name: Motion time
+    enum_datapoint: 45
+    optimistic: true
+    entity_category: config
+    options:
+      0: "On"
+      1: "Off"
+    internal: false
+  # Sensing status - ??Enable/disable motion sensor??
+  - platform: tuya
+    name: What-does-this-do
+    enum_datapoint: 47
+    optimistic: true
+    entity_category: config
+    options:
+      0: "On"
+      1: "Off"
+    internal: true
+  # Motion sensor sensitivity
+  - platform: tuya
+    name: PIR sensitivity
+    enum_datapoint: 48
+    optimistic: true
+    entity_category: config
+    options:
+      0: "low"
+      1: "middle"
+      2: "high"
+    internal: false
+
+number:
+  # Motion sensor delay in seconds for light turn off
+  - platform: tuya
+    name: Motion delay seconds
+    number_datapoint: 49
+    min_value: 5
+    max_value: 3600
+    step: 1
+    entity_category: config
+    internal: false
+    datapoint_hidden:
+      datapoint_type: int
+      initial_value: 300
+      restore_value: True
+  # Motion sensor stop time in minutes from 00:00 (12:00 am)
+  - platform: tuya
+    name: Motion time stop
+    number_datapoint: 101
+    min_value: 0
+    max_value: 1440
+    step: 1
+    entity_category: config
+    internal: false
+    datapoint_hidden:
+      datapoint_type: int
+      initial_value: 1440
+      restore_value: True
+  # Motion sensor start time in minutes from 00:00 (12:00 am)
+  - platform: tuya
+    name: Motion time start
+    number_datapoint: 102
+    min_value: 0
+    max_value: 1440
+    step: 1
+    entity_category: config
+    internal: false
+    datapoint_hidden:
+      datapoint_type: int
+      initial_value: 0
+      restore_value: True
+
+switch:
+  # Relay
+  - platform: tuya
+    name: Switch
+    switch_datapoint: 1
+  # Controls motion activation of relay
+  - platform: tuya
+    name: Motion activation
+    switch_datapoint: 43
+    entity_category: config
+    inverted: True
+    internal: false
+  # Sensor switch - ??Enable/disable PIR sensor??
+  - platform: tuya
+    name: Motion sensor
+    switch_datapoint: 46
+    entity_category: config
+    internal: false
+
+binary_sensor:
+  # Status Binary Sensor exposes the node state (if it’s connected to via MQTT/native API) for Home Assistant.
+  - platform: status
+    name: "Connection Status"
+    id: connection_status
+    internal: True
+    entity_category: diagnostic
+
+button:
+  - platform: restart
+    id: restart_button
+    name: "Restart"
+
+text_sensor:
+  - platform: version
+    hide_timestamp: true
+    name: 'ESPHome Version'
+    internal: True
+  # DPid 103 is RAW - setting to text for now
+  # - platform: tuya
+  #   name: Timing
+  #   sensor_datapoint: 103
+  #   internal: True
+  - platform: wifi_info
+    ip_address:
+      name: "IP"
+      icon: "mdi:ip-outline"
+    ssid:
+      name: "SSID"
+      icon: "mdi:wifi-settings"
+      internal: True
+    bssid:
+      name: "BSSID"
+      icon: "mdi:wifi-settings"
+      internal: True
+    mac_address:
+      name: "MAC"
+      icon: "mdi:network-outline"
+      internal: True
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    icon: "mdi:wifi-settings"
+    internal: True

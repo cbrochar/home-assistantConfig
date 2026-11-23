@@ -1,0 +1,32 @@
+- platform: mqtt
+  state_topic: "tele/rf_bridge/RESULT"
+  name: "upstairs_hallway_motion"
+  value_template: >-
+    {% if value_json.RfReceived.Data == 'EC498E' %}
+      {{'ON'}}
+    {% else %}
+      {{states('binary_sensor.upstairs_halwayy_motion') | upper}}
+    {% endif %}
+  off_delay: 15
+  device_class: motion
+- platform: mqtt
+  state_topic: "tele/rf_bridge/RESULT"
+  name: "pantry_door"
+  value_template: >-
+    {% if value_json.RfReceived.Data == '5CFEE9' %}
+      {{'ON'}}
+    {% else %}
+      {{states('binary_sensor.pantry_door') | upper}}
+    {% endif %}
+  off_delay: 15
+  device_class: door
+- platform: mqtt
+  state_topic: "tele/rf_bridge/RESULT"
+  name: "wifi_button"
+  value_template: >-
+    {% if value_json.RfReceived.Data == '826B53' %}
+      {{'ON'}}
+    {% else %}
+      {{states('binary_sensor.wifi_button') | upper}}
+    {% endif %}
+  off_delay: 3
